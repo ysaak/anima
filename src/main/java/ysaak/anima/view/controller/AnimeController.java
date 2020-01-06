@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ysaak.anima.data.Anime;
 import ysaak.anima.dto.view.anime.AnimeListDto;
+import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.AnidbService;
 import ysaak.anima.service.AnimeService;
 import ysaak.anima.utils.StringUtils;
@@ -57,8 +58,8 @@ public class AnimeController {
 
     @NamedRoute("animes.view")
     @GetMapping("/{id}")
-    public String viewAction(ModelMap model, @PathVariable("id") String id) {
-        Anime anime = this.animeService.findById(id).orElseThrow(() -> new RuntimeException("Bye bye"));
+    public String viewAction(ModelMap model, @PathVariable("id") String id) throws NoDataFoundException {
+        Anime anime = this.animeService.findById(id).orElseThrow(() -> new NoDataFoundException("Bye bye"));
         model.put("anime", anime);
 
 
