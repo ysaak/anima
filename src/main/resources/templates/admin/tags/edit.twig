@@ -1,0 +1,36 @@
+{% extends "layout" %}
+
+{% block sidebar %}
+{% include "admin/admin_sidebar" %}
+{% endblock %}
+
+{% block content %}
+{% if tag.id is null %}
+<h1>Nouveau tag</h1>
+{% else %}
+<h1>Modifier tag</h1>
+{% endif %}
+
+<form method="post" action="/admin/tags/{{ tag.id }}">
+    <input type="hidden" name="id" value="{{ tag.id }}">
+
+    <div class="form-group">
+        <label for="genreName">Nom</label>
+        <input type="text" class="form-control" id="genreName" name="name" value="{{ tag.name }}">
+    </div>
+
+    <div class="form-group">
+        <label for="genreDescription">Description</label>
+        <textarea class="form-control" id="genreDescription" rows="4" name="description">{{ tag.description | raw }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="genreAniDbEquivalence">Equivalence AniDB</label>
+        <textarea class="form-control" id="genreAniDbEquivalence" rows="4" name="anidbEquivalence">{{ tag.anidbEquivalence | raw }}</textarea>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
+
+{% endblock %}

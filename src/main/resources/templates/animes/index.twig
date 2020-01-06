@@ -1,0 +1,11 @@
+{% extends "layout" %}
+
+{% block content %}
+
+<ul>
+    {% for anime in animeList %}
+    <li><a href="{{ anime.viewUrl }}">{{ anime.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

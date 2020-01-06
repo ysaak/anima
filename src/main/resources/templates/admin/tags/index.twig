@@ -1,0 +1,35 @@
+{% extends "layout" %}
+
+{% block sidebar %}
+{% include "admin/admin_sidebar" %}
+{% endblock %}
+
+
+{% block content %}
+<h1>Tags</h1>
+
+<p class="text-right">
+    <a href="/admin/tags/new" class="btn btn-primary">Nouveau</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Description</th>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for tag in tagList %}
+        <tr>
+            <td>{{ tag.name }}</td>
+            <td>{{ tag.description }}</td>
+            <td><a href="/admin/tags/{{ tag.id }}/edit">Modifier</a></td>
+            <td><form method="post" action="/admin/tags/{{ tag.id }}/delete"><button type="submit">Supprimer</button></form> </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
