@@ -25,7 +25,7 @@ html, body {
 </style>
 </head>
 <body class="d-flex flex-column">
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow">
     <a class="navbar-brand" href="/">Anima</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -60,6 +60,32 @@ html, body {
         </ul>
     </div>
 </nav>
+
+{% if hasFlashErrorMessage() %}
+<div class="alert alert-danger alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
+    <ul class="m-0">
+    {% for message in getFlashErrorMessage() %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+
+{% if hasFlashInfoMessage() %}
+<div class="alert alert-success alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
+    <ul class="m-0">
+        {% for message in getFlashInfoMessage() %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
 
 <div class="d-flex flex-grow-1">
     {% block sidebar %}{% endblock %}

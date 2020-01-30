@@ -8,17 +8,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.IAnimaComponent;
 import ysaak.anima.data.Tag;
+import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ResourceNotFoundException;
 import ysaak.anima.service.TagService;
+import ysaak.anima.view.controller.AbstractViewController;
 import ysaak.anima.view.dto.admin.TagEditDto;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin/tags")
-public class AdminTagController implements IAnimaComponent {
+public class AdminTagController extends AbstractViewController implements IAnimaComponent {
 
     private final TagService tagService;
 
@@ -36,31 +39,52 @@ public class AdminTagController implements IAnimaComponent {
 
     @GetMapping("/new")
     public String newAction(ModelMap model) {
-        model.put("tag", new TagEditDto());
+        if (!model.containsAttribute("tag")) {
+            model.put("tag", new TagEditDto());
+        }
+
         return "admin/tags/edit";
     }
 
     @PostMapping("/")
-    public String createAction(@ModelAttribute TagEditDto tagDto) {
+    public String createAction(@ModelAttribute TagEditDto tagDto, final RedirectAttributes redirectAttributes) {
         final Tag tagToSave = converters().convert(tagDto, Tag.class);
-        tagService.save(tagToSave);
+
+        try {
+            tagService.save(tagToSave);
+        }
+        catch (DataValidationException dve) {
+            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            redirectAttributes.addFlashAttribute("tag", tagDto);
+            return "redirect:/admin/tags/" + tagDto.getId() + "/edit";
+        }
+
         return "redirect:/admin/tags/";
     }
 
     @GetMapping("/{id}/edit")
     public String editAction(ModelMap model, @PathVariable("id") String id) throws Exception {
-        final Tag tag = tagService.findById(id).orElseThrow(() -> new Exception("Byebye"));
+        if (!model.containsAttribute("tag")) {
+            final Tag tag = tagService.findById(id).orElseThrow(() -> new Exception("Byebye"));
 
-        final TagEditDto tagToEdit = converters().convert(tag, TagEditDto.class);
-        model.put("tag", tagToEdit);
+            final TagEditDto tagToEdit = converters().convert(tag, TagEditDto.class);
+            model.put("tag", tagToEdit);
+        }
 
         return "admin/tags/edit";
     }
 
     @PostMapping("/{id}")
-    public String updateAction(@ModelAttribute TagEditDto tagDto) {
+    public String updateAction(@ModelAttribute TagEditDto tagDto, final RedirectAttributes redirectAttributes) {
         final Tag tagToSave = converters().convert(tagDto, Tag.class);
-        tagService.save(tagToSave);
+        try {
+            tagService.save(tagToSave);
+        }
+        catch (DataValidationException dve) {
+            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            redirectAttributes.addFlashAttribute("tag", tagDto);
+            return "redirect:/admin/tags/new";
+        }
         return "redirect:/admin/tags/";
     }
 

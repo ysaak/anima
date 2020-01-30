@@ -3,11 +3,17 @@ package ysaak.anima.data;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class Tag implements Entity {
     private String id;
 
+    @NotEmpty(message = "{validation.name.notEmpty}")
+    @Size(max = 250, message = "{validation.name.size}")
     private String name;
 
+    @Size(max = 4000, message = "{validation.description.size}")
     private String description;
 
     private Multimap<TagEquivalenceOrigin, String> equivalenceMap;

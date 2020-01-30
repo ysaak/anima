@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ysaak.anima.data.Entity;
 import ysaak.anima.api.dto.PageDto;
+import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ResourceNotFoundException;
 import ysaak.anima.service.AbstractCrudService;
 
@@ -26,7 +27,7 @@ public class AbstractCrudController<ENTITY extends Entity, S extends AbstractCru
     }
 
     @PostMapping("/")
-    public ResponseEntity<ENTITY> create(@RequestBody ENTITY data) {
+    public ResponseEntity<ENTITY> create(@RequestBody ENTITY data) throws DataValidationException {
         ENTITY dataStored = entityService.save(data);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(data.getId()).toUri();
         return ResponseEntity.created(location).body(dataStored);
@@ -44,7 +45,7 @@ public class AbstractCrudController<ENTITY extends Entity, S extends AbstractCru
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ENTITY> update(@RequestBody ENTITY data, @PathVariable String id) {
+    public ResponseEntity<ENTITY> update(@RequestBody ENTITY data, @PathVariable String id) throws DataValidationException {
 
         Optional<ENTITY> genreOptional = entityService.findById(id);
 

@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-{% if tag.id is null %}
+{% if tag.id is null or tag.id is empty %}
 <h1>Nouveau tag</h1>
 {% else %}
 <h1>Modifier tag</h1>
