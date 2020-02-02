@@ -56,7 +56,7 @@ public class AdminTagController extends AbstractViewController implements IAnima
         catch (DataValidationException dve) {
             addFlashErrorMessage(redirectAttributes, dve.getMessageList());
             redirectAttributes.addFlashAttribute("tag", tagDto);
-            return "redirect:/admin/tags/" + tagDto.getId() + "/edit";
+            return "redirect:/admin/tags/new";
         }
 
         return "redirect:/admin/tags/";
