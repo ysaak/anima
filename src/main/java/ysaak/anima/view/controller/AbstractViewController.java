@@ -1,12 +1,13 @@
 package ysaak.anima.view.controller;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ysaak.anima.IAnimaComponent;
 import ysaak.anima.view.ViewConstants;
 
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractViewController {
+public abstract class AbstractViewController implements IAnimaComponent {
 
     protected void addFlashErrorMessage(final RedirectAttributes redirectAttributes, final String message) {
         addFlashErrorMessage(redirectAttributes, Collections.singletonList(message));

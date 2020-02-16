@@ -1,6 +1,7 @@
 package ysaak.anima.view.router;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ysaak.anima.data.Element;
 import ysaak.anima.utils.CollectionUtils;
 
 import javax.annotation.PostConstruct;
@@ -124,6 +126,12 @@ public class RoutingService {
         }
 
         return path;
+    }
+
+    public String getElementPath(Element element) {
+        Preconditions.checkNotNull(element);
+
+        return "/" + element.getType().getPathName() + "/" + element.getId();
     }
 
     public Optional<String> getUrlFor(String routeName, Map<String, Object> parameters) {

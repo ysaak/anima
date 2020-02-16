@@ -1,0 +1,179 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>{{ element.title }}</h1>
+
+<div class="border-bottom pb-2 mb-2 d-flex ">
+    <a href="/elements/{{ element.id }}/edit" class="btn btn-light">Modifier</a>
+    &nbsp;
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#elementAddSeasonModal">Ajouter une saison</a>
+            <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
+        </div>
+    </div>
+</div>
+
+<p><strong>Type :</strong> {{ element.subtype }}</p>
+<p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
+<p><strong>Synopsis :</strong> {{ element.synopsis }}</p>
+
+<hr>
+
+<h3>&Eacute;pisodes</h3>
+<table class="table table-sm">
+    <col width="50">
+    <col>
+    <col width="50">
+    <thead class="thead-dark">
+        <tr>
+            <th>N&deg;</th>
+            <th>Titre</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for season in element.seasonSet %}
+    {% if seasonCount > 1 %}
+        <tr class="table-secondary">
+            <td colspan="2">{{ season.title }}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                        ...
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/{{ season.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                        <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/seasons/{{ season.id }}/delete" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% endif %}
+    {% for episode in season.episodeSet %}
+        <tr>
+            <td>{{ episode.number }}</td>
+            <td>{{ episode.title }}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                        ...
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                        <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/delete" data-toggle="confirm">Supprimer</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+{% endfor %}
+    </tbody>
+</table>
+
+<div class="modal fade" id="elementAddSeasonModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="/elements/{{ element.id }}/seasons/" method="post">
+                <input type="hidden" name="elementId" value="{{ element.id }}">
+                <div class="modal-header">
+                    <h5>Ajouter une saison</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="newSeasonTitle">Titre :</label>
+                        <input type="text" class="form-control" id="newSeasonTitle" name="title">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                    <button type="button" class="btn btn-link">Fermer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="elementEditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="elementDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Supprimer &eacute;l&eacute;ment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Confirmer la suppression de l'&eacute;l&eacute;ment : {{ element.title }}
+            </div>
+            <div class="modal-footer">
+                <form action="/elements/{{ element.id }}/delete" method="post">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+                <button type="button" class="btn btn-link">Fermer</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5>Confirmation</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer">
+            <form action="#" method="post">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+            <button type="button" class="btn btn-link" data-dismiss="modal">Annuler</button>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#elementEditModal').on('show.bs.modal', function (e) {
+        $(this).find('.modal-content').html('<div class="modal-body d-flex justify-content-center"><div class="spinner-border" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+        var loadUrl = $(e.relatedTarget).attr('href');
+        $(this).find('.modal-content').load(loadUrl);
+    });
+
+    $('*[data-toggle="confirm"]').on('click', function(e) {
+        e.preventDefault();
+
+        var confirmText = $(this).data('confirmText');
+        if (confirmText === undefined || confirmText == null) {
+            confirmText = "Confirmez la suppression";
+        }
+
+        var deleteUrl = $(this).attr('href');
+
+        var $modal = $('#confirmModal');
+        $modal.find('.modal-body').html(confirmText);
+        $modal.find('form').attr('action', deleteUrl);
+        $modal.modal('show');
+    });
+});
+</script>
+{% endblock %}

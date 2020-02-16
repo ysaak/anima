@@ -4,8 +4,10 @@ import com.google.common.collect.Multimap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class CollectionUtils {
     private CollectionUtils() {/**/}
@@ -40,6 +42,10 @@ public final class CollectionUtils {
      */
     public static <K, V> boolean isNotEmpty(Multimap<K, V> map) {
         return map != null && !map.isEmpty();
+    }
+
+    public static <T> Set<T> getNotNull(Set<T> set) {
+        return isNotEmpty(set) ? set : new HashSet<>();
     }
 
     public static <T> List<T> toList(Iterable<T> iterable) {

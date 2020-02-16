@@ -1,0 +1,11 @@
+{% extends "layout" %}
+
+{% block content %}
+
+<ul>
+    {% for element in elementList %}
+    <li><a href="{{ element.viewUrl }}">{{ element.title }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

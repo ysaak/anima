@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ysaak.anima.IAnimaComponent;
 import ysaak.anima.converter.ConverterService;
-import ysaak.anima.data.Entity;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ResourceNotFoundException;
 import ysaak.anima.utils.CollectionUtils;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class AbstractCrudService<ENTITY extends Entity, MODEL, R extends PagingAndSortingRepository<MODEL, String>> implements IAnimaComponent {
+public class AbstractCrudService<ENTITY, MODEL, R extends PagingAndSortingRepository<MODEL, String>> implements IAnimaComponent {
 
     final ConverterService converterService;
     final R repository;

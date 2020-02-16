@@ -6,7 +6,7 @@ import com.google.common.collect.Multimap;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-public class Tag implements Entity {
+public class Tag {
     private String id;
 
     @NotEmpty(message = "{validation.name.notEmpty}")
@@ -35,12 +35,10 @@ public class Tag implements Entity {
         this.equivalenceMap = equivalenceMap;
     }
 
-    @Override
     public String getId() {
         return id;
     }
 
-    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -2,71 +2,73 @@ package ysaak.anima.view.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ysaak.anima.data.Anime;
-import ysaak.anima.dto.view.anime.AnimeListDto;
+import ysaak.anima.data.Element;
+import ysaak.anima.dto.view.entity.AnimeListDto;
 import ysaak.anima.exception.NoDataFoundException;
-import ysaak.anima.service.AnidbService;
-import ysaak.anima.service.AnimeService;
-import ysaak.anima.utils.StringUtils;
-import ysaak.anima.view.router.NamedRoute;
+import ysaak.anima.service.ElementService;
+import ysaak.anima.view.dto.elements.ElementViewDto;
 import ysaak.anima.view.router.RoutingService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/animes")
-public class AnimeController {
+@Transactional
+@RequestMapping(value = { "/animes", "/book" })
+public class AnimeController extends AbstractViewController {
 
-    private final AnimeService animeService;
-    private final AnidbService anidbService;
+    private final ElementService elementService;
     private final RoutingService routingService;
 
     @Autowired
-    public AnimeController(AnimeService animeService, AnidbService anidbService, RoutingService routingService) {
-        this.animeService = animeService;
-        this.anidbService = anidbService;
+    public AnimeController(ElementService elementService, RoutingService routingService) {
+        this.elementService = elementService;
         this.routingService = routingService;
     }
 
-    @NamedRoute("animes.index")
     @GetMapping("/")
     public String indexAction(ModelMap model) {
 
-        List<AnimeListDto.Anime> animeList =  this.animeService.findAll().stream().map(this::mapFromAnime).collect(Collectors.toList());
-        //AnimeListDto animeListDto = new AnimeListDto(animeList);
+        List<AnimeListDto.Anime> animeList =  this.elementService.findAll().stream()
+                .map(this::mapFromAnime)
+                .collect(Collectors.toList());
 
-        model.put("animeList", animeList);
+        model.put("elementList", animeList);
 
-        return "animes/index";
+        return "elements/index";
     }
 
-    private AnimeListDto.Anime mapFromAnime(Anime anime) {
+    private AnimeListDto.Anime mapFromAnime(Element element) {
 
-        String viewUrl = routingService.getUrlFor("animes.view", Collections.singletonMap("id", anime.getId())).orElse(null);
+        String viewUrl = routingService.getElementPath(element);
 
         return new AnimeListDto.Anime(
-                anime.getTitle(),
+                element.getTitle(),
                 viewUrl
         );
     }
 
-    @NamedRoute("animes.view")
     @GetMapping("/{id}")
     public String viewAction(ModelMap model, @PathVariable("id") String id) throws NoDataFoundException {
-        Anime anime = this.animeService.findById(id).orElseThrow(() -> new NoDataFoundException("Bye bye"));
-        model.put("anime", anime);
+        Element element = this.elementService.findById(id);
 
 
-        String anidbLink = (StringUtils.isNotEmpty(anime.getAnidbId())) ? anidbService.getUrl(anime.getAnidbId()) : null;
-        model.put("anidbLink", anidbLink);
+        ElementViewDto elementView = converters().convert(element, ElementViewDto.class);
 
-        return "animes/view";
+        model.put("element", elementView);
+
+        int seasonCount = elementView.getSeasonSet().size();
+        model.put("seasonCount", seasonCount);
+
+
+//        String anidbLink = (StringUtils.isNotEmpty(anime.getAnidbId())) ? oldAnidbService.getUrl(anime.getAnidbId()) : null;
+//        model.put("anidbLink", anidbLink);
+
+        return "elements/view";
     }
-
 }

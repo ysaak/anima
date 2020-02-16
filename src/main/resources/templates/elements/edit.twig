@@ -1,0 +1,43 @@
+{% extends "layout" %}
+
+{% block content %}
+{% if element.id is null or element.id is empty %}
+<h1>Nouvel &eacute;l&eacute;ment</h1>
+{% else %}
+<h1>Modifier &eacute;l&eacute;ment</h1>
+{% endif %}
+
+<form method="post" action="/elements/{{ element.id }}">
+    <input type="hidden" name="id" value="{{ element.id }}">
+
+    <div class="form-group">
+        <label for="type">Type</label>
+        {{ formSelect("type", typeList, element.type) }}
+    </div>
+
+    <hr>
+
+    <div class="form-group">
+        <label for="elementTitle">Titre</label>
+        <input type="text" class="form-control" id="elementTitle" name="title" value="{{ element.title }}">
+    </div>
+
+    <div class="form-group">
+        <label for="subType">Sous-type</label>
+        {{ formSelect("subType", subTypeList, element.subType) }}
+    </div>
+
+    <div class="form-group">
+        <label for="elementReleaseYear">Ann&eacute;e de parution</label>
+        <input type="number" class="form-control" id="elementReleaseYear" name="releaseYear" value="{{ element.releaseYear }}">
+    </div>
+
+    <div class="form-group">
+        <label for="elementSynopsis">Synopsis</label>
+        <textarea class="form-control" id="elementSynopsis" rows="4" name="synopsis">{{ element.synopsis | raw }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
+
+{% endblock %}
