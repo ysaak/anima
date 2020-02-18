@@ -73,7 +73,7 @@ public class ElementController extends AbstractViewController {
         final Element savedElement;
 
         try {
-            savedElement = elementService.save(elementToSave);
+            savedElement = elementService.create(elementToSave);
         }
         catch (DataValidationException dve) {
             addFlashErrorMessage(redirectAttributes, dve.getMessageList());
@@ -108,12 +108,12 @@ public class ElementController extends AbstractViewController {
     }
 
     @PostMapping("/{id}")
-    public String updateAction(@ModelAttribute ElementEditDto elementEditDto, final RedirectAttributes redirectAttributes) {
+    public String updateAction(@ModelAttribute ElementEditDto elementEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element elementToSave = converters().convert(elementEditDto, Element.class);
         final Element savedElement;
 
         try {
-            savedElement = elementService.save(elementToSave);
+            savedElement = elementService.update(elementToSave);
         }
         catch (DataValidationException dve) {
             addFlashErrorMessage(redirectAttributes, dve.getMessageList());

@@ -859,16 +859,8 @@ public class AnidbImportService {
         String animeData = loadAnimeData();
         Element element = importAnime(animeData);
 
-        return elementService.save(element);
-
-        /*
-        Element element = elementService.save(importData.element);
-
-        importData.episodeList.forEach(e -> e.setSeason(element.getId()));
-        episodeService.saveAll(importData.episodeList);
-*/
+        return elementService.create(element);
     }
-
 
     private Element importAnime(String animeData) throws Exception {
 

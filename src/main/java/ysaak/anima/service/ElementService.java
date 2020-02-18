@@ -26,7 +26,7 @@ public class ElementService implements IAnimaComponent {
         this.elementRepository = elementRepository;
     }
 
-    public Element save(final Element data) throws DataValidationException {
+    public Element create(final Element data) throws DataValidationException {
         validate(data);
 
         if (CollectionUtils.isNotEmpty(data.getSeasonList())) {
@@ -38,6 +38,15 @@ public class ElementService implements IAnimaComponent {
                 }
             });
         }
+
+        return elementRepository.save(data);
+    }
+
+    public Element update(final Element data) throws NoDataFoundException, DataValidationException {
+        Element storedElement = findById(data.getId());
+        validate(data);
+
+        data.setSeasonList(storedElement.getSeasonList());
 
         return elementRepository.save(data);
     }
