@@ -11,8 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "SEASON")
@@ -35,7 +35,7 @@ public class Season {
     private String title;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Episode> episodeSet;
+    private List<Episode> episodeList;
 
     public Season() {
     }
@@ -77,12 +77,12 @@ public class Season {
         this.title = title;
     }
 
-    public Set<Episode> getEpisodeSet() {
-        return episodeSet;
+    public List<Episode> getEpisodeList() {
+        return episodeList;
     }
 
-    public void setEpisodeSet(Set<Episode> episodeSet) {
-        this.episodeSet = episodeSet;
+    public void setEpisodeList(List<Episode> episodeSet) {
+        this.episodeList = episodeSet;
     }
 
     @Override
@@ -90,11 +90,11 @@ public class Season {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Season season = (Season) o;
-        return Objects.equals(id, season.id);
+        return number == season.number;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(number);
     }
 }

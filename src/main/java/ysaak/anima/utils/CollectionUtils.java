@@ -44,6 +44,10 @@ public final class CollectionUtils {
         return map != null && !map.isEmpty();
     }
 
+    public static <T> List<T> getNotNull(List<T> list) {
+        return isNotEmpty(list) ? list : new ArrayList<>();
+    }
+
     public static <T> Set<T> getNotNull(Set<T> set) {
         return isNotEmpty(set) ? set : new HashSet<>();
     }

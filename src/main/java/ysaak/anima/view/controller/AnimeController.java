@@ -62,7 +62,7 @@ public class AnimeController extends AbstractViewController {
 
         model.put("element", elementView);
 
-        int seasonCount = elementView.getSeasonSet().size();
+        int seasonCount = elementView.getSeasonList().size();
         model.put("seasonCount", seasonCount);
 
 

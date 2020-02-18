@@ -3,7 +3,7 @@ package ysaak.anima.data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "ELEMENT")
@@ -31,7 +31,7 @@ public class Element {
     private String synopsis;
 
     @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Season> seasonSet;
+    private List<Season> seasonList;
 
     public Element() {
     }
@@ -93,11 +93,11 @@ public class Element {
         this.synopsis = synopsis;
     }
 
-    public Set<Season> getSeasonSet() {
-        return seasonSet;
+    public List<Season> getSeasonList() {
+        return seasonList;
     }
 
-    public void setSeasonSet(Set<Season> seasonSet) {
-        this.seasonSet = seasonSet;
+    public void setSeasonList(List<Season> seasonList) {
+        this.seasonList = seasonList;
     }
 }

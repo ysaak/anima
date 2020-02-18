@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -874,7 +875,7 @@ public class AnidbImportService {
         final Element element = new Element();
         element.setType(ElementType.ANIME);
 
-        final Set<Episode> episodeSet = new HashSet<>();
+        final List<Episode> episodeList = new ArrayList<>();
 
         final Document document = createDocument(animeData);
         final org.w3c.dom.Element rootNode = document.getDocumentElement();
@@ -905,17 +906,17 @@ public class AnidbImportService {
                     element.setSynopsis(node.getTextContent());
                 }
                 else if (TAG_EPISODES.equals(nodeName)) {
-                    extractEpisodes(episodeSet, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_EPISODE));
+                    extractEpisodes(episodeList, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_EPISODE));
                 }
             }
         }
 
         Season season = new Season(1, DEFAULT_SEASON_NAME);
-        season.setEpisodeSet(episodeSet);
+        season.setEpisodeList(episodeList);
 
-        Set<Season> seasonSet = new HashSet<>();
+        List<Season> seasonSet = new ArrayList<>();
         seasonSet.add(season);
-        element.setSeasonSet(seasonSet);
+        element.setSeasonList(seasonSet);
 
         //entity.setAnidbId(id);
 
@@ -962,13 +963,13 @@ public class AnidbImportService {
         return LocalDate.parse(data, DateTimeFormatter.ISO_DATE);
     }
 
-    private static void extractEpisodes(final Set<Episode> episodeSet, final NodeList nodeList) {
+    private static void extractEpisodes(final List<Episode> episodeList, final NodeList nodeList) {
         final int nodeCount = nodeList.getLength();
 
         for (int i = 0; i < nodeCount; i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                extractEpisode(node.getChildNodes()).ifPresent(episodeSet::add);
+                extractEpisode(node.getChildNodes()).ifPresent(episodeList::add);
             }
         }
     }

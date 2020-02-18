@@ -9,8 +9,9 @@
     <div class="dropdown">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
         <div class="dropdown-menu">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#elementAddSeasonModal">Ajouter une saison</a>
+            <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/new" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
             <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+            <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/massNew" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
         </div>
@@ -36,7 +37,7 @@
         </tr>
     </thead>
     <tbody>
-{% for season in element.seasonSet %}
+{% for season in element.seasonList %}
     {% if seasonCount > 1 %}
         <tr class="table-secondary">
             <td colspan="2">{{ season.title }}</td>
@@ -46,6 +47,8 @@
                         ...
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/{{ season.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
                         <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/seasons/{{ season.id }}/delete" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
                     </div>
@@ -53,7 +56,7 @@
             </td>
         </tr>
     {% endif %}
-    {% for episode in season.episodeSet %}
+    {% for episode in season.episodeList %}
         <tr>
             <td>{{ episode.number }}</td>
             <td>{{ episode.title }}</td>
@@ -73,32 +76,6 @@
 {% endfor %}
     </tbody>
 </table>
-
-<div class="modal fade" id="elementAddSeasonModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <form action="/elements/{{ element.id }}/seasons/" method="post">
-                <input type="hidden" name="elementId" value="{{ element.id }}">
-                <div class="modal-header">
-                    <h5>Ajouter une saison</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="newSeasonTitle">Titre :</label>
-                        <input type="text" class="form-control" id="newSeasonTitle" name="title">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
-                    <button type="button" class="btn btn-link">Fermer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="elementEditModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">

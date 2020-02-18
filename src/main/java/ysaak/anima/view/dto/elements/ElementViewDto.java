@@ -1,6 +1,6 @@
 package ysaak.anima.view.dto.elements;
 
-import java.util.Set;
+import java.util.List;
 
 public class ElementViewDto {
     private String id;
@@ -15,16 +15,16 @@ public class ElementViewDto {
 
     private String synopsis;
 
-    private Set<ElementSeasonDto> seasonSet;
+    private List<ElementSeasonDto> seasonList;
 
-    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, Set<ElementSeasonDto> seasonSet) {
+    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.subType = subType;
         this.releaseYear = releaseYear;
         this.synopsis = synopsis;
-        this.seasonSet = seasonSet;
+        this.seasonList = seasonList;
     }
 
     public String getId() {
@@ -75,25 +75,25 @@ public class ElementViewDto {
         this.synopsis = synopsis;
     }
 
-    public Set<ElementSeasonDto> getSeasonSet() {
-        return seasonSet;
+    public List<ElementSeasonDto> getSeasonList() {
+        return seasonList;
     }
 
-    public void setSeasonSet(Set<ElementSeasonDto> seasonSet) {
-        this.seasonSet = seasonSet;
+    public void setSeasonList(List<ElementSeasonDto> seasonList) {
+        this.seasonList = seasonList;
     }
 
     public static class ElementSeasonDto {
         private String id;
         private int number;
         private String title;
-        private Set<ElementEpisodeDto> episodeSet;
+        private List<ElementEpisodeDto> episodeList;
 
-        public ElementSeasonDto(String id, int number, String title, Set<ElementEpisodeDto> episodeSet) {
+        public ElementSeasonDto(String id, int number, String title, List<ElementEpisodeDto> episodeList) {
             this.id = id;
             this.number = number;
             this.title = title;
-            this.episodeSet = episodeSet;
+            this.episodeList = episodeList;
         }
 
         public String getId() {
@@ -120,12 +120,12 @@ public class ElementViewDto {
             this.title = title;
         }
 
-        public Set<ElementEpisodeDto> getEpisodeSet() {
-            return episodeSet;
+        public List<ElementEpisodeDto> getEpisodeList() {
+            return episodeList;
         }
 
-        public void setEpisodeSet(Set<ElementEpisodeDto> episodeSet) {
-            this.episodeSet = episodeSet;
+        public void setEpisodeList(List<ElementEpisodeDto> episodeList) {
+            this.episodeList = episodeList;
         }
     }
 

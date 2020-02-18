@@ -15,7 +15,6 @@ import ysaak.anima.utils.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ElementService implements IAnimaComponent {
@@ -30,12 +29,12 @@ public class ElementService implements IAnimaComponent {
     public Element save(final Element data) throws DataValidationException {
         validate(data);
 
-        if (CollectionUtils.isNotEmpty(data.getSeasonSet())) {
-            data.getSeasonSet().forEach(s -> {
+        if (CollectionUtils.isNotEmpty(data.getSeasonList())) {
+            data.getSeasonList().forEach(s -> {
                 s.setElement(data);
 
-                if (CollectionUtils.isNotEmpty(s.getEpisodeSet())) {
-                    s.getEpisodeSet().forEach(e -> e.setSeason(s));
+                if (CollectionUtils.isNotEmpty(s.getEpisodeList())) {
+                    s.getEpisodeList().forEach(e -> e.setSeason(s));
                 }
             });
         }
@@ -70,9 +69,9 @@ public class ElementService implements IAnimaComponent {
 
         final Element element = findById(elementId);
 
-        Set<Season> seasonSet = element.getSeasonSet();
+        List<Season> seasonSet = element.getSeasonList();
 
-        int seasonNumber = seasonSet.stream().mapToInt(Season::getNumber).max().orElse(1);
+        int seasonNumber = 1 + seasonSet.stream().mapToInt(Season::getNumber).max().orElse(0);
 
         Season season = new Season(seasonNumber, title);
         validate(season);
@@ -83,15 +82,32 @@ public class ElementService implements IAnimaComponent {
         return elementRepository.save(element);
     }
 
+    public Element updateSeasonTitle(String elementId, String seasonId, String seasonTitle) throws NoDataFoundException {
+        Preconditions.checkNotNull(elementId, "elementId is null");
+        Preconditions.checkNotNull(elementId, "seasonId is null");
+        Preconditions.checkNotNull(elementId, "seasonTitle is null");
+
+        final Element element = findById(elementId);
+
+        for (Season storedSeason : element.getSeasonList()) {
+            if (storedSeason.getId().equals(seasonId)) {
+                storedSeason.setTitle(seasonTitle);
+                break;
+            }
+        }
+
+        return elementRepository.save(element);
+    }
+
     public Element deleteSeason(String elementId, String seasonId) throws NoDataFoundException {
         Preconditions.checkNotNull(elementId, "elementId is null");
         Preconditions.checkNotNull(seasonId, "seasonId is null");
 
         final Element element = findById(elementId);
 
-        for (Season season : new ArrayList<>(element.getSeasonSet())) {
+        for (Season season : new ArrayList<>(element.getSeasonList())) {
             if (seasonId.equals(season.getId())) {
-                element.getSeasonSet().remove(season);
+                element.getSeasonList().remove(season);
                 break;
             }
         }
@@ -108,7 +124,7 @@ public class ElementService implements IAnimaComponent {
 
         Element element = findById(elementId);
 
-        Season season = CollectionUtils.getNotNull(element.getSeasonSet())
+        Season season = CollectionUtils.getNotNull(element.getSeasonList())
                 .stream()
                 .filter(s -> s.getId().equals(seasonId))
                 .findAny()
@@ -117,7 +133,28 @@ public class ElementService implements IAnimaComponent {
         validate(episode);
 
         episode.setSeason(season);
-        season.getEpisodeSet().add(episode);
+        season.getEpisodeList().add(episode);
+
+        return elementRepository.save(element);
+    }
+
+    public Element addEpisode(String elementId, String seasonId, List<Episode> episodeList) throws NoDataFoundException, DataValidationException {
+        Preconditions.checkNotNull(elementId, "elementId is null");
+        Preconditions.checkNotNull(seasonId, "seasonId is null");
+        Preconditions.checkNotNull(episodeList, "episodeList is null");
+
+        Element element = findById(elementId);
+
+        Season season = CollectionUtils.getNotNull(element.getSeasonList())
+                .stream()
+                .filter(s -> s.getId().equals(seasonId))
+                .findAny()
+                .orElseThrow(() -> new DataValidationException("seasonId '" + seasonId + "' is not found for element '" + elementId + "'"));
+
+        for (Episode episode : episodeList) {
+            episode.setSeason(season);
+            season.getEpisodeList().add(episode);
+        }
 
         return elementRepository.save(element);
     }
@@ -129,9 +166,9 @@ public class ElementService implements IAnimaComponent {
 
         Element element = findById(elementId);
 
-        final Episode storedEpisode = element.getSeasonSet()
+        final Episode storedEpisode = element.getSeasonList()
                 .stream()
-                .map(Season::getEpisodeSet)
+                .map(Season::getEpisodeList)
                 .flatMap(Collection::stream)
                 .filter(e -> e.getId().equals(episode.getId()))
                 .findFirst()
@@ -143,17 +180,10 @@ public class ElementService implements IAnimaComponent {
         validate(storedEpisode);
 
         if (!storedEpisode.getSeason().getId().equals(seasonId)) {
-            final String oldSeason = storedEpisode.getSeason().getId();
-
-            for (Season season : element.getSeasonSet()) {
-
+            for (Season season : element.getSeasonList()) {
                 if (seasonId.equals(season.getId())) {
                     storedEpisode.setSeason(season);
-                    season.getEpisodeSet().add(storedEpisode);
-                }
-
-                if (oldSeason.equals(season.getId())) {
-                    season.getEpisodeSet().remove(storedEpisode);
+                    season.getEpisodeList().add(storedEpisode);
                 }
             }
         }
@@ -169,10 +199,10 @@ public class ElementService implements IAnimaComponent {
 
         boolean found = false;
 
-        for (Season season : element.getSeasonSet()) {
-            for (Episode episode : new ArrayList<>(season.getEpisodeSet())) {
+        for (Season season : element.getSeasonList()) {
+            for (Episode episode : new ArrayList<>(season.getEpisodeList())) {
                 if (episodeId.equals(episode.getId())) {
-                    season.getEpisodeSet().remove(episode);
+                    season.getEpisodeList().remove(episode);
                     found = true;
                     break;
                 }

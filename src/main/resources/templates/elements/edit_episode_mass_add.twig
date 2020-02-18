@@ -1,0 +1,24 @@
+<form method="post" action="/elements/{{ elementId }}/episodes/massCreate">
+    <input type="hidden" name="elementId" value="{{ elementId }}">
+    <div class="modal-header">
+        <h5>Nouveaux &eacute;pisodes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="seasonId">Saison</label>
+            {{ formSelect("seasonId", seasonList, null) }}
+        </div>
+        <div class="form-group">
+            <label for="episodes">&Eacute;pisodes</label>
+            <textarea class="form-control" id="episodes" name="episodeList" rows="6"></textarea>
+            <small class="form-text text-muted">Format : num&eacute;ro|titre</small>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="button" class="btn btn-link" data-dismiss="modal">Fermer</button>
+    </div>
+</form>
