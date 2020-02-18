@@ -1,5 +1,7 @@
 package ysaak.anima.view.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,13 +9,20 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ysaak.anima.config.ElementConstants;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementType;
 import ysaak.anima.dto.view.entity.AnimeListDto;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.view.dto.elements.ElementViewDto;
+import ysaak.anima.view.dto.elements.list.LetterPaginationDto;
 import ysaak.anima.view.router.RoutingService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequestMapping(value = { "/animes", "/book" })
 public class AnimeController extends AbstractViewController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnimeController.class);
 
     private final ElementService elementService;
     private final RoutingService routingService;
@@ -31,16 +41,53 @@ public class AnimeController extends AbstractViewController {
         this.routingService = routingService;
     }
 
+
+
     @GetMapping("/")
     public String indexAction(ModelMap model) {
+        return byLetterAction(model, ElementConstants.NON_ALPHA_LETTER);
+    }
 
-        List<AnimeListDto.Anime> animeList =  this.elementService.findAll().stream()
+    @GetMapping("/byLetter/{letter}")
+    public String byLetterAction(final ModelMap model, @PathVariable("letter") final String letter) {
+
+        // Construct letter pagination
+        final List<LetterPaginationDto> letterPaginationDtoList = new ArrayList<>();
+        final List<String> usedLetterList = this.elementService.listUsedLetters();
+
+        // Non alpha letters
+        letterPaginationDtoList.add(createLetterPagination(ElementConstants.NON_ALPHA_LETTER, usedLetterList, letter));
+        for (char c = 'A' ; c <= 'Z'; c++) {
+            letterPaginationDtoList.add(createLetterPagination(Character.toString(c), usedLetterList, letter));
+        }
+
+        model.put("letterPaginationList", letterPaginationDtoList);
+
+        List<AnimeListDto.Anime> animeList =  this.elementService.findByTypeAndLetter(ElementType.ANIME, letter).stream()
                 .map(this::mapFromAnime)
                 .collect(Collectors.toList());
 
         model.put("elementList", animeList);
 
         return "elements/index";
+    }
+
+    private LetterPaginationDto createLetterPagination(String letter, List<String> usedLetterList, String currentLetter) {
+        String urlEncodedLetter;
+        try {
+            urlEncodedLetter = URLEncoder.encode(letter, StandardCharsets.UTF_8.toString());
+        }
+        catch (UnsupportedEncodingException e) {
+            LOGGER.error("Error while encoding letter '" + letter + "'", e);
+            urlEncodedLetter = letter;
+        }
+
+        return new LetterPaginationDto(
+                letter,
+                "/animes/byLetter/" + urlEncodedLetter,
+                usedLetterList.contains(letter),
+                letter.equals(currentLetter)
+        );
     }
 
     private AnimeListDto.Anime mapFromAnime(Element element) {

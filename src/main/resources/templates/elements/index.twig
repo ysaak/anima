@@ -2,6 +2,20 @@
 
 {% block content %}
 
+<nav>
+    <ul class="pagination justify-content-center">
+{% for page in letterPaginationList %}
+        {% if not page.active %}
+        <li class="page-item disabled"><span class="page-link">{{ page.letter }}</span></li>
+        {% else %}
+        <li class="page-item{% if page.current %} active{% endif %}">
+            <a href="{{ page.url }}" class="page-link">{{ page.letter }}</a>
+        </li>
+        {% endif %}
+{% endfor %}
+    </ul>
+</nav>
+
 <ul>
     {% for element in elementList %}
     <li><a href="{{ element.viewUrl }}">{{ element.title }}</a></li>

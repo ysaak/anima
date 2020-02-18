@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ysaak.anima.IAnimaComponent;
+import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.repository.ElementRepository;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.Season;
 import ysaak.anima.exception.DataValidationException;
@@ -49,6 +51,19 @@ public class ElementService implements IAnimaComponent {
         data.setSeasonList(storedElement.getSeasonList());
 
         return elementRepository.save(data);
+    }
+
+    public List<String> listUsedLetters() {
+        return elementRepository.listUsedLetters();
+    }
+
+    public List<Element> findByTypeAndLetter(final ElementType type, final String firstLetter) {
+        if (ElementConstants.NON_ALPHA_LETTER.equals(firstLetter)) {
+            return elementRepository.findAllByTypeAndFirstLetterNonAlpha(type);
+        }
+        else {
+            return elementRepository.findAllByTypeAndFistLetterAlpha(type, firstLetter);
+        }
     }
 
     public Element findById(String id) throws NoDataFoundException {

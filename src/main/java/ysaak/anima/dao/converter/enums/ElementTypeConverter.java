@@ -11,7 +11,7 @@ public class ElementTypeConverter extends AbstractEnumDbConverter<ElementType> {
     public ElementTypeConverter() {
         super(
                 ImmutableBiMap.<ElementType, String>builder()
-                            .put(ElementType.ANIME, "ANI")
+                            .put(ElementType.ANIME, ElementType.ANIME.getDbCode())
                             .build()
         );
     }
