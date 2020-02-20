@@ -9,6 +9,8 @@
     <div class="dropdown">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
         <div class="dropdown-menu">
+            <a class="dropdown-item" href="/elements/{{ element.id }}/image/edit" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
+            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/new" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
             <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
             <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/massNew" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
@@ -18,64 +20,69 @@
     </div>
 </div>
 
-<p><strong>Type :</strong> {{ element.subtype }}</p>
-<p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
-<p><strong>Synopsis :</strong> {{ element.synopsis }}</p>
+<div class="row">
+    <div class="col-8">
+        <p><strong>Type :</strong> {{ element.subtype }}</p>
+        <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
+        <p><strong>Synopsis :</strong> {{ element.synopsis }}</p>
 
-<hr>
+        <hr>
 
-<h3>&Eacute;pisodes</h3>
-<table class="table table-sm">
-    <col width="50">
-    <col>
-    <col width="50">
-    <thead class="thead-dark">
-        <tr>
-            <th>N&deg;</th>
-            <th>Titre</th>
-            <th>&nbsp;</th>
-        </tr>
-    </thead>
-    <tbody>
-{% for season in element.seasonList %}
-    {% if seasonCount > 1 %}
-        <tr class="table-secondary">
-            <td colspan="2">{{ season.title }}</td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                        ...
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/{{ season.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                        <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/seasons/{{ season.id }}/delete" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    {% endif %}
-    {% for episode in season.episodeList %}
-        <tr>
-            <td>{{ episode.number }}</td>
-            <td>{{ episode.title }}</td>
-            <td>
-                <div class="dropdown">
-                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                        ...
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                        <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/delete" data-toggle="confirm">Supprimer</a>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    {% endfor %}
-{% endfor %}
-    </tbody>
-</table>
+        <h3>&Eacute;pisodes</h3>
+        <table class="table table-sm">
+            <col width="50">
+            <col>
+            <col width="50">
+            <thead class="thead-dark">
+                <tr>
+                    <th>N&deg;</th>
+                    <th>Titre</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+        {% for season in element.seasonList %}
+            {% if seasonCount > 1 %}
+                <tr class="table-secondary">
+                    <td colspan="2">{{ season.title }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                                ...
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/{{ season.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/seasons/{{ season.id }}/delete" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+            {% for episode in season.episodeList %}
+                <tr>
+                    <td>{{ episode.number }}</td>
+                    <td>{{ episode.title }}</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                                ...
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/delete" data-toggle="confirm">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-4 text-center"><img src="/elements/{{ element.id }}/image.png" width="300" class="rounded" /></div>
+</div>
 
 <div class="modal fade" id="elementEditModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">

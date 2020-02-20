@@ -16,10 +16,16 @@
     </ul>
 </nav>
 
-<ul>
-    {% for element in elementList %}
-    <li><a href="{{ element.viewUrl }}">{{ element.title }}</a></li>
-    {% endfor %}
-</ul>
+<div class="d-flex flex-wrap">
+{% for element in elementList %}
+    <div class="media m-1 border rounded position-relative" style="width: 400px">
+        <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" class="mr-3 rounded-left" />
+        <div class="media-body">
+            <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
 
 {% endblock %}

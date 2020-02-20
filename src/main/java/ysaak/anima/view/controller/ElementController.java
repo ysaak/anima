@@ -1,6 +1,9 @@
 package ysaak.anima.view.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -9,15 +12,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.Season;
+import ysaak.anima.data.storage.StorageFormat;
+import ysaak.anima.data.storage.StorageType;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
+import ysaak.anima.exception.StorageException;
 import ysaak.anima.service.ElementService;
+import ysaak.anima.service.StorageService;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
@@ -42,12 +52,14 @@ import java.util.stream.Stream;
 public class ElementController extends AbstractViewController {
 
     private final ElementService elementService;
+    private final StorageService storageService;
     private final RoutingService routingService;
     private final TranslationService translationService;
 
     @Autowired
-    public ElementController(ElementService elementService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, StorageService storageService, RoutingService routingService, TranslationService translationService) {
         this.elementService = elementService;
+        this.storageService = storageService;
         this.routingService = routingService;
         this.translationService = translationService;
     }
@@ -130,6 +142,39 @@ public class ElementController extends AbstractViewController {
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.delete"));
 
         return "redirect:/";
+    }
+
+    /* ----- Image management ----- */
+
+    @GetMapping("/{elementId}/image.png")
+    @ResponseBody
+    public ResponseEntity<Resource> getElementImage(@PathVariable("elementId") String elementId) throws StorageException {
+        Resource file = storageService.getImage(StorageType.ELEMENT, StorageFormat.FULL, elementId);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping("/{elementId}/thumbnail.png")
+    @ResponseBody
+    public ResponseEntity<Resource> getElementThumbnail(@PathVariable("elementId") String elementId) throws StorageException {
+        Resource file = storageService.getImage(StorageType.ELEMENT, StorageFormat.THUMBNAIL, elementId);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping("/{elementId}/image/edit")
+    public String editImageAction(final ModelMap model, @PathVariable("elementId") final String elementId) {
+        model.put("elementId", elementId);
+        return "elements/edit_image";
+    }
+
+    @PostMapping("/{elementId}/image/")
+    public String updateImageAction(@PathVariable("elementId") final String elementId, @RequestParam("file") final MultipartFile file) throws NoDataFoundException, StorageException {
+        final Element element = elementService.findById(elementId);
+
+        storageService.store(StorageType.ELEMENT, elementId, file);
+
+        return "redirect:" + routingService.getElementPath(element);
     }
 
     /* ----- Season management ----- */

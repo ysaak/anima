@@ -1,7 +1,5 @@
 package ysaak.anima.view.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,19 +7,18 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementType;
-import ysaak.anima.dto.view.entity.AnimeListDto;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.ElementService;
+import ysaak.anima.service.StorageService;
 import ysaak.anima.view.dto.elements.ElementViewDto;
+import ysaak.anima.view.dto.elements.list.ElementListDto;
 import ysaak.anima.view.dto.elements.list.LetterPaginationDto;
 import ysaak.anima.view.router.RoutingService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,18 +27,16 @@ import java.util.stream.Collectors;
 @Transactional
 @RequestMapping(value = { "/animes", "/book" })
 public class AnimeController extends AbstractViewController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnimeController.class);
-
     private final ElementService elementService;
+    private final StorageService storageService;
     private final RoutingService routingService;
 
     @Autowired
-    public AnimeController(ElementService elementService, RoutingService routingService) {
+    public AnimeController(ElementService elementService, StorageService storageService, RoutingService routingService) {
         this.elementService = elementService;
+        this.storageService = storageService;
         this.routingService = routingService;
     }
-
-
 
     @GetMapping("/")
     public String indexAction(ModelMap model) {
@@ -63,8 +58,8 @@ public class AnimeController extends AbstractViewController {
 
         model.put("letterPaginationList", letterPaginationDtoList);
 
-        List<AnimeListDto.Anime> animeList =  this.elementService.findByTypeAndLetter(ElementType.ANIME, letter).stream()
-                .map(this::mapFromAnime)
+        List<ElementListDto> animeList =  this.elementService.findByTypeAndLetter(ElementType.ANIME, letter).stream()
+                .map(this::createViewDto)
                 .collect(Collectors.toList());
 
         model.put("elementList", animeList);
@@ -73,28 +68,20 @@ public class AnimeController extends AbstractViewController {
     }
 
     private LetterPaginationDto createLetterPagination(String letter, List<String> usedLetterList, String currentLetter) {
-        String urlEncodedLetter;
-        try {
-            urlEncodedLetter = URLEncoder.encode(letter, StandardCharsets.UTF_8.toString());
-        }
-        catch (UnsupportedEncodingException e) {
-            LOGGER.error("Error while encoding letter '" + letter + "'", e);
-            urlEncodedLetter = letter;
-        }
-
         return new LetterPaginationDto(
                 letter,
-                "/animes/byLetter/" + urlEncodedLetter,
+                MvcUriComponentsBuilder.fromMethodName(AnimeController.class, "byLetterAction", null, letter).toUriString(),
                 usedLetterList.contains(letter),
                 letter.equals(currentLetter)
         );
     }
 
-    private AnimeListDto.Anime mapFromAnime(Element element) {
+    private ElementListDto createViewDto(Element element) {
 
         String viewUrl = routingService.getElementPath(element);
 
-        return new AnimeListDto.Anime(
+        return new ElementListDto(
+                element.getId(),
                 element.getTitle(),
                 viewUrl
         );
