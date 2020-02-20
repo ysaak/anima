@@ -23,11 +23,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class AnidbImportService {
@@ -895,7 +895,7 @@ public class AnidbImportService {
                     element.setReleaseYear(startDate.getYear());
                 }
                 else if (TAG_SYNOPSIS.equals(nodeName)) {
-                    element.setSynopsis(node.getTextContent());
+                    element.setSynopsis(parseDescription(node.getTextContent()));
                 }
                 else if (TAG_EPISODES.equals(nodeName)) {
                     extractEpisodes(episodeList, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_EPISODE));
@@ -1011,5 +1011,21 @@ public class AnidbImportService {
         }
 
         return Optional.of(new Episode(number, title));
+    }
+
+    private String parseDescription(final String description) {
+
+        String alteredDescription = description;
+
+        final String regex = "((https?:\\/\\/.+?) \\[(.+?)\\])";
+        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+
+        final Matcher matcher = pattern.matcher(description);
+
+        while (matcher.find()) {
+            alteredDescription = alteredDescription.replace(matcher.group(0), matcher.group(3));
+        }
+
+        return alteredDescription;
     }
 }
