@@ -28,6 +28,7 @@ import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.StorageException;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.StorageService;
+import ysaak.anima.service.TagService;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
@@ -42,6 +43,7 @@ import ysaak.anima.view.router.RoutingService;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,13 +54,15 @@ import java.util.stream.Stream;
 public class ElementController extends AbstractViewController {
 
     private final ElementService elementService;
+    private final TagService tagService;
     private final StorageService storageService;
     private final RoutingService routingService;
     private final TranslationService translationService;
 
     @Autowired
-    public ElementController(ElementService elementService, StorageService storageService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RoutingService routingService, TranslationService translationService) {
         this.elementService = elementService;
+        this.tagService = tagService;
         this.storageService = storageService;
         this.routingService = routingService;
         this.translationService = translationService;
@@ -75,6 +79,12 @@ public class ElementController extends AbstractViewController {
 
         List<KeyValueItem> subTypeList = Stream.of(ElementSubType.UNDETERMINED, ElementSubType.TV).map(this::mapFromEnum).collect(Collectors.toList());
         model.put("subTypeList", subTypeList);
+
+        List<KeyValueItem> tagList = tagService.findAll().stream()
+                .map(t -> new KeyValueItem(t.getId(), t.getName()))
+                .sorted(Comparator.comparing(KeyValueItem::getValue))
+                .collect(Collectors.toList());
+        model.put("tagList", tagList);
 
         return "elements/edit";
     }
@@ -111,6 +121,12 @@ public class ElementController extends AbstractViewController {
 
         List<KeyValueItem> subTypeList = Stream.of(ElementSubType.UNDETERMINED, ElementSubType.TV).map(e -> new KeyValueItem(e.name(), e.name())).collect(Collectors.toList());
         model.put("subTypeList", subTypeList);
+
+        List<KeyValueItem> tagList = tagService.findAll().stream()
+                .map(t -> new KeyValueItem(t.getId(), t.getName()))
+                .sorted(Comparator.comparing(KeyValueItem::getValue))
+                .collect(Collectors.toList());
+        model.put("tagList", tagList);
 
         return "elements/edit";
     }

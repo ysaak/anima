@@ -99,7 +99,6 @@ public class AnimeController extends AbstractViewController {
         int seasonCount = elementView.getSeasonList().size();
         model.put("seasonCount", seasonCount);
 
-
 //        String anidbLink = (StringUtils.isNotEmpty(anime.getAnidbId())) ? oldAnidbService.getUrl(anime.getAnidbId()) : null;
 //        model.put("anidbLink", anidbLink);
 

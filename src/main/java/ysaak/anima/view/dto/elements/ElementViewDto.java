@@ -17,7 +17,9 @@ public class ElementViewDto {
 
     private List<ElementSeasonDto> seasonList;
 
-    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList) {
+    private List<String> tagList;
+
+    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -25,6 +27,7 @@ public class ElementViewDto {
         this.releaseYear = releaseYear;
         this.synopsis = synopsis;
         this.seasonList = seasonList;
+        this.tagList = tagList;
     }
 
     public String getId() {
@@ -81,6 +84,14 @@ public class ElementViewDto {
 
     public void setSeasonList(List<ElementSeasonDto> seasonList) {
         this.seasonList = seasonList;
+    }
+
+    public List<String> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<String> tagList) {
+        this.tagList = tagList;
     }
 
     public static class ElementSeasonDto {

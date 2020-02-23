@@ -1,6 +1,7 @@
 package ysaak.anima.data;
 
 import org.hibernate.annotations.GenericGenerator;
+import ysaak.anima.dao.model.TagModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -32,6 +33,14 @@ public class Element {
 
     @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Season> seasonList;
+
+    @ManyToMany
+    @JoinTable(
+            name = "L_ELEMENT_TAG",
+            joinColumns = @JoinColumn(name = "ELEMENT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAG_ID")
+    )
+    private List<TagModel> tagList;
 
     public Element() {
     }
@@ -99,5 +108,13 @@ public class Element {
 
     public void setSeasonList(List<Season> seasonList) {
         this.seasonList = seasonList;
+    }
+
+    public List<TagModel> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<TagModel> tagList) {
+        this.tagList = tagList;
     }
 }

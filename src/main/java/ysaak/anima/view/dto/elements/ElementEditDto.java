@@ -1,5 +1,7 @@
 package ysaak.anima.view.dto.elements;
 
+import java.util.List;
+
 public class ElementEditDto {
 
     private String id;
@@ -13,6 +15,8 @@ public class ElementEditDto {
     private int releaseYear;
 
     private String synopsis;
+
+    private List<String> tagList;
 
     public String getId() {
         return id;
@@ -60,5 +64,13 @@ public class ElementEditDto {
 
     public void setSynopsis(String synopsis) {
         this.synopsis = synopsis;
+    }
+
+    public List<String> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<String> tagList) {
+        this.tagList = tagList;
     }
 }

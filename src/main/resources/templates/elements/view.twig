@@ -24,6 +24,7 @@
     <div class="col-8">
         <p><strong>Type :</strong> {{ element.subtype }}</p>
         <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
+        <p><strong>Tags :</strong> {{ element.tagList | join(', ') }}</p>
         <p><strong>Synopsis :</strong> {{ element.synopsis | nl2br }}</p>
 
         <hr>

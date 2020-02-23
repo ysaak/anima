@@ -33,11 +33,23 @@
     </div>
 
     <div class="form-group">
+        <label for="tagList">Tags</label>
+        {{ formMultiSelect("tagList", tagList, element.tagList) }}
+    </div>
+
+    <div class="form-group">
         <label for="elementSynopsis">Synopsis</label>
         <textarea class="form-control" id="elementSynopsis" rows="4" name="synopsis">{{ element.synopsis | raw }}</textarea>
     </div>
 
     <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
+{% endblock %}
 
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#tagList').tokenize2();
+});
+</script>
 {% endblock %}

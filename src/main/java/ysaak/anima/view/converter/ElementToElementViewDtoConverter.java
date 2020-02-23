@@ -2,6 +2,7 @@ package ysaak.anima.view.converter;
 
 import ysaak.anima.converter.AbstractConverter;
 import ysaak.anima.converter.Converter;
+import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.Season;
@@ -9,6 +10,7 @@ import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.comparator.SeasonComparator;
 import ysaak.anima.view.dto.elements.ElementViewDto;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,12 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
                 .map(this::convertSeason)
                 .collect(Collectors.toList());
 
+        List<String> tagList = CollectionUtils.getNotNull(object.getTagList())
+                .stream()
+                .map(this::convertTag)
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+
         return new ElementViewDto(
             object.getId(),
             object.getTitle(),
@@ -30,7 +38,8 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
             fromEnum(object.getSubType()),
             object.getReleaseYear(),
             object.getSynopsis(),
-            seasonList
+            seasonList,
+            tagList
         );
     }
 
@@ -55,6 +64,10 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
                 episode.getNumber(),
                 episode.getTitle()
         );
+    }
+
+    private String convertTag(TagModel tag) {
+        return tag.getName();
     }
 
 }

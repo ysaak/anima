@@ -33,6 +33,10 @@ public class TagModel {
     public TagModel() {
     }
 
+    public TagModel(String id) {
+        this.id = id;
+    }
+
     public TagModel(String id, String name, String description) {
         this.id = id;
         this.name = name;
