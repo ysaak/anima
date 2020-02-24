@@ -1,6 +1,9 @@
 package ysaak.anima.service;
 
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,18 +19,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Optional;
 
 @Service
 public class StorageService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
 
     private final StorageConfig storageConfig;
 
@@ -98,68 +96,37 @@ public class StorageService {
     }
 
     public Resource getImage(final StorageType type, final StorageFormat format, String id) throws StorageException {
+        final Path imagePath = getLocalFileLocation(type, format, id);
 
-        Path directoryPath = this.rootLocation
-                .resolve(type.name().toLowerCase())
-                .resolve(format.name().toLowerCase());
-
-        SearchFileVisitor searchFileVisitor = new SearchFileVisitor(id);
+        boolean loadDefaultImage = true;
+        Resource resource = null;
 
         try {
-            Files.walkFileTree(directoryPath, searchFileVisitor);
+            resource = new UrlResource(imagePath.toUri());
 
-            final Path filePath = searchFileVisitor.getFoundFilePath().orElseThrow(() -> new StorageException("No file found for id " + id));
-
-            final Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
+            if (Files.exists(imagePath) && Files.isReadable(imagePath)) {
+                loadDefaultImage = false;
             }
             else {
-                throw new StorageException("Could not read file: " + filePath);
+                LOGGER.error("Cannot access image " + imagePath.toString());
             }
         }
         catch (IOException e) {
-            e.printStackTrace();
-            throw new StorageException("Error while searching file", e);
+            LOGGER.error("Error while loading image " + imagePath.toString(), e);
         }
+
+        if (loadDefaultImage) {
+            resource = getNoImageResource(type, format);
+        }
+
+        return resource;
     }
 
-    private static class SearchFileVisitor extends SimpleFileVisitor<Path> {
+    private Resource getNoImageResource(final StorageType type, final StorageFormat format) throws StorageException {
+        final StorageConfig.Size configSize = storageConfig.get(type, format)
+                .orElseThrow(() -> new StorageException("No size defined for couple " + type + "/" + format));
 
-        private final PathMatcher pathMatcher;
-        private Path foundFilePath = null;
-
-        private SearchFileVisitor(String id) {
-            pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + id + "*");
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path filePath, BasicFileAttributes basicFileAttrib) {
-            if (pathMatcher.matches(filePath.getFileName())) {
-                foundFilePath = filePath;
-                return FileVisitResult.TERMINATE;
-            }
-
-            return FileVisitResult.CONTINUE;
-        }
-
-        public Optional<Path> getFoundFilePath() {
-            return Optional.ofNullable(foundFilePath);
-        }
-
-        /*
-        @Override
-        public FileVisitResult preVisitDirectory(Path directoryPath,
-                                                 BasicFileAttributes basicFileAttrib) {
-            if (pathMatcher.matches(directoryPath.getFileName())) {
-                matchCount++;
-                System.out.println(directoryPath);
-            }
-            return FileVisitResult.CONTINUE;
-        }
- */
+        final String imageKey = "public/images/no_image/" + configSize.getWidth() + "x" + configSize.getHeight() + ".png";
+        return new ClassPathResource(imageKey);
     }
-
-
 }

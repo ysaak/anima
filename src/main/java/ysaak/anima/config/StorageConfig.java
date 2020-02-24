@@ -15,7 +15,7 @@ public class StorageConfig {
     public StorageConfig() {
         storageSizeTable = ImmutableTable.<StorageType, StorageFormat, Size>builder()
                 .put(StorageType.ELEMENT, StorageFormat.FULL, new Size(300, 390))
-                .put(StorageType.ELEMENT, StorageFormat.THUMBNAIL, new Size(50, 50))
+                .put(StorageType.ELEMENT, StorageFormat.THUMBNAIL, new Size(70, 70))
                 .build();
     }
 
@@ -23,7 +23,7 @@ public class StorageConfig {
         return Optional.ofNullable(storageSizeTable.get(type, format));
     }
 
-    public class Size {
+    public static class Size {
         private final int width;
         private final int height;
 
