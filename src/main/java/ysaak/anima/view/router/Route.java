@@ -4,18 +4,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public final class Route {
+final class Route {
 
-    public final String name;
+    private final String name;
 
-    public final String path;
+    private final String path;
 
-    public final List<String> params;
+    private final List<String> paramList;
 
-    Route(String name, String path, List<String> params) {
+    Route(String name, String path, List<String> paramList) {
         this.name = name;
         this.path = path;
-        this.params = params;
+        this.paramList = paramList;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    String getPath() {
+        return path;
+    }
+
+    List<String> getParamList() {
+        return paramList;
     }
 
     @Override
@@ -36,7 +48,7 @@ public final class Route {
         return new StringJoiner(", ", Route.class.getSimpleName() + "[", "]")
                 .add("name='" + name + "'")
                 .add("path='" + path + "'")
-                .add("params=" + params)
+                .add("params=" + paramList)
                 .toString();
     }
 }

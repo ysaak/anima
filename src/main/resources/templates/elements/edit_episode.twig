@@ -1,4 +1,8 @@
-<form method="post" action="/elements/{{ episode.elementId }}/episodes/{{ episode.id }}">
+{% if episode.id is null or episode.id is empty %}
+<form method="post" action="{{ urlFor('elements.episodes.create', {'elementId': episode.elementId }) }}">
+{% else %}
+<form method="post" action="{{ urlFor('elements.episodes.update', {'elementId': episode.elementId, 'episodeId': episode.id }) }}">
+{% endif %}
     <input type="hidden" name="elementId" value="{{ episode.elementId }}">
     <input type="hidden" name="id" value="{{ episode.id }}">
     <div class="modal-header">

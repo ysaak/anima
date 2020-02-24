@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ysaak.anima.data.Element;
 import ysaak.anima.utils.CollectionUtils;
+import ysaak.anima.utils.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
@@ -32,7 +33,7 @@ public class RoutingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoutingService.class);
 
-    private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{([0-9a-zA-Z\\-_]+)\\}");
+    private static final Pattern PATH_VARIABLE_PATTERN = Pattern.compile("\\{([0-9a-zA-Z\\-_]+)}");
 
     private static final String PATH_DELIMITER = "/";
 
@@ -45,12 +46,12 @@ public class RoutingService {
     @PostConstruct
     private void init() {
         LOGGER.debug("Start of named route analysis");
+        long duration = System.currentTimeMillis();
+
         final Reflections reflections = new Reflections("ysaak.anima");
         final Set<Class<?>> controllerClassSet = reflections.getTypesAnnotatedWith(Controller.class);
 
         for (Class<?> controllerClass : controllerClassSet) {
-
-            final String basePath;
             if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
                 RequestMapping mapping = controllerClass.getAnnotation(RequestMapping.class);
                 String path = mapping.value()[0];
@@ -62,70 +63,66 @@ public class RoutingService {
                     path += PATH_DELIMITER;
                 }
 
-                basePath = path;
-            }
-            else {
-                basePath = "";
-            }
+                final String basePath = path;
 
-            Arrays.stream(controllerClass.getMethods())
-                    .filter(method -> method.isAnnotationPresent(NamedRoute.class))
-                    .map(method -> createRoute(basePath, method))
-                    .filter(Objects::nonNull)
-                    .forEach(route -> routeMap.put(route.name, route));
+                Arrays.stream(controllerClass.getMethods())
+                        .map(this::extractAnnotationData)
+                        .filter(Objects::nonNull)
+                        .map(data -> createRoute(basePath, data))
+                        .forEach(route -> routeMap.put(route.getName(), route));
+            }
         }
 
-        LOGGER.debug("End of named route analysis");
+        if (LOGGER.isDebugEnabled()) {
+            routeMap.values().forEach(route -> LOGGER.debug(
+                    "Found new named route '{}' with path {} and params {}",
+                    route.getName(),
+                    route.getPath(),
+                    route.getParamList()
+            ));
+        }
+
+        LOGGER.debug("End of named route analysis ; {} routes found in {} ms", routeMap.size(), (System.currentTimeMillis() - duration));
     }
 
-    private Route createRoute(String basePath, Method method) {
-        final NamedRoute namedRoute = method.getAnnotation(NamedRoute.class);
-        final String name = namedRoute.value();
+    private Route createRoute(final String basePath, final AnnotationData annotationData) {
+        final String fullPath = basePath + (annotationData.path.startsWith(PATH_DELIMITER) ? annotationData.path.substring(1) : annotationData.path);
+        final List<String> paramList = new ArrayList<>();
 
-        String path = getPath(method);
+        final Matcher matcher = PATH_VARIABLE_PATTERN.matcher(annotationData.path);
 
-        if (path != null) {
-            final String fullPath = basePath + (path.startsWith(PATH_DELIMITER) ? path.substring(1) : path);
-            final List<String> paramList = new ArrayList<>();
-
-            final Matcher matcher = PATH_VARIABLE_PATTERN.matcher(path);
-
-            while (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    paramList.add(matcher.group(i));
-                }
+        while (matcher.find()) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                paramList.add(matcher.group(i));
             }
-
-            LOGGER.debug("Found new named route '{}' with path {} and params {}", name, fullPath, paramList);
-
-            return new Route(name, fullPath, paramList);
         }
-        else {
-            LOGGER.warn("No path found for route {}", name);
-            return null;
-        }
+
+        return new Route(annotationData.name, fullPath, paramList);
     }
 
-    private String getPath(Method method) {
-        final String path;
+    private AnnotationData extractAnnotationData(Method method) {
+        AnnotationData annotationData = null;
 
         if (method.isAnnotationPresent(GetMapping.class)) {
-            GetMapping mapping = method.getAnnotation(GetMapping.class);
-            path = mapping.value()[0];
+            final GetMapping mapping = method.getAnnotation(GetMapping.class);
+            if (StringUtils.isNotEmpty(mapping.name())) {
+                annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
+            }
         }
         else if (method.isAnnotationPresent(PostMapping.class)) {
             PostMapping mapping = method.getAnnotation(PostMapping.class);
-            path = mapping.value()[0];
+            if (StringUtils.isNotEmpty(mapping.name())) {
+                annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
+            }
         }
         else if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-            path = mapping.value()[0];
-        }
-        else {
-            path = null;
+            if (StringUtils.isNotEmpty(mapping.name())) {
+                annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
+            }
         }
 
-        return path;
+        return annotationData;
     }
 
     public String getElementPath(Element element) {
@@ -141,10 +138,10 @@ public class RoutingService {
 
             final Route route = routeMap.get(routeName);
 
-            path = route.path;
+            path = route.getPath();
 
             List<Map.Entry<String, Object>> pathParamList = parameters.entrySet().stream()
-                    .filter(e -> route.params.contains(e.getKey()))
+                    .filter(e -> route.getParamList().contains(e.getKey()))
                     .collect(Collectors.toList());
 
             for (Map.Entry<String, Object> param : pathParamList) {
@@ -152,7 +149,7 @@ public class RoutingService {
             }
 
             final Map<String, Object> queryParamMap = parameters.entrySet().stream()
-                    .filter(e -> !route.params.contains(e.getKey()))
+                    .filter(e -> !route.getParamList().contains(e.getKey()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             if (CollectionUtils.isNotEmpty(queryParamMap)) {
@@ -164,5 +161,15 @@ public class RoutingService {
         }
 
         return Optional.ofNullable(path);
+    }
+
+    private static class AnnotationData {
+        private final String name;
+        private final String path;
+
+        public AnnotationData(String name, String path) {
+            this.name = name;
+            this.path = path;
+        }
     }
 }

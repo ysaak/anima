@@ -1,4 +1,4 @@
-<form method="post" action="/elements/{{ elementId }}/episodes/massCreate">
+<form method="post" action="{{ urlFor('elements.episodes.mass-create', {'elementId': elementId }) }}">
     <input type="hidden" name="elementId" value="{{ elementId }}">
     <div class="modal-header">
         <h5>Nouveaux &eacute;pisodes</h5>

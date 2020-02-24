@@ -38,7 +38,6 @@ import ysaak.anima.view.dto.elements.ElementEditDto;
 import ysaak.anima.view.dto.elements.EpisodeEditDto;
 import ysaak.anima.view.dto.elements.EpisodeMassAddDto;
 import ysaak.anima.view.dto.elements.SeasonEditDto;
-import ysaak.anima.view.router.NamedRoute;
 import ysaak.anima.view.router.RoutingService;
 
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class ElementController extends AbstractViewController {
         this.translationService = translationService;
     }
 
-    @GetMapping("/new")
+    @GetMapping(path = "/new", name = "elements.new")
     public String newAction(ModelMap model) {
         if (!model.containsAttribute("element")) {
             model.put("element", new Element());
@@ -89,7 +88,7 @@ public class ElementController extends AbstractViewController {
         return "elements/edit";
     }
 
-    @PostMapping("/")
+    @PostMapping(path = "/", name = "elements.create")
     public String createAction(@ModelAttribute ElementEditDto elementEditDto, final RedirectAttributes redirectAttributes) {
         final Element elementToSave = converters().convert(elementEditDto, Element.class);
         final Element savedElement;
@@ -106,8 +105,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(savedElement);
     }
 
-    @NamedRoute("elements.edit")
-    @GetMapping("/{id}/edit")
+    @GetMapping(path = "/{id}/edit", name = "elements.edit")
     public String editAction(ModelMap model, @PathVariable("id") String id) throws Exception {
         if (!model.containsAttribute("element")) {
             final Element element = elementService.findById(id);
@@ -135,7 +133,7 @@ public class ElementController extends AbstractViewController {
         return new KeyValueItem(item.name(), translationService.get(item));
     }
 
-    @PostMapping("/{id}")
+    @PostMapping(path = "/{id}", name = "elements.update")
     public String updateAction(@ModelAttribute ElementEditDto elementEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element elementToSave = converters().convert(elementEditDto, Element.class);
         final Element savedElement;
@@ -152,7 +150,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(savedElement);
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping(path = "/{id}/delete", name = "elements.delete")
     public String deleteAction(@PathVariable("id") final String id, final RedirectAttributes redirectAttributes) {
         elementService.delete(id);
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.delete"));
@@ -178,13 +176,13 @@ public class ElementController extends AbstractViewController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping("/{elementId}/image/edit")
+    @GetMapping(path = "/{elementId}/image/edit", name = "elements.image.edit")
     public String editImageAction(final ModelMap model, @PathVariable("elementId") final String elementId) {
         model.put("elementId", elementId);
         return "elements/edit_image";
     }
 
-    @PostMapping("/{elementId}/image/")
+    @PostMapping(path = "/{elementId}/image/", name = "elements.image.update")
     public String updateImageAction(@PathVariable("elementId") final String elementId, @RequestParam("file") final MultipartFile file) throws NoDataFoundException, StorageException {
         final Element element = elementService.findById(elementId);
 
@@ -194,8 +192,7 @@ public class ElementController extends AbstractViewController {
     }
 
     /* ----- Season management ----- */
-
-    @GetMapping("{elementId}/seasons/new")
+    @GetMapping(path = "/{elementId}/seasons/new", name = "elements.seasons.new")
     public String seasonNewAction(final ModelMap model, @PathVariable("elementId") final String elementId) throws NoDataFoundException {
         final Element element = elementService.findById(elementId);
 
@@ -205,7 +202,7 @@ public class ElementController extends AbstractViewController {
         return "elements/edit_season";
     }
 
-    @PostMapping("/{elementId}/seasons/")
+    @PostMapping(path = "/{elementId}/seasons/", name = "elements.seasons.create")
     public String seasonCreateAction(@ModelAttribute SeasonEditDto seasonEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
         try {
@@ -220,7 +217,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
-    @GetMapping("/{elementId}/seasons/{seasonId}/edit")
+    @GetMapping(path = "/{elementId}/seasons/{seasonId}/edit", name = "elements.seasons.edit")
     public String seasonEditAction(ModelMap model, @PathVariable("elementId") String elementId, @PathVariable("seasonId") String seasonId) throws NoDataFoundException {
 
         final Element element = elementService.findById(elementId);
@@ -241,8 +238,8 @@ public class ElementController extends AbstractViewController {
         return "elements/edit_season";
     }
 
-    @PostMapping("/{elementId}/seasons/{seasonId}")
-    public String episodeUpdateAction(@ModelAttribute SeasonEditDto seasonEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
+    @PostMapping(path = "/{elementId}/seasons/{seasonId}", name = "elements.seasons.update")
+    public String seasonUpdateAction(@ModelAttribute SeasonEditDto seasonEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
 
         element = elementService.updateSeasonTitle(seasonEditDto.getElementId(), seasonEditDto.getId(), seasonEditDto.getTitle());
@@ -251,7 +248,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
-    @PostMapping("/{elementId}/seasons/{seasonId}/delete")
+    @PostMapping(path = "/{elementId}/seasons/{seasonId}/delete", name = "elements.seasons.delete")
     public String seasonDeleteAction(@PathVariable("elementId") final String elementId, @PathVariable("seasonId") final String seasonId, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element = elementService.deleteSeason(elementId, seasonId);
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.season.delete"));
@@ -259,8 +256,8 @@ public class ElementController extends AbstractViewController {
     }
 
     /* ----- Episode management ----- */
-    @GetMapping("{id}/episodes/new")
-    public String episodeNewAction(final ModelMap model, @PathVariable("id") final String elementId) throws NoDataFoundException {
+    @GetMapping(path = "/{elementId}/episodes/new", name = "elements.episodes.new")
+    public String episodeNewAction(final ModelMap model, @PathVariable("elementId") final String elementId) throws NoDataFoundException {
 
         final Element element = elementService.findById(elementId);
 
@@ -277,7 +274,7 @@ public class ElementController extends AbstractViewController {
         return "elements/edit_episode";
     }
 
-    @PostMapping("/{id}/episodes/")
+    @PostMapping(path = "/{elementId}/episodes/", name = "elements.episodes.create")
     public String episodeCreateAction(@ModelAttribute EpisodeEditDto episodeEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
 
@@ -295,7 +292,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
-    @GetMapping("{elementId}/episodes/massNew")
+    @GetMapping(path = "/{elementId}/episodes/massNew", name = "elements.episodes.mass-new")
     public String episodeMassNewAction(final ModelMap model, @PathVariable("elementId") final String elementId) throws NoDataFoundException {
 
         final Element element = elementService.findById(elementId);
@@ -312,7 +309,7 @@ public class ElementController extends AbstractViewController {
         return "elements/edit_episode_mass_add";
     }
 
-    @PostMapping("/{elementId}/episodes/massCreate")
+    @PostMapping(path = "/{elementId}/episodes/massCreate", name = "elements.episodes.mass-create")
     public String episodeMassCreateAction(@ModelAttribute EpisodeMassAddDto episodeMassAddDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
 
@@ -342,7 +339,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
-    @GetMapping("/{elementId}/episodes/{episodeId}/edit")
+    @GetMapping(path = "/{elementId}/episodes/{episodeId}/edit", name = "elements.episodes.edit")
     public String episodeEditAction(ModelMap model, @PathVariable("elementId") String elementId, @PathVariable("episodeId") String episodeId) throws NoDataFoundException {
 
         final Element element = elementService.findById(elementId);
@@ -374,7 +371,7 @@ public class ElementController extends AbstractViewController {
         return "elements/edit_episode";
     }
 
-    @PostMapping("/{elementId}/episodes/{episodeId}")
+    @PostMapping(path = "/{elementId}/episodes/{episodeId}", name = "elements.episodes.update")
     public String episodeUpdateAction(@ModelAttribute EpisodeEditDto episodeEditDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
 
@@ -392,7 +389,7 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
-    @PostMapping("/{elementId}/episodes/{episodeId}/delete")
+    @PostMapping(path = "/{elementId}/episodes/{episodeId}/delete", name = "elements.episodes.delete")
     public String episodeDeleteAction(@PathVariable("elementId") final String elementId, @PathVariable("episodeId") final String episodeId, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element = elementService.deleteEpisode(elementId, episodeId);
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.episode.delete"));

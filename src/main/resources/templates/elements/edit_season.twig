@@ -1,4 +1,8 @@
-<form method="post" action="/elements/{{ season.elementId }}/seasons/{{ season.id }}">
+{% if season.id is null or season.id is empty %}
+<form method="post" action="{{ urlFor('elements.seasons.create', {'elementId': season.elementId }) }}">
+{% else %}
+<form method="post" action="{{ urlFor('elements.seasons.update', {'elementId': season.elementId, 'seasonId': season.id}) }}">
+{% endif %}
     <input type="hidden" name="elementId" value="{{ season.elementId }}">
     <input type="hidden" name="id" value="{{ season.id }}">
     <div class="modal-header">

@@ -13,7 +13,6 @@ import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.ElementService;
-import ysaak.anima.service.StorageService;
 import ysaak.anima.view.dto.elements.ElementViewDto;
 import ysaak.anima.view.dto.elements.list.ElementListDto;
 import ysaak.anima.view.dto.elements.list.LetterPaginationDto;
@@ -28,22 +27,20 @@ import java.util.stream.Collectors;
 @RequestMapping(value = { "/animes", "/book" })
 public class AnimeController extends AbstractViewController {
     private final ElementService elementService;
-    private final StorageService storageService;
     private final RoutingService routingService;
 
     @Autowired
-    public AnimeController(ElementService elementService, StorageService storageService, RoutingService routingService) {
+    public AnimeController(ElementService elementService, RoutingService routingService) {
         this.elementService = elementService;
-        this.storageService = storageService;
         this.routingService = routingService;
     }
 
-    @GetMapping("/")
+    @GetMapping(path = "/", name = "animes.index")
     public String indexAction(ModelMap model) {
         return byLetterAction(model, ElementConstants.NON_ALPHA_LETTER);
     }
 
-    @GetMapping("/byLetter/{letter}")
+    @GetMapping(path = "/byLetter/{letter}", name = "animes.by-letter")
     public String byLetterAction(final ModelMap model, @PathVariable("letter") final String letter) {
 
         // Construct letter pagination
@@ -87,7 +84,7 @@ public class AnimeController extends AbstractViewController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(path = "/{id}", name = "animes.view")
     public String viewAction(ModelMap model, @PathVariable("id") String id) throws NoDataFoundException {
         Element element = this.elementService.findById(id);
 

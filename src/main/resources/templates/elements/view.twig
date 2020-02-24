@@ -4,16 +4,16 @@
 <h1>{{ element.title }}</h1>
 
 <div class="border-bottom pb-2 mb-2 d-flex ">
-    <a href="/elements/{{ element.id }}/edit" class="btn btn-light">Modifier</a>
+    <a href="{{ urlFor('elements.edit',{'id': element.id}) }}" class="btn btn-light">Modifier</a>
     &nbsp;
     <div class="dropdown">
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
         <div class="dropdown-menu">
-            <a class="dropdown-item" href="/elements/{{ element.id }}/image/edit" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
+            <a class="dropdown-item" href="{{ urlFor('elements.image.edit', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/new" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
-            <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-            <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/massNew" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
+            <a class="dropdown-item" href="{{ urlFor('elements.seasons.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
+            <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+            <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
         </div>
@@ -52,10 +52,10 @@
                                 ...
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/new" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/elements/{{ element.id }}/seasons/{{ season.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/seasons/{{ season.id }}/delete" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                                <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
                             </div>
                         </div>
                     </td>
@@ -71,8 +71,8 @@
                                 ...
                             </button>
                             <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/edit" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="/elements/{{ element.id }}/episodes/{{ episode.id }}/delete" data-toggle="confirm">Supprimer</a>
+                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
                             </div>
                         </div>
                     </td>

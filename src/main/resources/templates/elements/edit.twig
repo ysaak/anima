@@ -3,11 +3,12 @@
 {% block content %}
 {% if element.id is null or element.id is empty %}
 <h1>Nouvel &eacute;l&eacute;ment</h1>
+<form method="post" action="{{ urlFor('elements.create') }}">
 {% else %}
 <h1>Modifier &eacute;l&eacute;ment</h1>
+<form method="post" action="{{ urlFor('elements.update', { 'id': element.id }) }}">
 {% endif %}
 
-<form method="post" action="/elements/{{ element.id }}">
     <input type="hidden" name="id" value="{{ element.id }}">
 
     <div class="form-group">
