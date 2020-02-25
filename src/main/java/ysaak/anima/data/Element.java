@@ -42,7 +42,14 @@ public class Element {
     )
     private List<TagModel> tagList;
 
+    @OneToMany(mappedBy = "element")
+    private List<Relation> relationList;
+
     public Element() {
+    }
+
+    public Element(String id) {
+        this.id = id;
     }
 
     public Element(String id, String title, ElementType type, ElementSubType subType, int releaseYear, String synopsis) {
@@ -116,5 +123,13 @@ public class Element {
 
     public void setTagList(List<TagModel> tagList) {
         this.tagList = tagList;
+    }
+
+    public List<Relation> getRelationList() {
+        return relationList;
+    }
+
+    public void setRelationList(List<Relation> relationList) {
+        this.relationList = relationList;
     }
 }

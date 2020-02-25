@@ -1,4 +1,4 @@
-package ysaak.anima.dao;
+package ysaak.anima.dao.converter;
 
 import com.google.common.collect.ImmutableBiMap;
 

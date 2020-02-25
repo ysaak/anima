@@ -20,6 +20,7 @@ import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
+import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
 import ysaak.anima.data.storage.StorageFormat;
 import ysaak.anima.data.storage.StorageType;
@@ -27,6 +28,7 @@ import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.StorageException;
 import ysaak.anima.service.ElementService;
+import ysaak.anima.service.RelationService;
 import ysaak.anima.service.StorageService;
 import ysaak.anima.service.TagService;
 import ysaak.anima.service.technical.TranslationService;
@@ -37,6 +39,7 @@ import ysaak.anima.view.dto.KeyValueItem;
 import ysaak.anima.view.dto.elements.ElementEditDto;
 import ysaak.anima.view.dto.elements.EpisodeEditDto;
 import ysaak.anima.view.dto.elements.EpisodeMassAddDto;
+import ysaak.anima.view.dto.elements.RelationAddDto;
 import ysaak.anima.view.dto.elements.SeasonEditDto;
 import ysaak.anima.view.router.RoutingService;
 
@@ -55,14 +58,16 @@ public class ElementController extends AbstractViewController {
     private final ElementService elementService;
     private final TagService tagService;
     private final StorageService storageService;
+    private final RelationService relationService;
     private final RoutingService routingService;
     private final TranslationService translationService;
 
     @Autowired
-    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, RoutingService routingService, TranslationService translationService) {
         this.elementService = elementService;
         this.tagService = tagService;
         this.storageService = storageService;
+        this.relationService = relationService;
         this.routingService = routingService;
         this.translationService = translationService;
     }
@@ -395,4 +400,55 @@ public class ElementController extends AbstractViewController {
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.episode.delete"));
         return "redirect:" + routingService.getElementPath(element);
     }
+
+    /* ----- Relation management ----- */
+    @GetMapping(path = "/{elementId}/relations/new", name = "elements.relations.new")
+    public String relationNewAction(final ModelMap model, @PathVariable("elementId") final String elementId) {
+
+        model.put("elementId", elementId);
+
+        final List<KeyValueItem> typeList = Stream.of(
+                        RelationType.SEQUEL,
+                        RelationType.PREQUEL,
+                        RelationType.ALTERNATIVE_SETTING,
+                        RelationType.ALTERNATIVE_VERSION,
+                        RelationType.SUMMARY,
+                        RelationType.FULL_STORY,
+                        RelationType.SIDE_STORY,
+                        RelationType.SPIN_OFF,
+                        RelationType.PARENT_STORY,
+                        RelationType.ADAPTATION,
+                        RelationType.OTHER
+                )
+                .map(s -> new KeyValueItem(s.name(), translationService.get("elements.relation." + s.name())))
+                .collect(Collectors.toList());
+        model.put("typeList", typeList);
+
+        return "elements/edit_relation";
+    }
+
+    @PostMapping(path = "/{elementId}/relations/", name = "elements.relations.create")
+    public String relationCreateAction(@ModelAttribute RelationAddDto relationAddDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
+        final Element element = elementService.findById(relationAddDto.getElementId());
+
+        try {
+            relationService.createRelation(relationAddDto.getElementId(), relationAddDto.getRelatedElementId(), relationAddDto.getType());
+        }
+        catch (DataValidationException dve) {
+            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+        }
+
+        return "redirect:" + routingService.getElementPath(element);
+    }
+
+    @PostMapping(path = "/{elementId}/relations/{relationId}/delete", name = "elements.relations.delete")
+    public String relationDeleteAction(@PathVariable("elementId") final String elementId, @PathVariable("relationId") final String relationId, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
+        final Element element = elementService.findById(elementId);
+
+        relationService.deleteRelation(relationId);
+
+        addFlashInfoMessage(redirectAttributes, translationService.get("elements.relation.delete"));
+        return "redirect:" + routingService.getElementPath(element);
+    }
+
 }

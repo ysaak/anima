@@ -1,7 +1,7 @@
 package ysaak.anima.dao.converter.enums;
 
 import com.google.common.collect.ImmutableBiMap;
-import ysaak.anima.dao.AbstractEnumDbConverter;
+import ysaak.anima.dao.converter.AbstractEnumDbConverter;
 import ysaak.anima.data.ElementType;
 
 import javax.persistence.Converter;

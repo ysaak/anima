@@ -15,6 +15,8 @@
             <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
             <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
             <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
+            <div class="dropdown-divider"></div>
             <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
         </div>
     </div>
@@ -26,6 +28,28 @@
         <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
         <p><strong>Tags :</strong> {{ element.tagList | join(', ') }}</p>
         <p><strong>Synopsis :</strong> {{ element.synopsis | nl2br }}</p>
+
+        {% if element.relationList is not empty %}
+        <hr />
+        <h3>Relations</h3>
+        <table class="table table-sm">
+            <col />
+            <col width="30" />
+            <tbody>
+        {% for relationGroup in element.relationList %}
+            <tr>
+                <th colspan="2">{{ relationGroup.name }}</th>
+            </tr>
+            {% for relation in relationGroup.elementList %}
+            <tr>
+                <td><a href="{{ relation.url }}">{{ relation.title }}</a></td>
+                <td><a href="{{ urlFor('elements.relations.delete', { 'elementId': element.id, 'relationId': relation.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
 
         <hr>
 

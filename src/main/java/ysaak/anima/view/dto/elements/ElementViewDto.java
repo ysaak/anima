@@ -1,25 +1,29 @@
 package ysaak.anima.view.dto.elements;
 
+import ysaak.anima.data.RelationType;
+
 import java.util.List;
 
 public class ElementViewDto {
-    private String id;
+    private final String id;
 
-    private String title;
+    private final String title;
 
-    private String type;
+    private final String type;
 
-    private String subType;
+    private final String subType;
 
-    private int releaseYear;
+    private final int releaseYear;
 
-    private String synopsis;
+    private final String synopsis;
 
-    private List<ElementSeasonDto> seasonList;
+    private final List<ElementSeasonDto> seasonList;
 
-    private List<String> tagList;
+    private final List<String> tagList;
 
-    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList) {
+    private final List<ElementRelationListDto> relationList;
+
+    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList, List<ElementRelationListDto> relationList) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -28,70 +32,43 @@ public class ElementViewDto {
         this.synopsis = synopsis;
         this.seasonList = seasonList;
         this.tagList = tagList;
+        this.relationList = relationList;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getSubType() {
         return subType;
-    }
-
-    public void setSubType(String subType) {
-        this.subType = subType;
     }
 
     public int getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
     public String getSynopsis() {
         return synopsis;
-    }
-
-    public void setSynopsis(String synopsis) {
-        this.synopsis = synopsis;
     }
 
     public List<ElementSeasonDto> getSeasonList() {
         return seasonList;
     }
 
-    public void setSeasonList(List<ElementSeasonDto> seasonList) {
-        this.seasonList = seasonList;
-    }
-
     public List<String> getTagList() {
         return tagList;
     }
 
-    public void setTagList(List<String> tagList) {
-        this.tagList = tagList;
+    public List<ElementRelationListDto> getRelationList() {
+        return relationList;
     }
 
     public static class ElementSeasonDto {
@@ -173,6 +150,54 @@ public class ElementViewDto {
 
         public void setTitle(String title) {
             this.title = title;
+        }
+    }
+
+    public static class ElementRelationListDto {
+        private final RelationType relationType;
+        private final String name;
+        private final List<ElementRelationDto> elementList;
+
+        public ElementRelationListDto(RelationType relationType, String name, List<ElementRelationDto> elementList) {
+            this.relationType = relationType;
+            this.name = name;
+            this.elementList = elementList;
+        }
+
+        public RelationType getRelationType() {
+            return relationType;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public List<ElementRelationDto> getElementList() {
+            return elementList;
+        }
+    }
+
+    public static class ElementRelationDto {
+        private final String id;
+        private final String title;
+        private final String url;
+
+        public ElementRelationDto(String id, String title, String url) {
+            this.id = id;
+            this.title = title;
+            this.url = url;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getUrl() {
+            return url;
         }
     }
 }
