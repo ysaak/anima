@@ -3,7 +3,6 @@ package ysaak.anima.service;
 import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import ysaak.anima.IAnimaComponent;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.repository.ElementRepository;
@@ -72,9 +71,8 @@ public class ElementService implements IAnimaComponent {
                 .orElseThrow(() -> new NoDataFoundException("No element found for id " + id));
     }
 
-    public List<Element> findAll() {
-        Iterable<Element> entityIterable = elementRepository.findAll();
-        return CollectionUtils.toList(entityIterable);
+    public List<Element> searchByTitle(String title) {
+        return elementRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
 
     private <T> void validate(T data) throws DataValidationException {
@@ -85,19 +83,6 @@ public class ElementService implements IAnimaComponent {
     public void delete(final String elementId) {
         Preconditions.checkNotNull(elementId, "elementId is null");
         elementRepository.deleteById(elementId);
-    }
-
-    /* ----- Image management ----- */
-
-    public Element updateImage(String elementId, MultipartFile file) throws NoDataFoundException {
-        Preconditions.checkNotNull(elementId, "elementId is null");
-        Preconditions.checkNotNull(file, "file is null");
-
-        final Element element = findById(elementId);
-
-        
-
-        return element;
     }
 
     /* ----- Season management ----- */

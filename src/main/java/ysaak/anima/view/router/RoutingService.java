@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ysaak.anima.data.Element;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
@@ -49,29 +50,9 @@ public class RoutingService {
         long duration = System.currentTimeMillis();
 
         final Reflections reflections = new Reflections("ysaak.anima");
-        final Set<Class<?>> controllerClassSet = reflections.getTypesAnnotatedWith(Controller.class);
 
-        for (Class<?> controllerClass : controllerClassSet) {
-            if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping mapping = controllerClass.getAnnotation(RequestMapping.class);
-                String path = mapping.value()[0];
-
-                if (!path.startsWith(PATH_DELIMITER)) {
-                    path = PATH_DELIMITER + path;
-                }
-                if (!path.endsWith(PATH_DELIMITER)) {
-                    path += PATH_DELIMITER;
-                }
-
-                final String basePath = path;
-
-                Arrays.stream(controllerClass.getMethods())
-                        .map(this::extractAnnotationData)
-                        .filter(Objects::nonNull)
-                        .map(data -> createRoute(basePath, data))
-                        .forEach(route -> routeMap.put(route.getName(), route));
-            }
-        }
+        reflections.getTypesAnnotatedWith(Controller.class).forEach(this::loadRouteFromController);
+        reflections.getTypesAnnotatedWith(RestController.class).forEach(this::loadRouteFromController);
 
         if (LOGGER.isDebugEnabled()) {
             routeMap.values().forEach(route -> LOGGER.debug(
@@ -83,6 +64,28 @@ public class RoutingService {
         }
 
         LOGGER.debug("End of named route analysis ; {} routes found in {} ms", routeMap.size(), (System.currentTimeMillis() - duration));
+    }
+
+    private void loadRouteFromController(final Class<?> controllerClass) {
+        if (controllerClass.isAnnotationPresent(RequestMapping.class)) {
+            RequestMapping mapping = controllerClass.getAnnotation(RequestMapping.class);
+            String path = mapping.value()[0];
+
+            if (!path.startsWith(PATH_DELIMITER)) {
+                path = PATH_DELIMITER + path;
+            }
+            if (!path.endsWith(PATH_DELIMITER)) {
+                path += PATH_DELIMITER;
+            }
+
+            final String basePath = path;
+
+            Arrays.stream(controllerClass.getMethods())
+                    .map(this::extractAnnotationData)
+                    .filter(Objects::nonNull)
+                    .map(data -> createRoute(basePath, data))
+                    .forEach(route -> routeMap.put(route.getName(), route));
+        }
     }
 
     private Route createRoute(final String basePath, final AnnotationData annotationData) {

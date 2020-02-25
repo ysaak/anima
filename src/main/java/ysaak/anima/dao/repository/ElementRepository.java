@@ -27,4 +27,6 @@ public interface ElementRepository extends PagingAndSortingRepository<Element, S
 
     @Query("SELECT e FROM Element e WHERE e.type = :type AND UPPER(e.title) LIKE CONCAT(:firstLetter, '%') ORDER BY e.title")
     List<Element> findAllByTypeAndFistLetterAlpha(@Param("type") final ElementType type, @Param("firstLetter") final String firstLetter);
+
+    List<Element> findByTitleContainingIgnoreCaseOrderByTitle(String title);
 }
