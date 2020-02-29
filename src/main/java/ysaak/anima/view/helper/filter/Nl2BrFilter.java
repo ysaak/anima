@@ -1,4 +1,4 @@
-package ysaak.anima.view.helper.function;
+package ysaak.anima.view.helper.filter;
 
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.Filter;

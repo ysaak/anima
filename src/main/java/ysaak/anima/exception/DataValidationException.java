@@ -1,22 +1,29 @@
 package ysaak.anima.exception;
 
+import ysaak.anima.utils.CollectionUtils;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class DataValidationException extends Exception {
-    private final List<String> messageList;
+    private final Map<String, String> errorMap;
 
-    public DataValidationException(String message) {
+    public DataValidationException(final String key, final String message) {
         super(message);
-        messageList = Collections.singletonList(message);
+        errorMap = Collections.singletonMap(key, message);
     }
 
-    public DataValidationException(List<String> messageList) {
+    public DataValidationException(Map<String, String> errorMap) {
         super("Error while validating object");
-        this.messageList = messageList;
+        this.errorMap = errorMap;
+    }
+
+    public Map<String, String> getErrorMap() {
+        return errorMap;
     }
 
     public List<String> getMessageList() {
-        return messageList;
+        return CollectionUtils.toList(errorMap.values());
     }
 }

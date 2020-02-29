@@ -102,7 +102,7 @@ public class ElementController extends AbstractViewController {
             savedElement = elementService.create(elementToSave);
         }
         catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            registerValidationErrors(redirectAttributes, dve);
             redirectAttributes.addFlashAttribute("element", elementEditDto);
             return "redirect:/elements/new";
         }
@@ -147,7 +147,7 @@ public class ElementController extends AbstractViewController {
             savedElement = elementService.update(elementToSave);
         }
         catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            registerValidationErrors(redirectAttributes, dve);
             redirectAttributes.addFlashAttribute("element", elementEditDto);
             return "redirect:/elements/" + elementEditDto.getId() + "/edit";
         }

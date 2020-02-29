@@ -56,7 +56,7 @@ public class AdminTagController extends AbstractViewController implements IAnima
             tagService.save(tagToSave);
         }
         catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            registerValidationErrors(redirectAttributes, dve);
             redirectAttributes.addFlashAttribute("tag", tagDto);
             return "redirect:/admin/tags/new";
         }
@@ -83,7 +83,7 @@ public class AdminTagController extends AbstractViewController implements IAnima
             tagService.save(tagToSave);
         }
         catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            registerValidationErrors(redirectAttributes, dve);
             redirectAttributes.addFlashAttribute("tag", tagDto);
             return "redirect:/admin/tags/new";
         }

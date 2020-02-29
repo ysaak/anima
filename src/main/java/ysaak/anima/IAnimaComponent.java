@@ -2,7 +2,7 @@ package ysaak.anima;
 
 import ysaak.anima.converter.ConverterService;
 import ysaak.anima.exception.TechnicalException;
-import ysaak.anima.service.technical.ValidationService;
+import ysaak.anima.service.validation.ValidationService;
 
 public interface IAnimaComponent {
     default ConverterService converters() {

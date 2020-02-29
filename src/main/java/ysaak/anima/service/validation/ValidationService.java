@@ -1,4 +1,4 @@
-package ysaak.anima.service.technical;
+package ysaak.anima.service.validation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,8 +7,8 @@ import ysaak.anima.utils.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -25,13 +25,13 @@ public class ValidationService {
         final Set<ConstraintViolation<T>> violationSet = validator.validate(object);
 
         if (CollectionUtils.isNotEmpty(violationSet)) {
-            final List<String> messageList = new ArrayList<>();
+            final Map<String, String> validationErrorMap = new HashMap<>();
 
             for (ConstraintViolation<T> violation : violationSet) {
-                messageList.add(violation.getMessage());
+                validationErrorMap.put(violation.getPropertyPath().toString(), violation.getMessage());
             }
 
-            throw new DataValidationException(messageList);
+            throw new DataValidationException(validationErrorMap);
         }
     }
 }

@@ -19,8 +19,8 @@
     <hr>
 
     <div class="form-group">
-        <label for="elementTitle">Titre</label>
-        <input type="text" class="form-control" id="elementTitle" name="title" value="{{ element.title }}">
+        <label for="title">Titre</label>
+        {{ formInput("title", element.title) }}
     </div>
 
     <div class="form-group">
@@ -29,8 +29,8 @@
     </div>
 
     <div class="form-group">
-        <label for="elementReleaseYear">Ann&eacute;e de parution</label>
-        <input type="number" class="form-control" id="elementReleaseYear" name="releaseYear" value="{{ element.releaseYear }}">
+        <label for="releaseYear">Ann&eacute;e de parution</label>
+        {{ formInput("releaseYear", element.releaseYear, { "type": "number" }) }}
     </div>
 
     <div class="form-group">

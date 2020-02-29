@@ -151,7 +151,7 @@ public class ElementService implements IAnimaComponent {
                 .stream()
                 .filter(s -> s.getId().equals(seasonId))
                 .findAny()
-                .orElseThrow(() -> new DataValidationException("seasonId '" + seasonId + "' is not found for element '" + elementId + "'"));
+                .orElseThrow(() -> new DataValidationException("seasonId", "seasonId '" + seasonId + "' is not found for element '" + elementId + "'"));
 
         validate(episode);
 
@@ -172,7 +172,7 @@ public class ElementService implements IAnimaComponent {
                 .stream()
                 .filter(s -> s.getId().equals(seasonId))
                 .findAny()
-                .orElseThrow(() -> new DataValidationException("seasonId '" + seasonId + "' is not found for element '" + elementId + "'"));
+                .orElseThrow(() -> new DataValidationException("seasonId", "seasonId '" + seasonId + "' is not found for element '" + elementId + "'"));
 
         for (Episode episode : episodeList) {
             episode.setSeason(season);
