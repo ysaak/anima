@@ -11,12 +11,23 @@ import java.util.stream.Collectors;
 public final class HtmlUtils {
     private HtmlUtils() { /**/ }
 
-    public static String createHtmlTag(String tagName, Map<String, String> attributeMap, String value) {
+    public static String createHtmlTag(String tagName, Map<String, Object> attributeMap, String value) {
         final StringBuilder sb = new StringBuilder("<").append(tagName);
 
         if (CollectionUtils.isNotEmpty(attributeMap)) {
             String attributes = attributeMap.entrySet().stream()
-                    .map(e -> e.getKey() + "=\"" + e.getValue() + "\"")
+                    .map(e -> {
+                        final String attribute;
+
+                        if (e.getValue() != null) {
+                            attribute = e.getKey() + "=\"" + e.getValue() + "\"";
+                        }
+                        else {
+                            attribute = e.getKey();
+                        }
+
+                        return attribute;
+                    })
                     .collect(Collectors.joining(" "));
 
             sb.append(" ").append(attributes);

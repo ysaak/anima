@@ -12,7 +12,7 @@ public class FormInputFunction extends AbstractFormHelper {
     }
 
     @Override
-    protected void registerAttributes(final Map<String, String> attributeMap, final Map<String, Object> variableMap) {
+    protected void registerAttributes(final Map<String, Object> attributeMap, final Map<String, Object> argMap, final Map<String, Object> variableMap) {
         final String type;
         if (variableMap.containsKey("type")) {
             type = (String) variableMap.get("type");

@@ -17,7 +17,7 @@ public class FormTextAreaFunction extends AbstractFormHelper {
     }
 
     @Override
-    protected void registerAttributes(Map<String, String> attributeMap, Map<String, Object> variableMap) {
+    protected void registerAttributes(final Map<String, Object> attributeMap, final Map<String, Object> argMap, final Map<String, Object> variableMap) {
         if (variableMap.containsKey(SIZE_PARAM)) {
             Matcher sizeMatcher = SIZE_PATTERN.matcher((String) variableMap.get(SIZE_PARAM));
             if (sizeMatcher.matches()) {

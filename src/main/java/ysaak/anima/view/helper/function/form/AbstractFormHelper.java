@@ -17,9 +17,9 @@ import java.util.Optional;
 import java.util.Set;
 
 abstract class AbstractFormHelper implements Function {
-    private static final String NAME_ARG = "name";
-    private static final String VALUE_ARG = "value";
-    private static final String PARAMS_ARG = "param";
+    protected static final String NAME_ARG = "name";
+    protected static final String VALUE_ARG = "value";
+    protected static final String PARAMS_ARG = "param";
 
     private static final String CLASS_PARAM = "class";
     private static final String FORM_VALIDITY_PARAM = "validity";
@@ -53,7 +53,7 @@ abstract class AbstractFormHelper implements Function {
             variableMap = new HashMap<>();
         }
 
-        final Map<String, String> attributeMap = new HashMap<>();
+        final Map<String, Object> attributeMap = new HashMap<>();
         attributeMap.put("id", name);
         attributeMap.put("name", name);
 
@@ -70,7 +70,7 @@ abstract class AbstractFormHelper implements Function {
         registerClass(classSet);
         attributeMap.put("class", String.join(" ", classSet));
 
-        registerAttributes(attributeMap, variableMap);
+        registerAttributes(attributeMap, args, variableMap);
 
         String tag = renderFormTag(attributeMap, value);
 
@@ -89,11 +89,11 @@ abstract class AbstractFormHelper implements Function {
         // Override to use
     }
 
-    protected void registerAttributes(final Map<String, String> attributeMap, final Map<String, Object> variableMap) {
+    protected void registerAttributes(final Map<String, Object> attributeMap, final Map<String, Object> argMap, final Map<String, Object> variableMap) {
         // Override to use
     }
 
-    protected String renderFormTag(final Map<String, String> attributeMap, final Object value) {
+    protected String renderFormTag(final Map<String, Object> attributeMap, final Object value) {
 
         String renderedValue = StringUtils.getNotNull(value != null ? String.valueOf(value) : "");
 

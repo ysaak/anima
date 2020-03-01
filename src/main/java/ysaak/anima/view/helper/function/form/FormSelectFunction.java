@@ -1,60 +1,84 @@
 package ysaak.anima.view.helper.function.form;
 
-import com.mitchellbosecke.pebble.extension.Function;
-import com.mitchellbosecke.pebble.extension.escaper.SafeString;
-import com.mitchellbosecke.pebble.template.EvaluationContext;
-import com.mitchellbosecke.pebble.template.PebbleTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import ysaak.anima.utils.CollectionUtils;
-import ysaak.anima.utils.StringUtils;
 import ysaak.anima.view.dto.KeyValueItem;
+import ysaak.anima.view.helper.HtmlUtils;
 import ysaak.anima.view.helper.ViewHelper;
-import ysaak.anima.view.router.RoutingService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ViewHelper(name = "formSelect")
-public class FormSelectFunction implements Function {
+public class FormSelectFunction extends AbstractFormHelper {
+    protected static final String ITEM_LIST_ARG = "itemList";
 
-    private final RoutingService routingService;
+    private static final String OPTIONS_ATTR = "options";
 
-    @Autowired
-    public FormSelectFunction(RoutingService routingService) {
-        this.routingService = routingService;
+    public FormSelectFunction() {
+        super("select", false);
     }
 
     @Override
     public List<String> getArgumentNames() {
         return Arrays.asList(
-                "name", "itemList", "selectedItem"
+                NAME_ARG, ITEM_LIST_ARG, VALUE_ARG, PARAMS_ARG
         );
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Object execute(Map<String, Object> args, PebbleTemplate self, EvaluationContext context, int lineNumber) {
+    protected void registerAttributes(Map<String, Object> attributeMap, Map<String, Object> argMap, Map<String, Object> variableMap) {
+        final List<KeyValueItem> itemList = (List<KeyValueItem>) argMap.get(ITEM_LIST_ARG);
+        attributeMap.put(OPTIONS_ATTR, itemList);
 
-        final String name = (String) args.get("name");
-        final List<KeyValueItem> itemList = (List<KeyValueItem>) args.get("itemList");
-        final String selectedItem = StringUtils.getNotNull((String) args.get("selectedItem"));
+        if (variableMap.containsKey("multiple")) {
+            attributeMap.put("multiple", null);
+        }
+    }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("<select name=\"").append(name).append("\" class=\"custom-select\">");
+    @Override
+    protected void registerClass(Set<String> classSet) {
+        classSet.remove("form-control");
+        classSet.add("custom-select");
+    }
 
-        if (CollectionUtils.isNotEmpty(itemList)) {
-            for (KeyValueItem item : itemList) {
-                sb.append("<option value=\"").append(item.getKey()).append("\"");
+    @Override
+    @SuppressWarnings("unchecked")
+    protected String renderFormTag(Map<String, Object> attributeMap, Object value) {
+        final List<KeyValueItem> itemList = (List<KeyValueItem>) attributeMap.get(OPTIONS_ATTR);
+        attributeMap.remove(OPTIONS_ATTR);
 
-                if (Objects.equals(selectedItem, item.getKey())) {
-                    sb.append(" selected");
-                }
-
-                sb.append(">").append(item.getValue()).append("</option>");
+        final List<Object> valueList = new ArrayList<>();
+        if (value != null) {
+            if (value instanceof Collection) {
+                valueList.addAll((Collection<Object>) value);
+            }
+            else {
+                valueList.add(value);
             }
         }
 
-        sb.append("</select>");
+        final StringBuilder optionsBuilder = new StringBuilder();
 
-        return new SafeString(sb.toString());
+        if (CollectionUtils.isNotEmpty(itemList)) {
+            for (KeyValueItem item : itemList) {
+
+                Map<String, Object> optAttrMap = new HashMap<>();
+                optAttrMap.put("value", item.getKey());
+
+                if (valueList.contains(item.getKey())) {
+                    optAttrMap.put("selected", null);
+                }
+
+                optionsBuilder.append(HtmlUtils.createHtmlTag("option", optAttrMap, item.getValue()));
+            }
+        }
+
+        return super.renderFormTag(attributeMap, optionsBuilder.toString());
     }
 }
