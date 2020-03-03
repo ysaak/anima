@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.Relation;
@@ -130,6 +131,8 @@ public class AnimeController extends AbstractViewController {
 
         List<ElementViewDto.ElementRelationListDto> relationList = convertRelationList(object.getRelationList());
 
+        List<ElementViewDto.ElementRemoteIdDto> remoteIdList = convertRemoteIdList(object.getRemoteIdList());
+
         return new ElementViewDto(
                 object.getId(),
                 object.getTitle(),
@@ -139,7 +142,8 @@ public class AnimeController extends AbstractViewController {
                 object.getSynopsis(),
                 seasonList,
                 tagList,
-                relationList
+                relationList,
+                remoteIdList
         );
     }
 
@@ -205,6 +209,24 @@ public class AnimeController extends AbstractViewController {
                 relationId,
                 relatedElement.getTitle(),
                 url
+        );
+    }
+
+    private List<ElementViewDto.ElementRemoteIdDto> convertRemoteIdList(List<ElementRemoteId> remoteIdList) {
+        final List<ElementViewDto.ElementRemoteIdDto> dtoList = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(remoteIdList)) {
+            remoteIdList.stream().map(this::convertRemoteId).forEach(dtoList::add);
+        }
+
+        return dtoList;
+    }
+
+    private ElementViewDto.ElementRemoteIdDto convertRemoteId(ElementRemoteId remoteId) {
+        return new ElementViewDto.ElementRemoteIdDto(
+                remoteId.getId(),
+                remoteId.getExternalSite().getSiteName(),
+                String.format(remoteId.getExternalSite().getUrlTemplate(), remoteId.getRemoteId())
         );
     }
 }

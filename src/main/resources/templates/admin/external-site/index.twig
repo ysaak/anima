@@ -1,0 +1,37 @@
+{% extends "layout" %}
+
+{% block sidebar %}
+{% include "admin/admin_sidebar" %}
+{% endblock %}
+
+
+{% block content %}
+<h1>Sites externe</h1>
+
+<p class="text-right">
+    <a href="{{ urlFor('admin.external-site.new') }}" class="btn btn-primary">Nouveau</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Nom du site</th>
+            <th>Template</th>
+            <th colspan="2">&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for site in siteList %}
+        <tr>
+            <td>{{ site.code }}</td>
+            <td>{{ site.siteName }}</td>
+            <td>{{ site.urlTemplate }}</td>
+            <td><a href="{{ urlFor('admin.external-site.edit', {'id': site.id }) }}">Modifier</a></td>
+            <td><form method="post" action="{{ urlFor('admin.external-site.delete', {'id': site.id }) }}"><button type="submit">Supprimer</button></form> </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

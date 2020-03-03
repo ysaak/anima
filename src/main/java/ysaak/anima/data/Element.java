@@ -3,12 +3,21 @@ package ysaak.anima.data;
 import org.hibernate.annotations.GenericGenerator;
 import ysaak.anima.dao.model.TagModel;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 @Entity
 @Table(name = "ELEMENT")
-public class Element {
+public class Element implements IEntity {
 
     @Id
     @GeneratedValue(generator = "suuid_generator")
@@ -45,6 +54,9 @@ public class Element {
     @OneToMany(mappedBy = "element")
     private List<Relation> relationList;
 
+    @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ElementRemoteId> remoteIdList;
+
     public Element() {
     }
 
@@ -61,6 +73,7 @@ public class Element {
         this.synopsis = synopsis;
     }
 
+    @Override
     public String getId() {
         return id;
     }
@@ -131,5 +144,13 @@ public class Element {
 
     public void setRelationList(List<Relation> relationList) {
         this.relationList = relationList;
+    }
+
+    public List<ElementRemoteId> getRemoteIdList() {
+        return remoteIdList;
+    }
+
+    public void setRemoteIdList(List<ElementRemoteId> remoteIdList) {
+        this.remoteIdList = remoteIdList;
     }
 }

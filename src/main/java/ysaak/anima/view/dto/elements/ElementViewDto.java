@@ -23,7 +23,9 @@ public class ElementViewDto {
 
     private final List<ElementRelationListDto> relationList;
 
-    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList, List<ElementRelationListDto> relationList) {
+    private final List<ElementRemoteIdDto> remoteIdList;
+
+    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList, List<ElementRelationListDto> relationList, List<ElementRemoteIdDto> remoteIdList) {
         this.id = id;
         this.title = title;
         this.type = type;
@@ -33,6 +35,7 @@ public class ElementViewDto {
         this.seasonList = seasonList;
         this.tagList = tagList;
         this.relationList = relationList;
+        this.remoteIdList = remoteIdList;
     }
 
     public String getId() {
@@ -69,6 +72,10 @@ public class ElementViewDto {
 
     public List<ElementRelationListDto> getRelationList() {
         return relationList;
+    }
+
+    public List<ElementRemoteIdDto> getRemoteIdList() {
+        return remoteIdList;
     }
 
     public static class ElementSeasonDto {
@@ -194,6 +201,30 @@ public class ElementViewDto {
 
         public String getTitle() {
             return title;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
+
+    public static class ElementRemoteIdDto {
+        private final String id;
+        private final String siteName;
+        private final String url;
+
+        public ElementRemoteIdDto(String id, String siteName, String url) {
+            this.id = id;
+            this.siteName = siteName;
+            this.url = url;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getSiteName() {
+            return siteName;
         }
 
         public String getUrl() {

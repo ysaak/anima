@@ -16,6 +16,7 @@
             <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
+            <a class="dropdown-item" href="{{ urlFor('elements.remote-ids.new', {'elementId': element.id }) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une ressource</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
         </div>
@@ -24,9 +25,29 @@
 
 <div class="row">
     <div class="col-8">
-        <p><strong>Type :</strong> {{ element.subtype }}</p>
-        <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
-        <p><strong>Tags :</strong> {{ element.tagList | join(', ') }}</p>
+        <div class="row">
+            <div class="col-6">
+                <p><strong>Type :</strong> {{ element.subtype }}</p>
+                <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
+                <p><strong>Tags :</strong> {{ element.tagList | join(', ') }}</p>
+            </div>
+            <div class="col-6">
+                <strong>Ressource :</strong><br />
+                <table class="table table-sm">
+                    <col/>
+                    <col width="30"/>
+                    <tbody>
+                    {% for remoteId in element.remoteIdList %}
+                        <tr>
+                            <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
+                            <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <p><strong>Synopsis :</strong> {{ element.synopsis | nl2br }}</p>
 
         {% if element.relationList is not empty %}

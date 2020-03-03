@@ -7,24 +7,35 @@ import ysaak.anima.IAnimaComponent;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.repository.ElementRepository;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
+import ysaak.anima.data.ExternalSite;
 import ysaak.anima.data.Season;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
+import ysaak.anima.service.technical.TranslationService;
+import ysaak.anima.service.validation.ValidationMessages;
 import ysaak.anima.utils.CollectionUtils;
+import ysaak.anima.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class ElementService implements IAnimaComponent {
 
+    private final ExternalSiteService externalSiteService;
+    private final TranslationService translationService;
+
     private final ElementRepository elementRepository;
 
     @Autowired
-    public ElementService(ElementRepository elementRepository) {
+    public ElementService(ExternalSiteService externalSiteService, TranslationService translationService, ElementRepository elementRepository) {
+        this.externalSiteService = externalSiteService;
+        this.translationService = translationService;
         this.elementRepository = elementRepository;
     }
 
@@ -237,5 +248,62 @@ public class ElementService implements IAnimaComponent {
         }
 
         return elementRepository.save(element);
+    }
+
+    /* ----- Remote id management ----- */
+
+    public void addRemoteId(String elementId, String externalSiteId, String remoteId) throws NoDataFoundException, DataValidationException {
+        Preconditions.checkNotNull(elementId, "elementId is null");
+        //Preconditions.checkNotNull(externalSiteId, "externalSiteId is null");
+        Preconditions.checkNotNull(remoteId, "remoteId is null");
+
+        final Element element = findById(elementId);
+        final ExternalSite externalSite;
+
+        if (StringUtils.isNotEmpty(externalSiteId)) {
+            try {
+                externalSite = externalSiteService.findById(externalSiteId);
+            }
+            catch (NoDataFoundException e) {
+                throw new DataValidationException(Collections.singletonMap(
+                        "externalSiteId", translationService.get("elements.remote-id.error.external-site-not-found")
+                ));
+            }
+        }
+        else {
+            throw new DataValidationException(Collections.singletonMap(
+                    "externalSiteId", translationService.get(ValidationMessages.NOT_EMPTY_KEY)
+            ));
+        }
+
+        final ElementRemoteId elementRemoteId = new ElementRemoteId(
+                element,
+                externalSite,
+                remoteId
+        );
+
+        // TODO Uniqueness check
+
+        element.getRemoteIdList().add(elementRemoteId);
+
+        elementRepository.save(element);
+    }
+
+    public void deleteRemoteId(String elementId, String remoteId) throws NoDataFoundException {
+        Preconditions.checkNotNull(elementId, "elementId is null");
+        Preconditions.checkNotNull(remoteId, "remoteId is null");
+
+        final Element element = findById(elementId);
+
+        ElementRemoteId idToRemove = null;
+        for (ElementRemoteId storedId : element.getRemoteIdList()) {
+            if (remoteId.equals(storedId.getId())) {
+                idToRemove = storedId;
+                break;
+            }
+        }
+
+        element.getRemoteIdList().remove(idToRemove);
+        elementRepository.save(element);
     }
 }

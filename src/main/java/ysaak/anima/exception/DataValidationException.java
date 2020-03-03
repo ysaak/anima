@@ -10,12 +10,12 @@ public class DataValidationException extends Exception {
     private final Map<String, String> errorMap;
 
     public DataValidationException(final String key, final String message) {
-        super(message);
+        super("Error while validating field " + key + " > " + message);
         errorMap = Collections.singletonMap(key, message);
     }
 
     public DataValidationException(Map<String, String> errorMap) {
-        super("Error while validating object");
+        super("Error while validating object ");
         this.errorMap = errorMap;
     }
 

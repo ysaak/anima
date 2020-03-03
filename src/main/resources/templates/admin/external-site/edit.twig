@@ -1,0 +1,37 @@
+{% extends "layout" %}
+
+{% block sidebar %}
+{% include "admin/admin_sidebar" %}
+{% endblock %}
+
+{% block content %}
+{% if site.id is null or site.id is empty %}
+<h1>Nouveau site externe</h1>
+<form method="post" action="{{ urlFor('admin.external-site.create') }}">
+{% else %}
+<h1>Modifier site externe</h1>
+<form method="post" action="{{ urlFor('admin.external-site.update', { 'id': site.id }) }}">
+{% endif %}
+
+    <input type="hidden" name="id" value="{{ site.id }}">
+
+    <div class="form-group">
+        <label for="code">Code</label>
+        {{ formInput("code", site.code) }}
+    </div>
+
+    <div class="form-group">
+        <label for="siteName">Nom du site</label>
+        {{ formInput("siteName", site.siteName) }}
+    </div>
+
+    <div class="form-group">
+        <label for="urlTemplate">Template URL</label>
+        {{ formInput("urlTemplate", site.urlTemplate) }}
+        <small class="form-text text-muted"><code>%s</code> sera remplacé par l'identifiant du site</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+</form>
+
+{% endblock %}

@@ -28,6 +28,7 @@ import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.StorageException;
 import ysaak.anima.service.ElementService;
+import ysaak.anima.service.ExternalSiteService;
 import ysaak.anima.service.RelationService;
 import ysaak.anima.service.StorageService;
 import ysaak.anima.service.TagService;
@@ -40,6 +41,7 @@ import ysaak.anima.view.dto.elements.ElementEditDto;
 import ysaak.anima.view.dto.elements.EpisodeEditDto;
 import ysaak.anima.view.dto.elements.EpisodeMassAddDto;
 import ysaak.anima.view.dto.elements.RelationAddDto;
+import ysaak.anima.view.dto.elements.RemoteIdAddDto;
 import ysaak.anima.view.dto.elements.SeasonEditDto;
 import ysaak.anima.view.router.RoutingService;
 
@@ -59,15 +61,17 @@ public class ElementController extends AbstractViewController {
     private final TagService tagService;
     private final StorageService storageService;
     private final RelationService relationService;
+    private final ExternalSiteService externalSiteService;
     private final RoutingService routingService;
     private final TranslationService translationService;
 
     @Autowired
-    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, RoutingService routingService, TranslationService translationService) {
         this.elementService = elementService;
         this.tagService = tagService;
         this.storageService = storageService;
         this.relationService = relationService;
+        this.externalSiteService = externalSiteService;
         this.routingService = routingService;
         this.translationService = translationService;
     }
@@ -451,4 +455,43 @@ public class ElementController extends AbstractViewController {
         return "redirect:" + routingService.getElementPath(element);
     }
 
+    /* ----- Remote id management ----- */
+    @GetMapping(path = "/{elementId}/remote-id/new", name = "elements.remote-ids.new")
+    public String remoteIdNewAction(final ModelMap model, @PathVariable("elementId") final String elementId) {
+        model.put("elementId", elementId);
+
+        final List<KeyValueItem> siteList = externalSiteService.findAll().stream()
+                .map(s -> new KeyValueItem(s.getId(), s.getSiteName()))
+                .collect(Collectors.toList());
+        model.put("siteList", siteList);
+
+        return "elements/edit_remote_id";
+    }
+
+    @PostMapping(path = "/{elementId}/remote-id/", name = "elements.remote-ids.create")
+    public String remoteIdCreateAction(@ModelAttribute RemoteIdAddDto remoteIdAddDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
+        final Element element = elementService.findById(remoteIdAddDto.getElementId());
+
+        try {
+            elementService.addRemoteId(
+                    remoteIdAddDto.getElementId(),
+                    remoteIdAddDto.getExternalSiteId(),
+                    remoteIdAddDto.getRemoteId()
+            );
+        }
+        catch (DataValidationException dve) {
+            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+        }
+
+        return "redirect:" + routingService.getElementPath(element);
+    }
+
+    @PostMapping(path = "/{elementId}/remote-id/{remoteId}/delete", name = "elements.remote-ids.delete")
+    public String remoteIdDeleteAction(final RedirectAttributes redirectAttributes, @PathVariable("elementId") final String elementId, @PathVariable("remoteId") final String remoteId) throws NoDataFoundException {
+        final Element element = elementService.findById(elementId);
+        elementService.deleteRemoteId(elementId, remoteId);
+
+        this.addFlashInfoMessage(redirectAttributes, translationService.get("elements.remote-id.delete"));
+        return "redirect:" + routingService.getElementPath(element);
+    }
 }
