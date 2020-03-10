@@ -1,0 +1,66 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>Importation - AniDB</h1>
+
+<form method="get" action="{{ urlFor('importer.anidb.search') }}" class="d-flex">
+    <input type="text" class="form-control" name="search" value="{{ search_text }}" autocomplete="off" />
+    <button type="submit" class="btn btn-primary ml-2">Rechercher</button>
+</form>
+
+{% if searchResultList is not empty %}
+<hr>
+<div class="row">
+    {% for result in searchResultList %}
+    <div class="col-6 p-2">
+        <div class="d-flex flex-column border p-2">
+            <div><strong>{{ result.title }}</strong></div>
+            <div class="d-flex justify-content-between align-items-end">
+                <div>Consuler sur <a href="{{ result.remoteUrl }}" target="_blank">AniDB</a></div>
+                {% if result.elementId is empty %}
+                <form method="post" action="{{ urlFor('importer.anidb.import') }}" class="d-flex align-items-center">
+                    <input type="hidden" name="externalId" value="{{ result.externalId }}" />
+                    <button type="submit" class="btn btn-primary">Importer</button>
+                </form>
+                {% else %}
+                <span class="btn btn-light disabled">D&eacute;j&agrave; import&eacute;</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="d-flex justify-content-between align-items-center">
+    <div>{{ page.elementCount }} r&eacute;sultat(s)</div>
+
+    <ul class="pagination justify-content-end">
+
+        {% if page.hasPrevious %}
+        <li class="page-item"><a href="{{ urlFor('importer.anidb.search', {'search': search_text, 'page': page.current - 1}) }}" class="page-link">&laquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+        <li class="page-item disabled"><span class="page-link">{{ page.current }} / {{ page.total }}</span></li>
+        {% if page.hasNext %}
+        <li class="page-item"><a href="{{ urlFor('importer.anidb.search', {'search': search_text, 'page': page.current + 1}) }}" class="page-link">&raquo;</a></li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+    </ul>
+</div>
+
+{% elseif search_text is not empty %}
+<hr>
+<p>Aucun r&eacute;sultat trouv&eacute;</p>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+});
+</script>
+{% endblock %}

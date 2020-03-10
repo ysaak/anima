@@ -6,23 +6,29 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ysaak.anima.IAnimaComponent;
 import ysaak.anima.dao.repository.ExternalSiteRepository;
+import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ExternalSite;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.NotAllowedOperationException;
+import ysaak.anima.service.importer.anidb.AnidbConstants;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.service.validation.ValidationMessages;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ExternalSiteService implements IAnimaComponent {
 
-    private static final List<String> UNMODIFIABLE_CODE_LIST = Collections.singletonList("ANIDB");
+    private static final List<String> UNMODIFIABLE_CODE_LIST = Collections.singletonList(
+            AnidbConstants.ANIDB_SITE_CODE
+    );
 
     private final ExternalSiteRepository externalSiteRepository;
     private final TranslationService translationService;
@@ -60,6 +66,11 @@ public class ExternalSiteService implements IAnimaComponent {
                 .orElseThrow(() -> new NoDataFoundException("No external site found with id " + externalSiteId));
     }
 
+    public ExternalSite findByCode(String code) throws NoDataFoundException {
+        return externalSiteRepository.findByCode(code)
+                .orElseThrow(() -> new NoDataFoundException("No external site found with code " + code));
+    }
+
     public List<ExternalSite> findAll() {
         return CollectionUtils.toList(
                 externalSiteRepository.findAll(Sort.by("siteName"))
@@ -74,5 +85,37 @@ public class ExternalSiteService implements IAnimaComponent {
         }
 
         externalSiteRepository.delete(siteToDelete);
+    }
+
+    public Map<String, String> getUrlForIdList(final String siteCode, final List<String> idList) {
+        final Optional<ExternalSite> site = externalSiteRepository.findByCode(siteCode);
+
+        final Map<String, String> urlMap = new HashMap<>();
+
+        if (site.isPresent() && CollectionUtils.isNotEmpty(idList)) {
+            String urlTemplate = site.get().getUrlTemplate();
+
+            for (String id : idList) {
+                urlMap.put(id, String.format(urlTemplate, id));
+            }
+        }
+
+        return urlMap;
+    }
+
+    public Map<String, String> findElementIdFromSiteAndRemoteId(final String siteCode, final List<String> idList) {
+        final Optional<ExternalSite> site = externalSiteRepository.findByCode(siteCode);
+
+        final Map<String, String> elementMap = new HashMap<>();
+
+        if (site.isPresent()) {
+            final List<ElementRemoteId> remoteIdList = externalSiteRepository.findElementForSite(site.get().getId(), idList);
+
+            for (ElementRemoteId remoteId : remoteIdList) {
+                elementMap.put(remoteId.getRemoteId(), remoteId.getElement().getId());
+            }
+        }
+
+        return elementMap;
     }
 }

@@ -3,13 +3,16 @@ package ysaak.anima.data;
 import org.hibernate.annotations.GenericGenerator;
 import ysaak.anima.service.validation.ValidationMessages;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table(name = "EXTERNAL_SITE")
@@ -34,6 +37,9 @@ public class ExternalSite {
     @Size(max = 250, message = ValidationMessages.MAX_LENGTH)
     @Column(name = "EXSI_URL_TEMPLATE", nullable = false)
     private String urlTemplate;
+
+    @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ElementRemoteId> elementRemoteIdList;
 
     public String getId() {
         return id;
@@ -65,5 +71,13 @@ public class ExternalSite {
 
     public void setUrlTemplate(String urlTemplate) {
         this.urlTemplate = urlTemplate;
+    }
+
+    public List<ElementRemoteId> getElementRemoteIdList() {
+        return elementRemoteIdList;
+    }
+
+    public void setElementRemoteIdList(List<ElementRemoteId> elementRemoteIdList) {
+        this.elementRemoteIdList = elementRemoteIdList;
     }
 }

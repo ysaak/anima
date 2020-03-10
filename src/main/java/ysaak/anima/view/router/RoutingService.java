@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementType;
+import ysaak.anima.exception.TechnicalException;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
 
@@ -19,12 +21,12 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -131,7 +133,11 @@ public class RoutingService {
     public String getElementPath(Element element) {
         Preconditions.checkNotNull(element);
 
-        return "/" + element.getType().getPathName() + "/" + element.getId();
+        return getElementPath(element.getType(), element.getId());
+    }
+
+    public String getElementPath(ElementType type, String id) {
+        return "/" + type.getPathName() + "/" + id;
     }
 
     public Optional<String> getUrlFor(String routeName, Map<String, Object> parameters) {
@@ -158,12 +164,28 @@ public class RoutingService {
             if (CollectionUtils.isNotEmpty(queryParamMap)) {
                 String queryParam = Joiner.on("&").withKeyValueSeparator("=").join(queryParamMap);
 
-                path += path + "?" + queryParam;
+                path += "?" + queryParam;
 
             }
         }
 
         return Optional.ofNullable(path);
+    }
+
+    public String redirectUrl(final String routeName) {
+        return this.redirectUrl(routeName, Collections.emptyMap());
+    }
+
+    public String redirectUrl(final String routeName, final Map<String, Object> parameters) {
+        Preconditions.checkNotNull(routeName);
+        Preconditions.checkNotNull(parameters);
+
+        return "redirect:" + getUrlFor(routeName, parameters)
+                .orElseThrow(() -> new TechnicalException("Unknown route " + routeName));
+    }
+
+    public String redirectUrl(final Element element) {
+        return "redirect:" + this.getElementPath(element);
     }
 
     private static class AnnotationData {

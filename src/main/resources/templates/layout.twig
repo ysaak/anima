@@ -50,7 +50,16 @@ html, body {
                 </div>
             </li>
             <li class="nav-item">
-                <a class="btn btn-secondary" href="{{ urlFor('elements.new') }}">Cr&eacute;er</a>
+                <div class="btn-group">
+                    <a class="btn btn-secondary" href="{{ urlFor('elements.new') }}">Cr&eacute;er</a>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{{ urlFor('importer.index') }}">Importation</a>
+                    </div>
+                </div>
+
             </li>
         </ul>
         <form class="form-inline my-2 my-lg-0">

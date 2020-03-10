@@ -1,0 +1,23 @@
+{% extends "layout" %}
+
+{% block sidebar %}
+{% include "admin/admin_sidebar" %}
+{% endblock %}
+
+
+{% block content %}
+<h1>AniDB</h1>
+<h6 class="text-muted">Importer</h6>
+
+
+<div class="card">
+    <div class="card-header">Recherche de titres</div>
+    <div class="card-body">
+        <p class="card-text">Titles en mémoire : {{ title_count }}</p>
+        <form action="{{ urlFor('admin.importer.anidb.reload-titles') }}" method="post">
+        <button type="submit" class="btn btn-primary">Actualiser</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
