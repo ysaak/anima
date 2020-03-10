@@ -1,6 +1,6 @@
-cache/
-storage/
-target/
+/cache/
+/storage/
+/target/
 
 # editor
 .idea
