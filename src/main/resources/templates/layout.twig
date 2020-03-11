@@ -86,9 +86,9 @@ html, body {
                 </div>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0 mr-lg-4">
+        <form class="form-inline my-2 my-lg-0 mr-lg-4" method="get" action="{{ urlFor('search') }}">
             <div class="input-group">
-                <input class="form-control search-input" type="text" placeholder="Rechercher" aria-label="Search" />
+                <input class="form-control search-input" type="text" placeholder="Rechercher" name="search" autocomplete="off" />
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary search-button" type="submit">Search</button>
                 </div>

@@ -1,0 +1,28 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>Recherche</h1>
+
+<form method="get" action="{{ urlFor('search') }}" class="d-flex">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" value="{{ search_text }}" autocomplete="off" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </div>
+    </div>
+</form>
+
+<hr>
+
+<div class="d-flex flex-wrap">
+    {% for element in animeList %}
+    <div class="media m-1 border rounded position-relative" style="width: 400px">
+        <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" class="mr-3 rounded-left" />
+        <div class="media-body">
+            <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
