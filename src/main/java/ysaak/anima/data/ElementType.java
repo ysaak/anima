@@ -1,19 +1,21 @@
 package ysaak.anima.data;
 
 public enum ElementType {
-    ANIME("ANI", "animes", true, true)
+    ANIME("ANI", "animes", true, true, "animes.index")
     ;
 
     private final String dbCode;
     private final String pathName;
     private final boolean hasSubtype;
     private final boolean hasEpisodeList;
+    private final String indexRoute;
 
-    ElementType(String dbCode, String pathName, boolean hasSubtype, boolean hasEpisodeList) {
+    ElementType(String dbCode, String pathName, boolean hasSubtype, boolean hasEpisodeList, String indexRoute) {
         this.dbCode = dbCode;
         this.pathName = pathName;
         this.hasSubtype = hasSubtype;
         this.hasEpisodeList = hasEpisodeList;
+        this.indexRoute = indexRoute;
     }
 
     public String getDbCode() {
@@ -30,5 +32,9 @@ public enum ElementType {
 
     public boolean isHasEpisodeList() {
         return hasEpisodeList;
+    }
+
+    public String getIndexRoute() {
+        return indexRoute;
     }
 }

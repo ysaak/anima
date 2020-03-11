@@ -140,6 +140,10 @@ public class RoutingService {
         return "/" + type.getPathName() + "/" + id;
     }
 
+    public String getUrlFor(String routeName) {
+        return getUrlFor(routeName, Collections.emptyMap())
+                .orElseThrow(() -> new TechnicalException("No route found for name " + routeName));
+    }
     public Optional<String> getUrlFor(String routeName, Map<String, Object> parameters) {
         String path = null;
 

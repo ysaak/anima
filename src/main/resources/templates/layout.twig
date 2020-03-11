@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/tokenize2/tokenize2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/typeaheadjs.css') }}" />
+
+    <!-- Favicon -->
+
+
     <title>Anima</title>
 <style type="text/css">
 html, body {
@@ -24,32 +28,53 @@ html, body {
     padding: 1rem;
 }
 
+.search-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #6c757d;
+    color: #FFF;
+}
+
+.search-input::placeholder {
+    color: #BBB;
+}
+
+.search-input:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #6c757d;
+    box-shadow: none;
+    color: #FFF;
+}
+.search-input:focus::placeholder {
+    color: #FFF;
+}
+
+.search-button {
+    color: #BBB;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-button:hover {
+    color: #FFF;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
 </style>
 </head>
 <body class="d-flex flex-column">
 <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow">
-    <a class="navbar-brand" href="/">Anima</a>
+    <a class="navbar-brand" href="/">
+        <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="" />
+        Anima
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ urlFor('animes.index') }}">Animes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
-            <li class="nav-item">
+            {{ main_menu() }}
+            <li class="nav-item ml-lg-4">
                 <div class="btn-group">
                     <a class="btn btn-secondary" href="{{ urlFor('elements.new') }}">Cr&eacute;er</a>
                     <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -59,14 +84,17 @@ html, body {
                         <a class="dropdown-item" href="{{ urlFor('importer.index') }}">Importation</a>
                     </div>
                 </div>
-
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        <form class="form-inline my-2 my-lg-0 mr-lg-4">
+            <div class="input-group">
+                <input class="form-control search-input" type="text" placeholder="Rechercher" aria-label="Search" />
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary search-button" type="submit">Search</button>
+                </div>
+            </div>
         </form>
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav">
             <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
         </ul>
     </div>
