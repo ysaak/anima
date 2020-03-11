@@ -11,18 +11,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ysaak.anima.view.helper.AssetResolver;
 import ysaak.anima.view.helper.ViewHelperExtension;
 
-import javax.servlet.ServletContext;
-
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
     private final ApplicationContext context;
-    private final ServletContext servletContext;
 
     @Autowired
-    public WebConfig(ApplicationContext context, ServletContext servletContext) {
+    public WebConfig(ApplicationContext context) {
         this.context = context;
-        this.servletContext = servletContext;
     }
 
     @Bean

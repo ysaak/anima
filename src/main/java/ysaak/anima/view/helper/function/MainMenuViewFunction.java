@@ -38,33 +38,22 @@ public class MainMenuViewFunction implements Function {
                 ElementType.ANIME
         );
 
+        String currentRoute = routingService.getCurrentRoute().orElse("");
+
         // TODO check active menu button => routingService.getCurrentRoute();
 
         StringBuilder menuBuilder = new StringBuilder();
 
-        typeList.stream().map(this::createNavLink).forEachOrdered(menuBuilder::append);
+        typeList.stream().map(type -> createNavLink(type, currentRoute)).forEachOrdered(menuBuilder::append);
 
         return new SafeString(menuBuilder.toString());
     }
 
-    private String createNavLink(ElementType elementType) {
+    private String createNavLink(ElementType elementType, String currentRoute) {
         String linkName = translationService.get("main-menu.element." + elementType.name());
         String linkHref = routingService.getUrlFor(elementType.getIndexRoute());
-        return "<li class=\"nav-item active\"><a class=\"nav-link\" href=\"" + linkHref + "\">" + linkName + "</a></li>";
+        String itemClass= (currentRoute.equals(elementType.getIndexRoute())) ? " active" : "";
+
+        return "<li class=\"nav-item" + itemClass + "\"><a class=\"nav-link\" href=\"" + linkHref + "\">" + linkName + "</a></li>";
     }
-
-/*
-    private String createMenuButton(Module module) {
-        StringBuilder sb = new StringBuilder("<a href=\"");
-
-        String path = routingService.getUrlFor(module.getIndexRouteName(), new HashMap<>())
-                .orElseThrow(() -> new ViewException("No route found for name " + module.getIndexRouteName()));
-
-        sb.append(path)
-                .append("\" class=\"lcars-element rounded\">")
-                .append(module.getName())
-                .append("</a>");
-
-        return sb.toString();
-   }*/
 }

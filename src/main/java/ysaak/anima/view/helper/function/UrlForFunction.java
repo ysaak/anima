@@ -4,7 +4,6 @@ import com.mitchellbosecke.pebble.extension.Function;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.PebbleTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import ysaak.anima.exception.ViewException;
 import ysaak.anima.view.helper.ViewHelper;
 import ysaak.anima.view.router.RoutingService;
 
@@ -33,19 +32,23 @@ public class UrlForFunction implements Function {
     @Override
     @SuppressWarnings("unchecked")
     public Object execute(Map<String, Object> map, PebbleTemplate self, EvaluationContext evaluationContext, int lineNumber) {
-        String routeName = (String) map.get(ROUTE_NAME_ARG);
+        Object object = map.get(ROUTE_NAME_ARG);
 
-        Map<String, Object> variableMap;
+        if (object instanceof String) {
+            String routeName = (String) object;
 
-        if (map.containsKey(VARIABLE_MAP_ARG)) {
-            variableMap = (Map<String, Object>) map.get(VARIABLE_MAP_ARG);
+            Map<String, Object> variableMap;
+
+            if (map.containsKey(VARIABLE_MAP_ARG)) {
+                variableMap = (Map<String, Object>) map.get(VARIABLE_MAP_ARG);
+            } else {
+                variableMap = new HashMap<>();
+            }
+
+            return routingService.getUrlFor(routeName, variableMap);
         }
         else {
-            variableMap = new HashMap<>();
+            return routingService.getUrlFor(object);
         }
-
-
-        return routingService.getUrlFor(routeName, variableMap)
-                .orElseThrow(() -> new ViewException("No route found for name '" + routeName + "'", self.getName(), lineNumber));
     }
 }

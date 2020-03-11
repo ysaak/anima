@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ysaak.anima.data.Element;
-import ysaak.anima.data.ElementType;
 import ysaak.anima.exception.TechnicalException;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
@@ -130,22 +131,27 @@ public class RoutingService {
         return annotationData;
     }
 
-    public String getElementPath(Element element) {
-        Preconditions.checkNotNull(element);
-
-        return getElementPath(element.getType(), element.getId());
-    }
-
-    public String getElementPath(ElementType type, String id) {
-        return "/" + type.getPathName() + "/" + id;
-    }
-
     public String getUrlFor(String routeName) {
-        return getUrlFor(routeName, Collections.emptyMap())
-                .orElseThrow(() -> new TechnicalException("No route found for name " + routeName));
+        return getUrlFor(routeName, Collections.emptyMap());
     }
-    public Optional<String> getUrlFor(String routeName, Map<String, Object> parameters) {
-        String path = null;
+
+    public String getUrlFor(Object object) {
+        Preconditions.checkNotNull(object);
+
+        if (object instanceof String) {
+            return getUrlFor((String) object);
+        }
+        else if (object instanceof Element) {
+            Element element = (Element) object;
+            return getUrlFor(element.getType().getViewRoute(), Collections.singletonMap("id", element.getId()));
+        }
+        else {
+            throw new TechnicalException("No route defined for class " + object.getClass().getName());
+        }
+    }
+
+    public String getUrlFor(String routeName, Map<String, Object> parameters) {
+        String path;
 
         if (routeMap.containsKey(routeName)) {
 
@@ -172,8 +178,11 @@ public class RoutingService {
 
             }
         }
+        else {
+            throw new TechnicalException("No route found for name " + routeName);
+        }
 
-        return Optional.ofNullable(path);
+        return path;
     }
 
     public String redirectUrl(final String routeName) {
@@ -184,12 +193,21 @@ public class RoutingService {
         Preconditions.checkNotNull(routeName);
         Preconditions.checkNotNull(parameters);
 
-        return "redirect:" + getUrlFor(routeName, parameters)
-                .orElseThrow(() -> new TechnicalException("Unknown route " + routeName));
+        return "redirect:" + getUrlFor(routeName, parameters);
     }
 
     public String redirectUrl(final Element element) {
-        return "redirect:" + this.getElementPath(element);
+        return "redirect:" + this.getUrlFor(element);
+    }
+
+    public Optional<String> getCurrentRoute() {
+        final ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        final String currentURI = requestAttributes.getRequest().getRequestURI();
+
+        return this.routeMap.values().stream()
+                .filter(route -> route.getPath().equals(currentURI))
+                .findFirst()
+                .map(Route::getName);
     }
 
     private static class AnnotationData {

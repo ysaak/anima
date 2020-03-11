@@ -111,7 +111,7 @@ public class ElementController extends AbstractViewController {
             return "redirect:/elements/new";
         }
 
-        return "redirect:" + routingService.getElementPath(savedElement);
+        return "redirect:" + routingService.getUrlFor(savedElement);
     }
 
     @GetMapping(path = "/{id}/edit", name = "elements.edit")
@@ -156,7 +156,7 @@ public class ElementController extends AbstractViewController {
             return "redirect:/elements/" + elementEditDto.getId() + "/edit";
         }
 
-        return "redirect:" + routingService.getElementPath(savedElement);
+        return "redirect:" + routingService.getUrlFor(savedElement);
     }
 
     @PostMapping(path = "/{id}/delete", name = "elements.delete")
@@ -197,7 +197,7 @@ public class ElementController extends AbstractViewController {
 
         storageService.store(StorageType.ELEMENT, elementId, file);
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     /* ----- Season management ----- */
@@ -223,7 +223,7 @@ public class ElementController extends AbstractViewController {
             return "redirect:/";
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @GetMapping(path = "/{elementId}/seasons/{seasonId}/edit", name = "elements.seasons.edit")
@@ -254,14 +254,14 @@ public class ElementController extends AbstractViewController {
         element = elementService.updateSeasonTitle(seasonEditDto.getElementId(), seasonEditDto.getId(), seasonEditDto.getTitle());
 
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @PostMapping(path = "/{elementId}/seasons/{seasonId}/delete", name = "elements.seasons.delete")
     public String seasonDeleteAction(@PathVariable("elementId") final String elementId, @PathVariable("seasonId") final String seasonId, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element = elementService.deleteSeason(elementId, seasonId);
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.season.delete"));
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     /* ----- Episode management ----- */
@@ -298,7 +298,7 @@ public class ElementController extends AbstractViewController {
             return "redirect:/";
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @GetMapping(path = "/{elementId}/episodes/massNew", name = "elements.episodes.mass-new")
@@ -345,7 +345,7 @@ public class ElementController extends AbstractViewController {
             element = elementService.findById(episodeMassAddDto.getElementId());
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @GetMapping(path = "/{elementId}/episodes/{episodeId}/edit", name = "elements.episodes.edit")
@@ -395,14 +395,14 @@ public class ElementController extends AbstractViewController {
             return "redirect:/";
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @PostMapping(path = "/{elementId}/episodes/{episodeId}/delete", name = "elements.episodes.delete")
     public String episodeDeleteAction(@PathVariable("elementId") final String elementId, @PathVariable("episodeId") final String episodeId, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element = elementService.deleteEpisode(elementId, episodeId);
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.episode.delete"));
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     /* ----- Relation management ----- */
@@ -442,7 +442,7 @@ public class ElementController extends AbstractViewController {
             addFlashErrorMessage(redirectAttributes, dve.getMessageList());
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @PostMapping(path = "/{elementId}/relations/{relationId}/delete", name = "elements.relations.delete")
@@ -452,7 +452,7 @@ public class ElementController extends AbstractViewController {
         relationService.deleteRelation(relationId);
 
         addFlashInfoMessage(redirectAttributes, translationService.get("elements.relation.delete"));
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     /* ----- Remote id management ----- */
@@ -483,7 +483,7 @@ public class ElementController extends AbstractViewController {
             addFlashErrorMessage(redirectAttributes, dve.getMessageList());
         }
 
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 
     @PostMapping(path = "/{elementId}/remote-id/{remoteId}/delete", name = "elements.remote-ids.delete")
@@ -492,6 +492,6 @@ public class ElementController extends AbstractViewController {
         elementService.deleteRemoteId(elementId, remoteId);
 
         this.addFlashInfoMessage(redirectAttributes, translationService.get("elements.remote-id.delete"));
-        return "redirect:" + routingService.getElementPath(element);
+        return "redirect:" + routingService.getUrlFor(element);
     }
 }

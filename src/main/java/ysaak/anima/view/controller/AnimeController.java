@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @Transactional
-@RequestMapping(value = { "/animes", "/book" })
+@RequestMapping("/animes")
 public class AnimeController extends AbstractViewController {
     private final ElementService elementService;
     private final RoutingService routingService;
@@ -89,7 +89,7 @@ public class AnimeController extends AbstractViewController {
 
     private ElementListDto createViewDto(Element element) {
 
-        String viewUrl = routingService.getElementPath(element);
+        String viewUrl = routingService.getUrlFor(element);
 
         return new ElementListDto(
                 element.getId(),
@@ -203,7 +203,7 @@ public class AnimeController extends AbstractViewController {
     }
 
     private ElementViewDto.ElementRelationDto convertRelation(String relationId, Element relatedElement) {
-        final String url = routingService.getElementPath(relatedElement);
+        final String url = routingService.getUrlFor(relatedElement);
 
         return new ElementViewDto.ElementRelationDto(
                 relationId,
