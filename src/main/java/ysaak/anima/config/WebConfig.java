@@ -35,28 +35,9 @@ public class WebConfig implements WebMvcConfigurer {
         return new ViewHelperExtension(context);
     }
 
-    /*
-    @Override
-    public void configure(JtwigViewResolver viewResolver) {
-
-        final Reflections reflections = new Reflections(AnimaApplication.BASE_PACKAGE);
-        final Set<Class<?>> viewHelperClassSet = reflections.getTypesAnnotatedWith(ViewHelper.class);
-
-        List<JtwigFunction> functionList = viewHelperClassSet.stream()
-                .filter(JtwigFunction.class::isAssignableFrom)
-                .map(c -> (JtwigFunction) this.context.getBean(c))
-                .collect(Collectors.toList());
-
-
-        viewResolver.setRenderer(new JtwigRenderer(EnvironmentConfigurationBuilder
-                .configuration()
-                .functions().add(functionList).and()
-                .build()));
-    }
-    */
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("public/**").addResourceLocations("classpath:public/");
+        registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:favicon.ico");
     }
 }
