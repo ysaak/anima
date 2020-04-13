@@ -1,0 +1,10 @@
+.main {
+    padding: 1rem;
+    overflow: auto;
+    flex: 1 auto;
+    height: calc(100vh - 62px);
+}
+
+.header-section + .main {
+    height: calc(100vh - 108px - 62px);
+}

@@ -1,0 +1,20 @@
+.sidebar {
+    position: relative;
+    background-color: #EEE;
+    padding: 1rem;
+    width: 200px;
+    z-index: 50;
+
+    &::after {
+        content: '';
+        box-shadow: inset 5px 0px 6px -3px rgba(0, 0, 0, 0.4);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: -6px;
+        width: 6px;
+        /*opacity: 0;*/
+        pointer-events: none;
+        z-index: 49;
+    }
+}

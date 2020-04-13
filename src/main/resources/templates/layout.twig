@@ -9,131 +9,87 @@
     <link rel="stylesheet" href="{{ asset('vendor/tokenize2/tokenize2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/typeaheadjs.css') }}" />
 
-    <!-- Favicon -->
-
+    <link rel="stylesheet" href="{{ asset('style.css') }}" />
 
     <title>Anima</title>
-<style type="text/css">
-html, body {
-    height: 100%;
-}
-
-.sidebar {
-    background-color: #EEE;
-    padding: 1rem;
-    width: 200px;
-}
-
-.main {
-    padding: 1rem;
-}
-
-.search-input {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #6c757d;
-    color: #FFF;
-}
-
-.search-input::placeholder {
-    color: #BBB;
-}
-
-.search-input:focus {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: #6c757d;
-    box-shadow: none;
-    color: #FFF;
-}
-.search-input:focus::placeholder {
-    color: #FFF;
-}
-
-.search-button {
-    color: #BBB;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.search-button:hover {
-    color: #FFF;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-
-</style>
 </head>
-<body class="d-flex flex-column">
-<nav class="navbar navbar-expand-md navbar-dark bg-dark shadow">
-    <a class="navbar-brand" href="/">
-        <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="" />
-        Anima
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<body>
+<div class="d-flex flex-column">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow">
+        <a class="navbar-brand" href="/">
+            <img src="{{ asset('images/logo.png') }}" width="36" height="36" alt="" />
+            Anima
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-            {{ main_menu() }}
-            <li class="nav-item ml-lg-4">
-                <div class="btn-group">
-                    <a class="btn btn-secondary" href="{{ urlFor('elements.new') }}">Cr&eacute;er</a>
-                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{{ urlFor('importer.index') }}">Importation</a>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                {{ main_menu() }}
+                <li class="nav-item ml-lg-4">
+                    <div class="btn-group">
+                        <a class="btn btn-secondary" href="{{ urlFor('elements.new') }}">Cr&eacute;er</a>
+                        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{{ urlFor('importer.index') }}">Importation</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0 mr-lg-4" method="get" action="{{ urlFor('search') }}">
+                <div class="input-group">
+                    <input class="form-control search-input" type="text" placeholder="Rechercher" name="search" autocomplete="off" />
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary search-button" type="submit">Search</button>
                     </div>
                 </div>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0 mr-lg-4" method="get" action="{{ urlFor('search') }}">
-            <div class="input-group">
-                <input class="form-control search-input" type="text" placeholder="Rechercher" name="search" autocomplete="off" />
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary search-button" type="submit">Search</button>
-                </div>
-            </div>
-        </form>
-        <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
-        </ul>
-    </div>
-</nav>
+            </form>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/admin/">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
 
-{% if hasFlashErrorMessage() %}
-<div class="alert alert-danger alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
-    <ul class="m-0">
-    {% for message in getFlashErrorMessage() %}
-        <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-{% endif %}
-
-{% if hasFlashInfoMessage() %}
-<div class="alert alert-success alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
-    <ul class="m-0">
-        {% for message in getFlashInfoMessage() %}
-        <li>{{ message }}</li>
+    {% if hasFlashErrorMessage() %}
+    <div class="alert alert-danger alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
+        <ul class="m-0">
+        {% for message in getFlashErrorMessage() %}
+            <li>{{ message }}</li>
         {% endfor %}
-    </ul>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    {% if hasFlashInfoMessage() %}
+    <div class="alert alert-success alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
+        <ul class="m-0">
+            {% for message in getFlashInfoMessage() %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+
+    <div class="d-flex flex-grow-1">
+        {% block sidebar %}{% endblock %}
+
+        <main role="main" class="flex-grow-1">
+            {% block header %}{% endblock %}
+            <div class="main">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
 </div>
-{% endif %}
-
-<div class="d-flex flex-grow-1">
-    {% block sidebar %}{% endblock %}
-
-    <main role="main" class="flex-grow-1 container-fluid main">
-        {% block content %}{% endblock %}
-    </main>
-</div>
-
 <script src="{{ asset('vendor/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/popper.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>

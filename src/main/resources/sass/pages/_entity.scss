@@ -1,0 +1,14 @@
+.entity-layout {
+    display: flex;
+    flex-direction: row;
+
+    &__center {
+        flex-grow: 1;
+    }
+
+    &__sidebar {
+        width: calc(300px + 4rem);
+        margin-left: 2rem;
+        padding: 2rem;
+    }
+}

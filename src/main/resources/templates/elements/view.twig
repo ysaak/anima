@@ -1,133 +1,159 @@
 {% extends "layout" %}
 
-{% block content %}
-<h1>{{ element.title }}</h1>
-
-<div class="border-bottom pb-2 mb-2 d-flex ">
-    <a href="{{ urlFor('elements.edit',{'id': element.id}) }}" class="btn btn-light">Modifier</a>
-    &nbsp;
-    <div class="dropdown">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
-        <div class="dropdown-menu">
-            <a class="dropdown-item" href="{{ urlFor('elements.image.edit', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ urlFor('elements.seasons.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
-            <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-            <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
-            <a class="dropdown-item" href="{{ urlFor('elements.remote-ids.new', {'elementId': element.id }) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une ressource</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
+{% block header %}
+<div class="header-section border-bottom">
+    <h1>{{ element.title }}</h1>
+    <div>
+        <div class="header-navigation">
+            <ul class="nav">
+                <li class="nav-item"><a data-toggle="tab" href="#element-details" class="nav-link active">D&eacute;tails</a></li>
+                <li class="nav-item"><a data-toggle="tab" href="#element-episodes" class="nav-link">&Eacute;pisodes</a></li>
+            </ul>
+        </div>
+        <div class="d-flex">
+            <a href="{{ urlFor('elements.edit',{'id': element.id}) }}" class="btn btn-light">Modifier</a>
+            &nbsp;
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{{ urlFor('elements.image.edit', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ urlFor('elements.seasons.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
+                    <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                    <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
+                    <a class="dropdown-item" href="{{ urlFor('elements.remote-ids.new', {'elementId': element.id }) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une ressource</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
-<div class="row">
-    <div class="col-8">
-        <div class="row">
-            <div class="col-6">
-                <p><strong>Type :</strong> {{ element.subtype }}</p>
-                <p><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</p>
-                <p><strong>Tags :</strong> {{ element.tagList | join(', ') }}</p>
-            </div>
-            <div class="col-6">
-                <strong>Ressource :</strong><br />
-                <table class="table table-sm">
-                    <col/>
-                    <col width="30"/>
-                    <tbody>
-                    {% for remoteId in element.remoteIdList %}
+{% block content %}
+<div class="entity-layout">
+    <div class="entity-layout__center">
+        <div class="tab-content" id="elementTabContent">
+            <div class="tab-pane fade show active" id="element-details">
+                <div class="card card-body shadow-z1">
+                    <div class="row mb-2">
+                        <div class="col"><strong>Type :</strong> {{ element.subtype }}</div>
+                        <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col"><strong>Tags :</strong> {{ element.tagList | join(', ') }}</div>
+                    </div>
+                </div>
+
+                <div class="card card-body shadow-z1 mt-3">
+                    <h4 class="card-title">Synopsis</h4>
+                    <div>{{ element.synopsis | nl2br }}</div>
+                </div>
+
+                {% if element.relationList is not empty %}
+                <div class="card card-body shadow-z1 mt-3">
+                    <h4 class="card-title">Relations</h4>
+                    <table class="table table-sm">
+                        <col />
+                        <col width="30" />
+                        <tbody>
+                        {% for relationGroup in element.relationList %}
                         <tr>
-                            <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
-                            <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+                            <th colspan="2">{{ relationGroup.name }}</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        {% for relation in relationGroup.elementList %}
+                        <tr>
+                            <td><a href="{{ relation.url }}">{{ relation.title }}</a></td>
+                            <td><a href="{{ urlFor('elements.relations.delete', { 'elementId': element.id, 'relationId': relation.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+            <div class="tab-pane fade" id="element-episodes">
+                <div class="card card-body shadow-z1">
+                    <table class="table table-sm">
+                        <col width="50">
+                        <col>
+                        <col width="50">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>N&deg;</th>
+                            <th>Titre</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for season in element.seasonList %}
+                        {% if seasonCount > 1 %}
+                        <tr class="table-secondary">
+                            <td colspan="2">{{ season.title }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                                        ...
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for episode in season.episodeList %}
+                        <tr>
+                            <td>{{ episode.number }}</td>
+                            <td>{{ episode.title }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
+                                        ...
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
-        <p><strong>Synopsis :</strong> {{ element.synopsis | nl2br }}</p>
-
-        {% if element.relationList is not empty %}
-        <hr />
-        <h3>Relations</h3>
-        <table class="table table-sm">
-            <col />
-            <col width="30" />
-            <tbody>
-        {% for relationGroup in element.relationList %}
-            <tr>
-                <th colspan="2">{{ relationGroup.name }}</th>
-            </tr>
-            {% for relation in relationGroup.elementList %}
-            <tr>
-                <td><a href="{{ relation.url }}">{{ relation.title }}</a></td>
-                <td><a href="{{ urlFor('elements.relations.delete', { 'elementId': element.id, 'relationId': relation.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
-            </tr>
-            {% endfor %}
-        {% endfor %}
-            </tbody>
-        </table>
-        {% endif %}
-
-        <hr>
-
-        <h3>&Eacute;pisodes</h3>
-        <table class="table table-sm">
-            <col width="50">
-            <col>
-            <col width="50">
-            <thead class="thead-dark">
-                <tr>
-                    <th>N&deg;</th>
-                    <th>Titre</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-        {% for season in element.seasonList %}
-            {% if seasonCount > 1 %}
-                <tr class="table-secondary">
-                    <td colspan="2">{{ season.title }}</td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                                ...
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            {% endif %}
-            {% for episode in season.episodeList %}
-                <tr>
-                    <td>{{ episode.number }}</td>
-                    <td>{{ episode.title }}</td>
-                    <td>
-                        <div class="dropdown">
-                            <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                                ...
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-        {% endfor %}
-            </tbody>
-        </table>
     </div>
-    <div class="col-4 text-center"><img src="/elements/{{ element.id }}/image.png" width="300" class="rounded" /></div>
+    <div class="entity-layout__sidebar">
+        <div class="text-center pb-3">
+            <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
+        </div>
+
+        <div class="card card-body shadow-z1">
+            <h4 class="card-title">Ressource</h4>
+            <table class="table table-sm">
+                <col/>
+                <col width="30"/>
+                <tbody>
+                {% for remoteId in element.remoteIdList %}
+                <tr>
+                    <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
+                    <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="elementEditModal" tabindex="-1" role="dialog">

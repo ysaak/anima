@@ -1,0 +1,31 @@
+.search-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #6c757d;
+    color: #FFF;
+
+    &::placeholder {
+        color: #BBB;
+    }
+
+    &:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: #6c757d;
+        box-shadow: none;
+        color: #FFF;
+
+        &::placeholder {
+            color: #FFF;
+        }
+    }
+}
+
+.search-button {
+    color: #BBB;
+    background-color: rgba(255, 255, 255, 0.1);
+
+    &:hover {
+        color: #FFF;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+

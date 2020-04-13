@@ -1,0 +1,16 @@
+.card-body > .table {
+    margin-bottom: 0;
+}
+
+.navbar::after {
+    content: '';
+    box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    /*opacity: 0;*/
+    pointer-events: none;
+    z-index: 50;
+}
