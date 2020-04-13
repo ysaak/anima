@@ -60,6 +60,8 @@ public class ElementService implements IAnimaComponent {
         validate(data);
 
         data.setSeasonList(storedElement.getSeasonList());
+        data.setRemoteIdList(storedElement.getRemoteIdList());
+        data.setRemoteIdList(storedElement.getRemoteIdList());
 
         return elementRepository.save(data);
     }
