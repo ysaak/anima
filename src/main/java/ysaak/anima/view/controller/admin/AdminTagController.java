@@ -10,36 +10,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ysaak.anima.IAnimaComponent;
 import ysaak.anima.data.Tag;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ResourceNotFoundException;
 import ysaak.anima.service.TagService;
 import ysaak.anima.view.controller.AbstractViewController;
 import ysaak.anima.view.dto.admin.TagEditDto;
+import ysaak.anima.view.router.RoutingService;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin/tags")
 @Transactional
-public class AdminTagController extends AbstractViewController implements IAnimaComponent {
+public class AdminTagController extends AbstractViewController {
 
     private final TagService tagService;
+    private final RoutingService routingService;
 
     @Autowired
-    public AdminTagController(TagService tagService) {
+    public AdminTagController(TagService tagService, RoutingService routingService) {
         this.tagService = tagService;
+        this.routingService = routingService;
     }
 
-    @GetMapping("/")
+    @GetMapping(path = "/", name = "admin.tags.index")
     public String indexAction(ModelMap model) {
         List<Tag> tagList = tagService.findAll();
         model.put("tagList", tagList);
         return "admin/tags/index";
     }
 
-    @GetMapping("/new")
+    @GetMapping(path = "/new", name = "admin.tags.new")
     public String newAction(ModelMap model) {
         if (!model.containsAttribute("tag")) {
             model.put("tag", new TagEditDto());
@@ -61,10 +63,10 @@ public class AdminTagController extends AbstractViewController implements IAnima
             return "redirect:/admin/tags/new";
         }
 
-        return "redirect:/admin/tags/";
+        return routingService.redirectUrl("admin.tags.index");
     }
 
-    @GetMapping("/{id}/edit")
+    @GetMapping(path = "/{id}/edit", name = "admin.tags.edit")
     public String editAction(ModelMap model, @PathVariable("id") String id) throws Exception {
         if (!model.containsAttribute("tag")) {
             final Tag tag = tagService.findById(id).orElseThrow(() -> new Exception("Byebye"));
@@ -87,12 +89,13 @@ public class AdminTagController extends AbstractViewController implements IAnima
             redirectAttributes.addFlashAttribute("tag", tagDto);
             return "redirect:/admin/tags/new";
         }
-        return "redirect:/admin/tags/";
+
+        return routingService.redirectUrl("admin.tags.index");
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping(path = "/{id}/delete", name = "admin.tags.delete")
     public String deleteAction(ModelMap modelMap, @PathVariable("id") String id) throws ResourceNotFoundException {
         tagService.delete(id);
-        return "redirect:/admin/tags/";
+        return routingService.redirectUrl("admin.tags.index");
     }
 }

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/tokenize2/tokenize2.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('vendor/typeaheadjs.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendor/material-icons/material-icons.css') }}" />
 
     <link rel="stylesheet" href="{{ asset('style.css') }}" />
 
@@ -90,12 +91,34 @@
         </main>
     </div>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <form action="#" method="post">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="{{ asset('vendor/jquery.min.js') }}"></script>
 <script src="{{ asset('vendor/popper.min.js') }}"></script>
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('vendor/bs-custom-file-input.min.js') }}"></script>
 <script src="{{ asset('vendor/tokenize2/tokenize2.min.js') }}"></script>
 <script src="{{ asset('vendor/typeahead.bundle.js') }}"></script>
+<script src="{{ asset('js/confirm-modal.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

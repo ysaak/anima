@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         // Metadata
         meta: {
             srcPath: 'src/main/resources/sass/',
-            deployPath: 'src/main/resources/public/'
+            resourcesPublicPath: 'src/main/resources/public/',
         },
 
         sass: {
@@ -12,7 +12,7 @@ module.exports = function(grunt) {
                     style: "expanded",
                 },
                 files: {
-                    "<%= meta.deployPath %>style.css": "<%= meta.srcPath %>main.scss"
+                    "<%= meta.resourcesPublicPath %>style.css": "<%= meta.srcPath %>main.scss"
                 },
             },
         },
@@ -24,11 +24,29 @@ module.exports = function(grunt) {
                 ],
                 tasks: ['sass']
             }
+        },
+
+        copy: {
+            main: {
+                files: [
+                    // material icons
+                    {
+                        expand: true,
+                        cwd: 'node_modules/material-icons/iconfont',
+                        src: [
+                            '*.css',
+                            'MaterialIcons-Regular*'
+                        ],
+                        dest: '<%= meta.resourcesPublicPath %>/vendor/material-icons'
+                    },
+                ]
+            }
         }
     });
 
     grunt.loadNpmTasks("grunt-contrib-sass");
-    grunt.loadNpmTasks('grunt-contrib-watch')
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', ['dev', 'watch']);
     grunt.registerTask('dev', ['sass'])
