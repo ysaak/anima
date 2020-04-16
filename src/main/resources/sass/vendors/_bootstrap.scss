@@ -1,3 +1,8 @@
+/* Card upgrades */
+.card {
+    @extend .shadow-z1;
+}
+
 .card-body > .table {
     margin-bottom: 0;
 }
@@ -18,4 +23,8 @@
 .btn-icon {
     display: inline-flex;
     align-items: center;
+}
+
+.form-group > label {
+    font-weight: bold;
 }

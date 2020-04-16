@@ -1,36 +1,46 @@
-{% extends "layout" %}
+{% extends "admin/layout" %}
 
-{% block sidebar %}
-{% include "admin/admin_sidebar" %}
+{% set updateMode = (tag.id is null or tag.id is empty) %}
+
+{% block header %}
+<div class="header-section">
+    {% if updateMode %}
+    <h1>Nouveau tag</h1>
+    {% else %}
+    <h1>Modifier tag</h1>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block content %}
-{% if tag.id is null or tag.id is empty %}
-<h1>Nouveau tag</h1>
+{% if updateMode %}
+<form method="post" action="{{ urlFor('admin.tags.create') }}">
 {% else %}
-<h1>Modifier tag</h1>
+<form method="post" action="{{ urlFor('admin.tags.update', { 'id': tag.id }) }}">
 {% endif %}
 
-<form method="post" action="/admin/tags/{{ tag.id }}">
     <input type="hidden" name="id" value="{{ tag.id }}">
 
-    <div class="form-group">
-        <label for="name">Nom</label>
-        {{ formInput("name", tag.name) }}
+    <div class="card card-body">
+        <div class="form-group">
+            <label for="name">Nom</label>
+            {{ formInput("name", tag.name) }}
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            {{ formTextArea("description", tag.description, { "size":"100x4" }) }}
+        </div>
+
+        <div class="form-group">
+            <label for="genreAniDbEquivalence">Equivalence AniDB</label>
+            <textarea class="form-control" id="genreAniDbEquivalence" rows="4" name="anidbEquivalence">{{ tag.anidbEquivalence | raw }}</textarea>
+        </div>
+
+        <div class="text-right">
+            <a href="{{ urlFor('admin.tags.index') }}" class="card-link mr-4">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="description">Description</label>
-        {{ formTextArea("description", tag.description, { "size":"100x4" }) }}
-    </div>
-
-    <div class="form-group">
-        <label for="genreAniDbEquivalence">Equivalence AniDB</label>
-        <textarea class="form-control" id="genreAniDbEquivalence" rows="4" name="anidbEquivalence">{{ tag.anidbEquivalence | raw }}</textarea>
-    </div>
-
-
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-
 {% endblock %}

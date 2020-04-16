@@ -1,37 +1,45 @@
-{% extends "layout" %}
+{% extends "admin/layout" %}
 
-{% block sidebar %}
-{% include "admin/admin_sidebar" %}
+{% set updateMode = (site.id is null or site.id is empty) %}
+
+{% block header %}
+<div class="header-section">
+    {% if updateMode %}
+    <h1>Nouveau site externe</h1>
+    {% else %}
+    <h1>Modifier site externe</h1>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block content %}
-{% if site.id is null or site.id is empty %}
-<h1>Nouveau site externe</h1>
+{% if updateMode %}
 <form method="post" action="{{ urlFor('admin.external-site.create') }}">
 {% else %}
-<h1>Modifier site externe</h1>
 <form method="post" action="{{ urlFor('admin.external-site.update', { 'id': site.id }) }}">
 {% endif %}
-
     <input type="hidden" name="id" value="{{ site.id }}">
+    <div class="card card-body">
+        <div class="form-group">
+            <label for="code">Code</label>
+            {{ formInput("code", site.code) }}
+        </div>
 
-    <div class="form-group">
-        <label for="code">Code</label>
-        {{ formInput("code", site.code) }}
+        <div class="form-group">
+            <label for="siteName">Nom du site</label>
+            {{ formInput("siteName", site.siteName) }}
+        </div>
+
+        <div class="form-group">
+            <label for="urlTemplate">Template URL</label>
+            {{ formInput("urlTemplate", site.urlTemplate) }}
+            <small class="form-text text-muted"><code>%s</code> sera remplacé par l'identifiant du site</small>
+        </div>
+
+        <div class="text-right">
+            <a href="{{ urlFor('admin.external-site.index') }}" class="card-link mr-4">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
     </div>
-
-    <div class="form-group">
-        <label for="siteName">Nom du site</label>
-        {{ formInput("siteName", site.siteName) }}
-    </div>
-
-    <div class="form-group">
-        <label for="urlTemplate">Template URL</label>
-        {{ formInput("urlTemplate", site.urlTemplate) }}
-        <small class="form-text text-muted"><code>%s</code> sera remplacé par l'identifiant du site</small>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
 </form>
-
 {% endblock %}

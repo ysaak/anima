@@ -50,7 +50,7 @@ public class AdminTagController extends AbstractViewController {
         return "admin/tags/edit";
     }
 
-    @PostMapping("/")
+    @PostMapping(path = "/", name = "admin.tags.create")
     public String createAction(@ModelAttribute TagEditDto tagDto, final RedirectAttributes redirectAttributes) {
         final Tag tagToSave = converters().convert(tagDto, Tag.class);
 
@@ -78,8 +78,8 @@ public class AdminTagController extends AbstractViewController {
         return "admin/tags/edit";
     }
 
-    @PostMapping("/{id}")
-    public String updateAction(@ModelAttribute TagEditDto tagDto, final RedirectAttributes redirectAttributes) {
+    @PostMapping(path = "/{id}", name = "admin.tags.update")
+    public String updateAction(@ModelAttribute TagEditDto tagDto, @PathVariable("id") final String id, final RedirectAttributes redirectAttributes) {
         final Tag tagToSave = converters().convert(tagDto, Tag.class);
         try {
             tagService.save(tagToSave);
