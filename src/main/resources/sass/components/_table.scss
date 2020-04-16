@@ -1,0 +1,7 @@
+.table .table-action {
+    visibility: hidden;
+}
+
+.table tr:hover .table-action {
+    visibility: visible;
+}
