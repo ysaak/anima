@@ -1,37 +1,40 @@
-{% extends "layout" %}
+{% extends "admin/layout" %}
 
-{% block sidebar %}
-{% include "admin/admin_sidebar" %}
+{% block header %}
+<div class="header-section">
+    <h1>Sites externe</h1>
+</div>
 {% endblock %}
 
-
 {% block content %}
-<h1>Sites externe</h1>
-
 <p class="text-right">
-    <a href="{{ urlFor('admin.external-site.new') }}" class="btn btn-primary">Nouveau</a>
+    <a href="{{ urlFor('admin.external-site.new') }}" class="btn btn-icon btn-primary"><span class="material-icons">add</span> Nouveau</a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Code</th>
-            <th>Nom du site</th>
-            <th>Template</th>
-            <th colspan="2">&nbsp;</th>
-        </tr>
-    </thead>
-    <tbody>
-{% for site in siteList %}
-        <tr>
-            <td>{{ site.code }}</td>
-            <td>{{ site.siteName }}</td>
-            <td>{{ site.urlTemplate }}</td>
-            <td><a href="{{ urlFor('admin.external-site.edit', {'id': site.id }) }}">Modifier</a></td>
-            <td><form method="post" action="{{ urlFor('admin.external-site.delete', {'id': site.id }) }}"><button type="submit">Supprimer</button></form> </td>
-        </tr>
-{% endfor %}
-    </tbody>
-</table>
-
+<div class="card card-body">
+    <table class="table">
+        <col width="200">
+        <col span="2">
+        <col span="2" width="80">
+        <thead class="thead-dark">
+            <tr>
+                <th>Code</th>
+                <th>Nom du site</th>
+                <th>Template</th>
+                <th colspan="2">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for site in siteList %}
+            <tr>
+                <td>{{ site.code }}</td>
+                <td>{{ site.siteName }}</td>
+                <td>{{ site.urlTemplate }}</td>
+                <td><a href="{{ urlFor('admin.external-site.edit', {'id': site.id }) }}">Modifier</a></td>
+                <td><a class="text-danger" href="{{ urlFor('admin.external-site.delete', { 'id': site.id }) }}" data-toggle="confirm">Supprimer</a></td>
+            </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

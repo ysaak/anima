@@ -1,4 +1,4 @@
-.shadow-z1 {
+.shadow-z1, .card {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   transition: box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
@@ -23,6 +23,7 @@
   transition: box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* Card upgrades */
 .card-body > .table {
   margin-bottom: 0;
 }
@@ -38,6 +39,15 @@
   /*opacity: 0;*/
   pointer-events: none;
   z-index: 50;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.form-group > label {
+  font-weight: bold;
 }
 
 html, body {
@@ -89,6 +99,7 @@ body {
 }
 .header-section > h1 {
   margin: 0.5rem;
+  padding: 0 0.5rem;
 }
 .header-section > div {
   display: flex;
