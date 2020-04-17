@@ -50,6 +50,10 @@
   font-weight: bold;
 }
 
+.btn-sm > .material-icons {
+  font-size: 1rem;
+}
+
 html, body {
   height: 100%;
 }
@@ -168,6 +172,14 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+.table .table-action {
+  visibility: hidden;
+}
+
+.table tr:hover .table-action {
+  visibility: visible;
+}
+
 .entity-layout {
   display: flex;
   flex-direction: row;
@@ -178,7 +190,7 @@ body {
 .entity-layout__sidebar {
   width: calc(300px + 4rem);
   margin-left: 2rem;
-  padding: 2rem;
+  padding: 0 2rem;
 }
 
 /*# sourceMappingURL=style.css.map */

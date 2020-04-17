@@ -34,11 +34,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="entity-layout">
-    <div class="entity-layout__center">
-        <div class="tab-content" id="elementTabContent">
-            <div class="tab-pane fade show active" id="element-details">
-                <div class="card card-body shadow-z1">
+<div class="tab-content" id="elementTabContent">
+    <div class="tab-pane fade show active" id="element-details">
+        <div class="entity-layout">
+            <div class="entity-layout__center">
+                <div class="card card-body">
                     <div class="row mb-2">
                         <div class="col"><strong>Type :</strong> {{ element.subtype }}</div>
                         <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
@@ -48,13 +48,13 @@
                     </div>
                 </div>
 
-                <div class="card card-body shadow-z1 mt-3">
+                <div class="card card-body mt-3">
                     <h4 class="card-title">Synopsis</h4>
                     <div>{{ element.synopsis | nl2br }}</div>
                 </div>
 
                 {% if element.relationList is not empty %}
-                <div class="card card-body shadow-z1 mt-3">
+                <div class="card card-body mt-3">
                     <h4 class="card-title">Relations</h4>
                     <table class="table table-sm">
                         <col />
@@ -76,56 +76,22 @@
                 </div>
                 {% endif %}
             </div>
-            <div class="tab-pane fade" id="element-episodes">
-                <div class="card card-body shadow-z1">
+            <div class="entity-layout__sidebar">
+                <div class="text-center pb-3">
+                    <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
+                </div>
+
+                <div class="card card-body">
+                    <h4 class="card-title">Ressource</h4>
                     <table class="table table-sm">
-                        <col width="50">
-                        <col>
-                        <col width="50">
-                        <thead class="thead-dark">
-                        <tr>
-                            <th>N&deg;</th>
-                            <th>Titre</th>
-                            <th>&nbsp;</th>
-                        </tr>
-                        </thead>
+                        <col/>
+                        <col width="30"/>
                         <tbody>
-                        {% for season in element.seasonList %}
-                        {% if seasonCount > 1 %}
-                        <tr class="table-secondary">
-                            <td colspan="2">{{ season.title }}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                                        ...
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% for episode in season.episodeList %}
+                        {% for remoteId in element.remoteIdList %}
                         <tr>
-                            <td>{{ episode.number }}</td>
-                            <td>{{ episode.title }}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown">
-                                        ...
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right">
-                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
-                                    </div>
-                                </div>
-                            </td>
+                            <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
+                            <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-icon btn-light btn-sm table-action"><span class="material-icons">delete</span></a></td>
                         </tr>
-                        {% endfor %}
                         {% endfor %}
                         </tbody>
                     </table>
@@ -133,22 +99,57 @@
             </div>
         </div>
     </div>
-    <div class="entity-layout__sidebar">
-        <div class="text-center pb-3">
-            <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
-        </div>
-
-        <div class="card card-body shadow-z1">
-            <h4 class="card-title">Ressource</h4>
-            <table class="table table-sm">
-                <col/>
-                <col width="30"/>
-                <tbody>
-                {% for remoteId in element.remoteIdList %}
+    <div class="tab-pane fade" id="element-episodes">
+        <div class="card card-body">
+            <table class="table table-sm table-hover" id="episodeTable">
+                <col width="50">
+                <col>
+                <col width="50">
+                <thead class="thead-dark">
                 <tr>
-                    <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
-                    <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
+                    <th>N&deg;</th>
+                    <th>Titre</th>
+                    <th>&nbsp;</th>
                 </tr>
+                </thead>
+                <tbody>
+                {% for season in element.seasonList %}
+                {% if seasonCount > 1 %}
+                <tr class="table-secondary parent">
+                    <td><span class="material-icons table-line-toggle">unfold_less</span></td>
+                    <td><strong>{{ season.title }}</strong></td>
+                    <td>
+                        <div class="dropdown table-action">
+                            <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% for episode in season.episodeList %}
+                <tr class="child">
+                    <td>{{ episode.number }}</td>
+                    <td>{{ episode.title }}</td>
+                    <td>
+                        <div class="dropdown table-action">
+                            <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
                 {% endfor %}
                 </tbody>
             </table>
@@ -194,6 +195,40 @@ $(document).ready(function() {
         var loadUrl = $(e.relatedTarget).attr('href');
         $(this).find('.modal-content').load(loadUrl, function() {
             bsCustomFileInput.init();
+        });
+    });
+
+    function getChildren($row) {
+        var children = [];
+        while($row.next().hasClass('child')) {
+             children.push($row.next());
+             $row = $row.next();
+        }
+        return children;
+    }
+
+    // zoom-out
+
+    $('#element-episodes .table-line-toggle').each(function() {
+        $(this).css('cursor', 'zoom-out');
+
+        $(this).on('click', function() {
+            var $this = $(this);
+
+            var currentIcon = $this.text();
+            if (currentIcon.endsWith('less')) {
+                $this.text('unfold_more');
+                $this.css('cursor', 'zoom-in');
+            }
+            else {
+                $this.text('unfold_less');
+                $this.css('cursor', 'zoom-out');
+            }
+
+            var children = getChildren($this.parent().parent());
+            $.each(children, function() {
+                $(this).toggle();
+            });
         });
     });
 });
