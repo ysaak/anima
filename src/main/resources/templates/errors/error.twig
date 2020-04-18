@@ -1,1 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('style.css') }}" />
+
+    <title>Anima</title>
+</head>
+<body>
 <h1>Global error</h1>
+
+<p>Status: {{ statusCode }}</p>
+
+{% if errorClass is not empty %}
+<hr>
+<p>Error type: {{ errorClass }}<br>Message: {{ errorMessage }}</p>
+{% endif %}
+
+</body>
+</html>
