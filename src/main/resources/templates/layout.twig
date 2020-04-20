@@ -68,15 +68,22 @@
     {% endif %}
 
     {% if hasFlashInfoMessage() %}
-    <div class="alert alert-success alert-dismissible fade show border-0 m-0 rounded-0" role="alert">
-        <ul class="m-0">
-            {% for message in getFlashInfoMessage() %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+    <div style="position: fixed; top: 0; right: 0; min-width: 250px; z-index: 99; margin: 1.5rem;">
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header">
+                <strong class="mr-auto">Anima</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">
+                <ul class="m-0 list-unstyled">
+                    {% for message in getFlashInfoMessage() %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
     {% endif %}
 
@@ -120,5 +127,10 @@
 <script src="{{ asset('vendor/typeahead.bundle.js') }}"></script>
 <script src="{{ asset('js/confirm-modal.js') }}"></script>
 {% block scripts %}{% endblock %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.toast').toast('show')
+});
+</script>
 </body>
 </html>

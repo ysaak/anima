@@ -27,6 +27,7 @@ import ysaak.anima.data.storage.StorageType;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.StorageException;
+import ysaak.anima.service.CollectionService;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.ExternalSiteService;
 import ysaak.anima.service.RelationService;
@@ -62,16 +63,18 @@ public class ElementController extends AbstractViewController {
     private final StorageService storageService;
     private final RelationService relationService;
     private final ExternalSiteService externalSiteService;
+    private final CollectionService collectionService;
     private final RoutingService routingService;
     private final TranslationService translationService;
 
     @Autowired
-    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, CollectionService collectionService, RoutingService routingService, TranslationService translationService) {
         this.elementService = elementService;
         this.tagService = tagService;
         this.storageService = storageService;
         this.relationService = relationService;
         this.externalSiteService = externalSiteService;
+        this.collectionService = collectionService;
         this.routingService = routingService;
         this.translationService = translationService;
     }
@@ -93,6 +96,12 @@ public class ElementController extends AbstractViewController {
                 .sorted(Comparator.comparing(KeyValueItem::getValue))
                 .collect(Collectors.toList());
         model.put("tagList", tagList);
+
+        List<KeyValueItem> collectionList = collectionService.findAll().stream()
+                .map(t -> new KeyValueItem(t.getId(), t.getName()))
+                .sorted(Comparator.comparing(KeyValueItem::getValue))
+                .collect(Collectors.toList());
+        model.put("collectionList", collectionList);
 
         return "elements/edit";
     }
@@ -134,6 +143,12 @@ public class ElementController extends AbstractViewController {
                 .sorted(Comparator.comparing(KeyValueItem::getValue))
                 .collect(Collectors.toList());
         model.put("tagList", tagList);
+
+        List<KeyValueItem> collectionList = collectionService.findAll().stream()
+                .map(t -> new KeyValueItem(t.getId(), t.getName()))
+                .sorted(Comparator.comparing(KeyValueItem::getValue))
+                .collect(Collectors.toList());
+        model.put("collectionList", collectionList);
 
         return "elements/edit";
     }

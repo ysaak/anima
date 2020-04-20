@@ -44,7 +44,22 @@
                         <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
                     </div>
                     <div class="row">
-                        <div class="col"><strong>Tags :</strong> {{ element.tagList | join(', ') }}</div>
+                        <div class="col">
+                            <strong>Tags :</strong>
+                            <ul class="tag-list">
+                                {% for tag in element.tagList %}
+                                <li>{{ tag }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col">
+                            <strong>Collections :</strong>
+                            <ul class="tag-list">
+                                {% for collection in element.collectionList %}
+                                <li>{{ collection.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
 

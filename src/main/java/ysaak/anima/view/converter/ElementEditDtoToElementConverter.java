@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import ysaak.anima.converter.AbstractConverter;
 import ysaak.anima.converter.Converter;
 import ysaak.anima.dao.model.TagModel;
+import ysaak.anima.data.Collection;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
@@ -30,6 +31,15 @@ public class ElementEditDtoToElementConverter extends AbstractConverter<ElementE
                 })
                 .collect(Collectors.toList());
 
+        final List<Collection> collectionList = CollectionUtils.getNotNull(object.getCollectionList())
+                .stream()
+                .map(collectionId -> {
+                    Collection collection = new Collection();
+                    collection.setId(collectionId);
+                    return collection;
+                })
+                .collect(Collectors.toList());
+
         Element element = new Element(
                 object.getId(),
                 object.getTitle(),
@@ -39,7 +49,7 @@ public class ElementEditDtoToElementConverter extends AbstractConverter<ElementE
                 object.getSynopsis()
         );
         element.setTagList(tagList);
+        element.setCollectionList(collectionList);
         return element;
     }
-
 }

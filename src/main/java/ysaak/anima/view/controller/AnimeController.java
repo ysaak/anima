@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.model.TagModel;
+import ysaak.anima.data.Collection;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ElementType;
@@ -133,6 +134,8 @@ public class AnimeController extends AbstractViewController {
 
         List<ElementViewDto.ElementRemoteIdDto> remoteIdList = convertRemoteIdList(object.getRemoteIdList());
 
+        List<ElementViewDto.ElementCollectionDto> collectionList = convertCollectionList(object.getCollectionList());
+
         return new ElementViewDto(
                 object.getId(),
                 object.getTitle(),
@@ -143,7 +146,8 @@ public class AnimeController extends AbstractViewController {
                 seasonList,
                 tagList,
                 relationList,
-                remoteIdList
+                remoteIdList,
+                collectionList
         );
     }
 
@@ -227,6 +231,23 @@ public class AnimeController extends AbstractViewController {
                 remoteId.getId(),
                 remoteId.getExternalSite().getSiteName(),
                 String.format(remoteId.getExternalSite().getUrlTemplate(), remoteId.getRemoteId())
+        );
+    }
+
+    private List<ElementViewDto.ElementCollectionDto> convertCollectionList(List<Collection> collectionList) {
+        final List<ElementViewDto.ElementCollectionDto> dtoList = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(collectionList)) {
+            collectionList.stream().map(this::convertCollection).forEach(dtoList::add);
+        }
+
+        return dtoList;
+    }
+
+    private ElementViewDto.ElementCollectionDto convertCollection(Collection collection) {
+        return new ElementViewDto.ElementCollectionDto(
+                collection.getId(),
+                collection.getName()
         );
     }
 }
