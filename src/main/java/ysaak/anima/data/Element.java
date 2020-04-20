@@ -57,6 +57,14 @@ public class Element implements IEntity {
     @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ElementRemoteId> remoteIdList;
 
+    @ManyToMany
+    @JoinTable(
+            name = "L_ELEMENT_COLLECTION",
+            joinColumns = @JoinColumn(name = "ELEMENT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "COLLECTION_ID")
+    )
+    private List<Collection> collectionList;
+
     public Element() {
     }
 
@@ -152,5 +160,13 @@ public class Element implements IEntity {
 
     public void setRemoteIdList(List<ElementRemoteId> remoteIdList) {
         this.remoteIdList = remoteIdList;
+    }
+
+    public List<Collection> getCollectionList() {
+        return collectionList;
+    }
+
+    public void setCollectionList(List<Collection> collectionList) {
+        this.collectionList = collectionList;
     }
 }

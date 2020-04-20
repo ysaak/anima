@@ -28,13 +28,15 @@ import java.util.List;
 public class ElementService implements IAnimaComponent {
 
     private final ExternalSiteService externalSiteService;
+    private final CollectionService collectionService;
     private final TranslationService translationService;
 
     private final ElementRepository elementRepository;
 
     @Autowired
-    public ElementService(ExternalSiteService externalSiteService, TranslationService translationService, ElementRepository elementRepository) {
+    public ElementService(ExternalSiteService externalSiteService, CollectionService collectionService, TranslationService translationService, ElementRepository elementRepository) {
         this.externalSiteService = externalSiteService;
+        this.collectionService = collectionService;
         this.translationService = translationService;
         this.elementRepository = elementRepository;
     }
@@ -61,7 +63,7 @@ public class ElementService implements IAnimaComponent {
 
         data.setSeasonList(storedElement.getSeasonList());
         data.setRemoteIdList(storedElement.getRemoteIdList());
-        data.setRemoteIdList(storedElement.getRemoteIdList());
+        data.setRelationList(storedElement.getRelationList());
 
         return elementRepository.save(data);
     }

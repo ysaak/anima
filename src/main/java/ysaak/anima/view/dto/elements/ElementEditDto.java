@@ -18,6 +18,8 @@ public class ElementEditDto {
 
     private List<String> tagList;
 
+    private List<String> collectionList;
+
     public String getId() {
         return id;
     }
@@ -72,5 +74,13 @@ public class ElementEditDto {
 
     public void setTagList(List<String> tagList) {
         this.tagList = tagList;
+    }
+
+    public List<String> getCollectionList() {
+        return collectionList;
+    }
+
+    public void setCollectionList(List<String> collectionList) {
+        this.collectionList = collectionList;
     }
 }

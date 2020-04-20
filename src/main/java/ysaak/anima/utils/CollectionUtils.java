@@ -13,6 +13,16 @@ public final class CollectionUtils {
     private CollectionUtils() {/**/}
 
     /**
+     * Check if a collection is null or empty
+     * @param collection Collection to check
+     * @param <T> Collection type
+     * @return true if the collection is null or empty - false otherwise
+     */
+    public static <T> boolean isEmpty(Collection<T> collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    /**
      * Checks if a collection is non null and not empty
      * @param collection Collection to check
      * @param <T> Collection type
@@ -61,5 +71,14 @@ public final class CollectionUtils {
             iterable.forEach(list::add);
             return list;
         }
+    }
+
+    public static <E, T> boolean isCollectionOfType(Collection<E> collection, Class<T> typeToCheck) {
+        if (isNotEmpty(collection)) {
+            E firstItem = collection.iterator().next();
+            return typeToCheck.isAssignableFrom(firstItem.getClass());
+        }
+
+        return false;
     }
 }
