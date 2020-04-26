@@ -8,7 +8,9 @@ import ysaak.anima.dao.repository.CollectionRepository;
 import ysaak.anima.data.Collection;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.FunctionalException;
+import ysaak.anima.exception.error.CollectionErrorCode;
 import ysaak.anima.exception.error.GenericErrorCode;
+import ysaak.anima.rules.CollectionRules;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.List;
@@ -23,12 +25,12 @@ public class CollectionService implements IAnimaComponent {
 
     public Collection findById(final String id) throws FunctionalException {
         return collectionRepository.findById(id)
-                .orElseThrow(() -> GenericErrorCode.NOT_FOUND.functional(id));
+                .orElseThrow(() -> CollectionErrorCode.NOT_FOUND.functional(id));
     }
 
-    public Collection save(Collection collection) throws DataValidationException {
+    public Collection save(Collection collection) throws FunctionalException {
         Preconditions.checkNotNull(collection);
-        validator().validate(collection);
+        CollectionRules.validate(collection);
 
         return collectionRepository.save(collection);
     }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.data.Collection;
-import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.service.CollectionService;
 import ysaak.anima.service.technical.TranslationService;
@@ -25,20 +24,22 @@ import java.util.List;
 @RequestMapping("/admin/collection")
 @Transactional
 public class AdminCollectionController extends AbstractViewController {
+    private static final String ROUTE_INDEX = "admin.collections.index";
+    private static final String ROUTE_NEW = "admin.collections.new";
+    private static final String ROUTE_CREATE = "admin.collections.create";
+    private static final String ROUTE_EDIT = "admin.collections.edit";
+    private static final String ROUTE_UPDATE = "admin.collections.update";
+    private static final String ROUTE_DELETE = "admin.collections.delete";
 
     private final CollectionService collectionService;
-    private final TranslationService translationService;
-    private final RoutingService routingService;
 
     @Autowired
     public AdminCollectionController(CollectionService collectionService, TranslationService translationService, RoutingService routingService) {
         super(translationService, routingService);
         this.collectionService = collectionService;
-        this.translationService = translationService;
-        this.routingService = routingService;
     }
 
-    @GetMapping(path = "/", name = "admin.collections.index")
+    @GetMapping(path = "/", name = ROUTE_INDEX)
     public String indexAction(ModelMap model) {
         final List<Collection> collectionList = collectionService.findAll();
         model.put("collectionList", collectionList);
@@ -46,7 +47,7 @@ public class AdminCollectionController extends AbstractViewController {
         return "admin/collection/index";
     }
 
-    @GetMapping(path = "/new", name = "admin.collections.new")
+    @GetMapping(path = "/new", name = ROUTE_NEW)
     public String newAction(ModelMap model) {
         if (!model.containsAttribute("collection")) {
             model.put("collection", new Collection());
@@ -55,21 +56,21 @@ public class AdminCollectionController extends AbstractViewController {
         return "admin/collection/edit";
     }
 
-    @PostMapping(path = "/", name = "admin.collections.create")
+    @PostMapping(path = "/", name = ROUTE_CREATE)
     public String createAction(@ModelAttribute Collection collection, final RedirectAttributes redirectAttributes) {
         try {
             collectionService.save(collection);
         }
-        catch (DataValidationException dve) {
-            registerValidationErrors(redirectAttributes, dve);
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             redirectAttributes.addFlashAttribute("collection", collection);
-            return routingService.redirectUrl("admin.collection.new");
+            return redirect(ROUTE_NEW);
         }
 
-        return routingService.redirectUrl("admin.collections.index");
+        return redirect(ROUTE_INDEX);
     }
 
-    @GetMapping(path = "/{id}/edit", name = "admin.collections.edit")
+    @GetMapping(path = "/{id}/edit", name = ROUTE_EDIT)
     public String editAction(ModelMap model, @PathVariable("id") String id) throws Exception {
         if (!model.containsAttribute("collection")) {
             final Collection collection = collectionService.findById(id);
@@ -79,30 +80,30 @@ public class AdminCollectionController extends AbstractViewController {
         return "admin/collection/edit";
     }
 
-    @PostMapping(path = "/{id}", name = "admin.collections.update")
+    @PostMapping(path = "/{id}", name = ROUTE_UPDATE)
     public String updateAction(@ModelAttribute Collection collection, final RedirectAttributes redirectAttributes) {
         try {
             collectionService.save(collection);
         }
-        catch (DataValidationException dve) {
-            registerValidationErrors(redirectAttributes, dve);
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             redirectAttributes.addFlashAttribute("collection", collection);
-            return routingService.redirectUrl("admin.collections.edit", Collections.singletonMap("id", collection.getId()));
+            return redirect(ROUTE_EDIT, Collections.singletonMap("id", collection.getId()));
         }
 
-        return routingService.redirectUrl("admin.collections.index");
+        return redirect(ROUTE_INDEX);
     }
 
-    @PostMapping(path = "/{id}/delete", name = "admin.collections.delete")
+    @PostMapping(path = "/{id}/delete", name = ROUTE_DELETE)
     public String deleteAction(@PathVariable("id") final String id, final RedirectAttributes redirectAttributes) {
         try {
             collectionService.delete(id);
             addFlashInfoMessage(redirectAttributes, translationService.get("collection.action.delete"));
         }
         catch (FunctionalException e) {
-            addFlashErrorMessage(redirectAttributes, translationService.get("collection.error.not-found"));
+            handleFunctionalException(redirectAttributes, e);
         }
 
-        return routingService.redirectUrl("admin.collections.index");
+        return redirect(ROUTE_INDEX);
     }
 }
