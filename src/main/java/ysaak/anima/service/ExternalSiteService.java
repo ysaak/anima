@@ -58,15 +58,12 @@ public class ExternalSiteService implements IAnimaComponent {
         return externalSiteRepository.save(externalSite);
     }
 
-    public ExternalSite findById(final String id) throws FunctionalException {
-        return externalSiteRepository.findById(id)
-                .orElseThrow(() -> ExternalSiteErrorCode.NOT_FOUND_BY_ID.functional(id));
+    public Optional<ExternalSite> findById(final String id) {
+        return externalSiteRepository.findById(id);
     }
 
-    public ExternalSite findByCode(final String code) throws FunctionalException {
-        return externalSiteRepository.findByCode(code)
-                .orElseThrow(() -> ExternalSiteErrorCode.NOT_FOUND_BY_CODE.functional(code));
-    }
+    public Optional<ExternalSite> findByCode(final String code) {
+        return externalSiteRepository.findByCode(code); }
 
     public List<ExternalSite> findAll() {
         return CollectionUtils.toList(
@@ -74,9 +71,7 @@ public class ExternalSiteService implements IAnimaComponent {
         );
     }
 
-    public void delete(String externalSiteId) throws FunctionalException {
-        ExternalSite siteToDelete = findById(externalSiteId);
-
+    public void delete(ExternalSite siteToDelete) throws FunctionalException {
         if (UNMODIFIABLE_CODE_LIST.contains(siteToDelete.getCode())) {
             throw ExternalSiteErrorCode.CANNOT_DELETE_SITE.functional();
         }

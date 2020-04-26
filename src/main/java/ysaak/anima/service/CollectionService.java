@@ -6,14 +6,12 @@ import org.springframework.stereotype.Service;
 import ysaak.anima.IAnimaComponent;
 import ysaak.anima.dao.repository.CollectionRepository;
 import ysaak.anima.data.Collection;
-import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.FunctionalException;
-import ysaak.anima.exception.error.CollectionErrorCode;
-import ysaak.anima.exception.error.GenericErrorCode;
 import ysaak.anima.rules.CollectionRules;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CollectionService implements IAnimaComponent {
@@ -23,9 +21,8 @@ public class CollectionService implements IAnimaComponent {
         this.collectionRepository = collectionRepository;
     }
 
-    public Collection findById(final String id) throws FunctionalException {
-        return collectionRepository.findById(id)
-                .orElseThrow(() -> CollectionErrorCode.NOT_FOUND.functional(id));
+    public Optional<Collection> findById(final String id) {
+        return collectionRepository.findById(id);
     }
 
     public Collection save(Collection collection) throws FunctionalException {
@@ -41,8 +38,8 @@ public class CollectionService implements IAnimaComponent {
         );
     }
 
-    public void delete(String id) throws FunctionalException {
-        Collection collectionToDelete = findById(id);
+    public void delete(Collection collectionToDelete) {
+        Preconditions.checkNotNull(collectionToDelete);
         collectionRepository.delete(collectionToDelete);
     }
 }

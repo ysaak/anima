@@ -73,9 +73,9 @@ public class AdminTagController extends AbstractViewController {
     }
 
     @GetMapping(path = "/{id}/edit", name = ROUTE_EDIT)
-    public String editAction(ModelMap model, @PathVariable("id") String id) throws FunctionalException {
+    public String editAction(ModelMap model, @PathVariable("id") String id) {
         if (!model.containsAttribute("tag")) {
-            final Tag tag = tagService.findById(id);
+            final Tag tag = tagService.findById(id).orElseThrow(this::notFound);
 
             final TagEditDto tagToEdit = converters().convert(tag, TagEditDto.class);
             model.put("tag", tagToEdit);
@@ -100,8 +100,9 @@ public class AdminTagController extends AbstractViewController {
     }
 
     @PostMapping(path = "/{id}/delete", name = ROUTE_DELETE)
-    public String deleteAction(@PathVariable("id") String id, final RedirectAttributes redirectAttributes) throws FunctionalException {
-        tagService.delete(id);
+    public String deleteAction(@PathVariable("id") String id, final RedirectAttributes redirectAttributes) {
+        Tag tagToDelete = tagService.findById(id).orElseThrow(this::notFound);
+        tagService.delete(tagToDelete);
         addFlashInfoMessage(redirectAttributes, translationService.get("tag.action.delete"));
         return redirect(ROUTE_INDEX);
     }

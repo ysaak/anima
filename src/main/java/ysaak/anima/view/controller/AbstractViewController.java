@@ -25,6 +25,10 @@ public abstract class AbstractViewController implements IAnimaComponent {
         this.routingService = routingService;
     }
 
+    protected ResponseStatusException notFound() {
+        return new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
     protected void handleFunctionalException(final RedirectAttributes redirectAttributes, FunctionalException exception) {
         ErrorCode errorCode = exception.getError();
 

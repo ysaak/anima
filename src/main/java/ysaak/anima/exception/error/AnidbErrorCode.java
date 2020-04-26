@@ -11,10 +11,11 @@ public enum AnidbErrorCode implements ErrorCode {
     IMPORT_ALREADY_IMPORTED("ANIDB-IMP-001", "Anime with id %s is already imported"),
     IMPORT_XML_READ("ANIDB-IMP-002", "Error while reading anime XML data"),
     IMPORT_API_ERROR("ANIDB-IMP-003", "API error : %s"),
+    IMPORT_SITE_NOT_FOUND("ANIDB-IMP-004", "Importer site not found code=%s"),
 
     IMPORT_API_URI_CREATE("ANIDB-API-001", "Error while creating API uri"),
     IMPORT_API_INVALID_SERVER_RESPONSE("ANIDB-API-002", "Error while executing request %s. HTTP status: %d"),
-    IMPORT_API_DATA_READ("ANIDB-API-003", "Error while reading API data for request %s")
+    IMPORT_API_DATA_READ("ANIDB-API-003", "Error while reading API data for request %s"),
     ;
 
     private final String code;

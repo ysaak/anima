@@ -9,11 +9,11 @@ import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.dao.repository.TagRepository;
 import ysaak.anima.data.Tag;
 import ysaak.anima.exception.FunctionalException;
-import ysaak.anima.exception.error.TagErrorCode;
 import ysaak.anima.rules.TagRules;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagService implements IAnimaComponent {
@@ -43,17 +43,13 @@ public class TagService implements IAnimaComponent {
         return converterService.convert(model, Tag.class);
     }
 
-    public Tag findById(final String id) throws FunctionalException {
-        TagModel tagModel = tagRepository.findById(id)
-                .orElseThrow(() -> TagErrorCode.NOT_FOUND.functional(id));
+    public Optional<Tag> findById(final String id) {
+        Optional<TagModel> tagModel = tagRepository.findById(id);
 
-        return converterService.convert(tagModel, Tag.class);
+        return tagModel.map(m -> converterService.convert(m, Tag.class));
     }
 
-    public void delete(String id) throws FunctionalException {
-        TagModel tagToDelete = tagRepository.findById(id)
-                .orElseThrow(() -> TagErrorCode.NOT_FOUND.functional(id));
-
-        tagRepository.delete(tagToDelete);
+    public void delete(Tag tagToDelete) {
+        tagRepository.deleteById(tagToDelete.getId());
     }
 }

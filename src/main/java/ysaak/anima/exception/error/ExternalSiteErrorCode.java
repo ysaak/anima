@@ -4,9 +4,6 @@ import org.springframework.http.HttpStatus;
 import ysaak.anima.exception.ErrorCode;
 
 public enum ExternalSiteErrorCode implements ErrorCode {
-    NOT_FOUND_BY_ID("EXTSI-GET-001", "No external site found with id '%s'", HttpStatus.NOT_FOUND),
-    NOT_FOUND_BY_CODE("EXTSI-GET-002", "No external site found with code '%s'", HttpStatus.NOT_FOUND),
-
     VALIDATE_CODE_FORMAT("EXTSI-VAL-001", "Code length must be between %s and %s characters", HttpStatus.BAD_REQUEST),
     VALIDATE_CODE_UNIQUENESS("EXTSI-VAL-002", "Code must be unique", HttpStatus.BAD_REQUEST),
     VALIDATE_SITE_NAME_FORMAT("EXTSI-VAL-003", "Site name length must be between %d and %d characters", HttpStatus.BAD_REQUEST),

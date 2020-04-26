@@ -71,9 +71,9 @@ public class AdminExternalSiteController extends AbstractViewController {
     }
 
     @GetMapping(path = "/{id}/edit", name = ROUTE_EDIT)
-    public String editAction(ModelMap model, @PathVariable("id") String id) throws FunctionalException {
+    public String editAction(ModelMap model, @PathVariable("id") String id) {
         if (!model.containsAttribute("site")) {
-            final ExternalSite externalSite = externalSiteService.findById(id);
+            final ExternalSite externalSite = externalSiteService.findById(id).orElseThrow(this::notFound);
             model.put("site", externalSite);
         }
 
@@ -96,8 +96,10 @@ public class AdminExternalSiteController extends AbstractViewController {
 
     @PostMapping(path = "/{id}/delete", name = ROUTE_DELETE)
     public String deleteAction(@PathVariable("id") final String id, final RedirectAttributes redirectAttributes) {
+        final ExternalSite siteToDelete = externalSiteService.findById(id).orElseThrow(this::notFound);
+
         try {
-            externalSiteService.delete(id);
+            externalSiteService.delete(siteToDelete);
             addFlashInfoMessage(redirectAttributes, this.translationService.get("external-site.action.delete"));
         }
         catch (FunctionalException e) {

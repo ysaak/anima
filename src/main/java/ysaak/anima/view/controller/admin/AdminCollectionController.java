@@ -71,9 +71,9 @@ public class AdminCollectionController extends AbstractViewController {
     }
 
     @GetMapping(path = "/{id}/edit", name = ROUTE_EDIT)
-    public String editAction(ModelMap model, @PathVariable("id") String id) throws Exception {
+    public String editAction(ModelMap model, @PathVariable("id") String id) {
         if (!model.containsAttribute("collection")) {
-            final Collection collection = collectionService.findById(id);
+            final Collection collection = collectionService.findById(id).orElseThrow(this::notFound);
             model.put("collection", collection);
         }
 
@@ -96,13 +96,10 @@ public class AdminCollectionController extends AbstractViewController {
 
     @PostMapping(path = "/{id}/delete", name = ROUTE_DELETE)
     public String deleteAction(@PathVariable("id") final String id, final RedirectAttributes redirectAttributes) {
-        try {
-            collectionService.delete(id);
-            addFlashInfoMessage(redirectAttributes, translationService.get("collection.action.delete"));
-        }
-        catch (FunctionalException e) {
-            handleFunctionalException(redirectAttributes, e);
-        }
+        Collection collectionToDelete = collectionService.findById(id).orElseThrow(this::notFound);
+
+        collectionService.delete(collectionToDelete);
+        addFlashInfoMessage(redirectAttributes, translationService.get("collection.action.delete"));
 
         return redirect(ROUTE_INDEX);
     }

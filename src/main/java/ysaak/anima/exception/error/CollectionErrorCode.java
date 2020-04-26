@@ -4,8 +4,6 @@ import org.springframework.http.HttpStatus;
 import ysaak.anima.exception.ErrorCode;
 
 public enum CollectionErrorCode implements ErrorCode {
-    NOT_FOUND("COLLE-GET-001", "No collection found with id '%s'", HttpStatus.NOT_FOUND),
-
     VALIDATE_NAME_FORMAT("COLLE-VAL-001", "Name length must be between %s and %s characters", HttpStatus.BAD_REQUEST),
     ;
 

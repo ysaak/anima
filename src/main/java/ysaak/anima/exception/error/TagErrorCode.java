@@ -4,8 +4,6 @@ import org.springframework.http.HttpStatus;
 import ysaak.anima.exception.ErrorCode;
 
 public enum TagErrorCode implements ErrorCode {
-    NOT_FOUND("TAG-GET-001", "No tag found with id '%s'", HttpStatus.NOT_FOUND),
-
     VALIDATE_NAME_FORMAT("TAG-VAL-001", "Name length must be between %s and %s characters", HttpStatus.BAD_REQUEST),
     VALIDATE_DESCRIPTION_FORMAT("TAG-VAL-002", "Description length cannot more than %d characters", HttpStatus.BAD_REQUEST),
     ;
