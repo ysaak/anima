@@ -10,11 +10,8 @@ import javax.validation.constraints.Size;
 public class Tag {
     private String id;
 
-    @NotEmpty
-    @Size(max = 250, message = ValidationMessages.MAX_LENGTH)
     private String name;
 
-    @Size(max = 4000, message = ValidationMessages.MAX_LENGTH)
     private String description;
 
     private Multimap<TagEquivalenceOrigin, String> equivalenceMap;
