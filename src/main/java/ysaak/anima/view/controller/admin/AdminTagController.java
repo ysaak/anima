@@ -14,6 +14,7 @@ import ysaak.anima.data.Tag;
 import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ResourceNotFoundException;
 import ysaak.anima.service.TagService;
+import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.view.controller.AbstractViewController;
 import ysaak.anima.view.dto.admin.TagEditDto;
 import ysaak.anima.view.router.RoutingService;
@@ -29,7 +30,8 @@ public class AdminTagController extends AbstractViewController {
     private final RoutingService routingService;
 
     @Autowired
-    public AdminTagController(TagService tagService, RoutingService routingService) {
+    public AdminTagController(TagService tagService, RoutingService routingService, TranslationService translationService) {
+        super(translationService, routingService);
         this.tagService = tagService;
         this.routingService = routingService;
     }

@@ -7,7 +7,8 @@ import ysaak.anima.IAnimaComponent;
 import ysaak.anima.dao.repository.CollectionRepository;
 import ysaak.anima.data.Collection;
 import ysaak.anima.exception.DataValidationException;
-import ysaak.anima.exception.NoDataFoundException;
+import ysaak.anima.exception.FunctionalException;
+import ysaak.anima.exception.error.GenericErrorCode;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.List;
@@ -20,9 +21,9 @@ public class CollectionService implements IAnimaComponent {
         this.collectionRepository = collectionRepository;
     }
 
-    public Collection findById(String id) throws NoDataFoundException {
+    public Collection findById(final String id) throws FunctionalException {
         return collectionRepository.findById(id)
-                .orElseThrow(() -> new NoDataFoundException("No collection found with id " + id));
+                .orElseThrow(() -> GenericErrorCode.NOT_FOUND.functional(id));
     }
 
     public Collection save(Collection collection) throws DataValidationException {
@@ -38,7 +39,7 @@ public class CollectionService implements IAnimaComponent {
         );
     }
 
-    public void delete(String id) throws NoDataFoundException {
+    public void delete(String id) throws FunctionalException {
         Collection collectionToDelete = findById(id);
         collectionRepository.delete(collectionToDelete);
     }

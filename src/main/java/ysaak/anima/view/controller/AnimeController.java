@@ -20,7 +20,9 @@ import ysaak.anima.data.Episode;
 import ysaak.anima.data.Relation;
 import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
+import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.NoDataFoundException;
+import ysaak.anima.exception.error.GenericErrorCode;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.utils.CollectionUtils;
@@ -45,6 +47,7 @@ public class AnimeController extends AbstractViewController {
 
     @Autowired
     public AnimeController(final ElementService elementService, final RoutingService routingService, final TranslationService translationService) {
+        super(translationService, routingService);
         this.elementService = elementService;
         this.routingService = routingService;
         this.translationService = translationService;
@@ -100,9 +103,15 @@ public class AnimeController extends AbstractViewController {
     }
 
     @GetMapping(path = "/{id}", name = "animes.view")
-    public String viewAction(ModelMap model, @PathVariable("id") String id) throws NoDataFoundException {
-        Element element = this.elementService.findById(id);
-
+    public String viewAction(ModelMap model, @PathVariable("id") String id) throws FunctionalException {
+        Element element;
+        try {
+            element = this.elementService.findById(id);
+        }
+        catch (NoDataFoundException e) {
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+            throw GenericErrorCode.NOT_FOUND.functional(id);
+        }
 
         ElementViewDto elementView = convertElementToDto(element);
 
@@ -110,9 +119,6 @@ public class AnimeController extends AbstractViewController {
 
         int seasonCount = elementView.getSeasonList().size();
         model.put("seasonCount", seasonCount);
-
-//        String anidbLink = (StringUtils.isNotEmpty(anime.getAnidbId())) ? oldAnidbService.getUrl(anime.getAnidbId()) : null;
-//        model.put("anidbLink", anidbLink);
 
         return "elements/view";
     }

@@ -17,14 +17,14 @@ public class TagEditDtoToTagConverter extends AbstractConverter<TagEditDto, Tag>
     @Override
     protected Tag safeConvert(TagEditDto dto) {
         final Tag tag = new Tag(
-                StringUtils.isNotEmpty(dto.getId()) ? dto.getId() : null,
+                StringUtils.isNotBlank(dto.getId()) ? dto.getId() : null,
                 dto.getName(),
                 dto.getDescription()
         );
 
         Multimap<Tag.TagEquivalenceOrigin, String> equivalenceMap = HashMultimap.create();
 
-        if (StringUtils.isNotEmpty(dto.getAnidbEquivalence())) {
+        if (StringUtils.isNotBlank(dto.getAnidbEquivalence())) {
             addToEquivalenceMap(equivalenceMap, Tag.TagEquivalenceOrigin.ANIDB, dto.getAnidbEquivalence());
         }
 
@@ -35,7 +35,7 @@ public class TagEditDtoToTagConverter extends AbstractConverter<TagEditDto, Tag>
 
     private void addToEquivalenceMap(final Multimap<Tag.TagEquivalenceOrigin, String> equivalenceMap, Tag.TagEquivalenceOrigin origin, String data) {
         final List<String> codeList = Stream.of(data.split("\n"))
-                .filter(StringUtils::isNotEmpty)
+                .filter(StringUtils::isNotBlank)
                 .sorted()
                 .map(String::trim)
                 .collect(Collectors.toList());

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.data.Collection;
 import ysaak.anima.exception.DataValidationException;
-import ysaak.anima.exception.NoDataFoundException;
+import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.service.CollectionService;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.view.controller.AbstractViewController;
@@ -32,6 +32,7 @@ public class AdminCollectionController extends AbstractViewController {
 
     @Autowired
     public AdminCollectionController(CollectionService collectionService, TranslationService translationService, RoutingService routingService) {
+        super(translationService, routingService);
         this.collectionService = collectionService;
         this.translationService = translationService;
         this.routingService = routingService;
@@ -98,7 +99,7 @@ public class AdminCollectionController extends AbstractViewController {
             collectionService.delete(id);
             addFlashInfoMessage(redirectAttributes, translationService.get("collection.action.delete"));
         }
-        catch (NoDataFoundException e) {
+        catch (FunctionalException e) {
             addFlashErrorMessage(redirectAttributes, translationService.get("collection.error.not-found"));
         }
 

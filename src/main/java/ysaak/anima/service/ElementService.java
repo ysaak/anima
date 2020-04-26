@@ -13,6 +13,7 @@ import ysaak.anima.data.Episode;
 import ysaak.anima.data.ExternalSite;
 import ysaak.anima.data.Season;
 import ysaak.anima.exception.DataValidationException;
+import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.service.validation.ValidationMessages;
@@ -264,11 +265,11 @@ public class ElementService implements IAnimaComponent {
         final Element element = findById(elementId);
         final ExternalSite externalSite;
 
-        if (StringUtils.isNotEmpty(externalSiteId)) {
+        if (StringUtils.isNotBlank(externalSiteId)) {
             try {
                 externalSite = externalSiteService.findById(externalSiteId);
             }
-            catch (NoDataFoundException e) {
+            catch (FunctionalException e) {
                 throw new DataValidationException(Collections.singletonMap(
                         "externalSiteId", translationService.get("elements.remote-id.error.external-site-not-found")
                 ));

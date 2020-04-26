@@ -87,7 +87,7 @@ public class Episode implements Comparable<Episode> {
         String o2StringPart = o2.replaceAll("\\d", "");
 
         if (o1StringPart.equalsIgnoreCase(o2StringPart)) {
-            return StringUtils.extractInt(o1) - StringUtils.extractInt(o2);
+            return StringUtils.extractDigits(o1) - StringUtils.extractDigits(o2);
         }
         return o1.compareTo(o2);
     }

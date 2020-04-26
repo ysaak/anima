@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.service.importer.anidb.AnidbImporterService;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.view.controller.AbstractViewController;
+import ysaak.anima.view.router.RoutingService;
 
 @Controller
 @RequestMapping("/admin/importer/anidb")
@@ -19,7 +20,8 @@ public class AdminAnidbImporterController extends AbstractViewController {
     private final AnidbImporterService anidbImporterService;
     private final TranslationService translationService;
 
-    public AdminAnidbImporterController(AnidbImporterService anidbImporterService, TranslationService translationService) {
+    public AdminAnidbImporterController(AnidbImporterService anidbImporterService, TranslationService translationService, RoutingService routingService) {
+        super(translationService, routingService);
         this.anidbImporterService = anidbImporterService;
         this.translationService = translationService;
     }
