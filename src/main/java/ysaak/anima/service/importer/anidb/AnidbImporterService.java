@@ -180,7 +180,8 @@ public class AnidbImporterService {
         final String animeData = anidbApiClient.getAnimeXml(aniDbId);
         final Element element = AnidbAnimeXmlParser.parseDocument(animeData);
 
-        final ExternalSite site = externalSiteService.findByCode(AnidbConstants.ANIDB_SITE_CODE);
+        final ExternalSite site = externalSiteService.findByCode(AnidbConstants.ANIDB_SITE_CODE)
+                .orElseThrow(() -> AnidbErrorCode.IMPORT_SITE_NOT_FOUND.functional(AnidbConstants.ANIDB_SITE_CODE));
         ElementRemoteId remoteId = new ElementRemoteId(element, site, aniDbId);
         element.setRemoteIdList(Collections.singletonList(remoteId));
 

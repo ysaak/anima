@@ -1,6 +1,5 @@
 package ysaak.anima.service;
 
-import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ysaak.anima.IAnimaComponent;
@@ -8,7 +7,6 @@ import ysaak.anima.dao.repository.RelationRepository;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.Relation;
 import ysaak.anima.data.RelationType;
-import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.NoDataFoundException;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class RelationService implements IAnimaComponent {
         this.relationRepository = relationRepository;
     }
 
-    public void createRelation(String elementId, String relatedElementId, RelationType type) throws DataValidationException {
+    public void createRelation(String elementId, String relatedElementId, RelationType type) {
         List<Relation> relationToSaveList = new ArrayList<>();
 
         final Relation relation = new Relation(
@@ -35,7 +33,7 @@ public class RelationService implements IAnimaComponent {
                 type
         );
 
-        validate(relation);
+        // TODO Validation
 
         relationToSaveList.add(relation);
 
@@ -53,13 +51,6 @@ public class RelationService implements IAnimaComponent {
         }
 
         relationRepository.saveAll(relationToSaveList);
-    }
-
-    private void validate(Relation relation) throws DataValidationException {
-        Preconditions.checkNotNull(relation);
-        validator().validate(relation);
-
-        // TODO check uniqueness
     }
 
     private RelationType getInvertedRelation(final RelationType type) {

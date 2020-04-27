@@ -1,8 +1,14 @@
 package ysaak.anima.exception;
 
+import org.springframework.http.HttpStatus;
+
 public interface ErrorCode {
     String getCode();
     String getMessage();
+
+    default HttpStatus getStatus() {
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
     default FunctionalException functional() {
         return new FunctionalException(this);

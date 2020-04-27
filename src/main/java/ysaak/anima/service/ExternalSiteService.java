@@ -8,12 +8,10 @@ import ysaak.anima.IAnimaComponent;
 import ysaak.anima.dao.repository.ExternalSiteRepository;
 import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ExternalSite;
-import ysaak.anima.exception.DataValidationException;
-import ysaak.anima.exception.NoDataFoundException;
-import ysaak.anima.exception.NotAllowedOperationException;
+import ysaak.anima.exception.FunctionalException;
+import ysaak.anima.exception.error.ExternalSiteErrorCode;
+import ysaak.anima.rules.ExternalSiteRules;
 import ysaak.anima.service.importer.anidb.AnidbConstants;
-import ysaak.anima.service.technical.TranslationService;
-import ysaak.anima.service.validation.ValidationMessages;
 import ysaak.anima.utils.CollectionUtils;
 
 import java.util.Collections;
@@ -31,22 +29,21 @@ public class ExternalSiteService implements IAnimaComponent {
     );
 
     private final ExternalSiteRepository externalSiteRepository;
-    private final TranslationService translationService;
 
     @Autowired
-    public ExternalSiteService(ExternalSiteRepository externalSiteRepository, TranslationService translationService) {
+    public ExternalSiteService(ExternalSiteRepository externalSiteRepository) {
         this.externalSiteRepository = externalSiteRepository;
-        this.translationService = translationService;
     }
 
-    public ExternalSite save(ExternalSite externalSite) throws DataValidationException {
+    public ExternalSite save(ExternalSite externalSite) throws FunctionalException {
         Preconditions.checkNotNull(externalSite);
-        validator().validate(externalSite);
+
+        ExternalSiteRules.validate(externalSite);
 
         Optional<ExternalSite> siteWithCode = externalSiteRepository.findByCode(externalSite.getCode());
         if (siteWithCode.isPresent()) {
             if (externalSite.getId() == null || !Objects.equals(externalSite.getId(), siteWithCode.get().getId())) {
-                throw new DataValidationException(Collections.singletonMap("code", translationService.get(ValidationMessages.UNIQUENESS_KEY)));
+                throw ExternalSiteErrorCode.VALIDATE_CODE_UNIQUENESS.functional();
             }
         }
 
@@ -61,15 +58,12 @@ public class ExternalSiteService implements IAnimaComponent {
         return externalSiteRepository.save(externalSite);
     }
 
-    public ExternalSite findById(String externalSiteId) throws NoDataFoundException {
-        return externalSiteRepository.findById(externalSiteId)
-                .orElseThrow(() -> new NoDataFoundException("No external site found with id " + externalSiteId));
+    public Optional<ExternalSite> findById(final String id) {
+        return externalSiteRepository.findById(id);
     }
 
-    public ExternalSite findByCode(String code) throws NoDataFoundException {
-        return externalSiteRepository.findByCode(code)
-                .orElseThrow(() -> new NoDataFoundException("No external site found with code " + code));
-    }
+    public Optional<ExternalSite> findByCode(final String code) {
+        return externalSiteRepository.findByCode(code); }
 
     public List<ExternalSite> findAll() {
         return CollectionUtils.toList(
@@ -77,11 +71,9 @@ public class ExternalSiteService implements IAnimaComponent {
         );
     }
 
-    public void delete(String externalSiteId) throws NoDataFoundException, NotAllowedOperationException {
-        ExternalSite siteToDelete = findById(externalSiteId);
-
+    public void delete(ExternalSite siteToDelete) throws FunctionalException {
         if (UNMODIFIABLE_CODE_LIST.contains(siteToDelete.getCode())) {
-            throw new NotAllowedOperationException("Cannot delete external site with code " + siteToDelete.getCode());
+            throw ExternalSiteErrorCode.CANNOT_DELETE_SITE.functional();
         }
 
         externalSiteRepository.delete(siteToDelete);

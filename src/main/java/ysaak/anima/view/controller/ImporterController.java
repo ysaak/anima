@@ -37,6 +37,7 @@ public class ImporterController extends AbstractViewController {
 
     @Autowired
     public ImporterController(AnidbImporterService anidbImporterService, ExternalSiteService externalSiteService, RoutingService routingService, TranslationService translationService) {
+        super(translationService, routingService);
         this.anidbImporterService = anidbImporterService;
         this.externalSiteService = externalSiteService;
         this.routingService = routingService;
@@ -56,7 +57,7 @@ public class ImporterController extends AbstractViewController {
 
         final int pageRequest = (page != null) ? page : 1;
 
-        if (StringUtils.isNotEmpty(search)) {
+        if (StringUtils.isNotBlank(search)) {
             Page<AnidbTitle> resultPage = anidbImporterService.searchByTitle(search, pageRequest, MAX_RESULTS);
 
             final List<String> idList = resultPage.get().map(AnidbTitle::getAnidbId).collect(Collectors.toList());

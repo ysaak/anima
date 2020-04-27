@@ -111,19 +111,19 @@ public class RoutingService {
 
         if (method.isAnnotationPresent(GetMapping.class)) {
             final GetMapping mapping = method.getAnnotation(GetMapping.class);
-            if (StringUtils.isNotEmpty(mapping.name())) {
+            if (StringUtils.isNotBlank(mapping.name())) {
                 annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
             }
         }
         else if (method.isAnnotationPresent(PostMapping.class)) {
             PostMapping mapping = method.getAnnotation(PostMapping.class);
-            if (StringUtils.isNotEmpty(mapping.name())) {
+            if (StringUtils.isNotBlank(mapping.name())) {
                 annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
             }
         }
         else if (method.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping mapping = method.getAnnotation(RequestMapping.class);
-            if (StringUtils.isNotEmpty(mapping.name())) {
+            if (StringUtils.isNotBlank(mapping.name())) {
                 annotationData = new AnnotationData(mapping.name(), mapping.path()[0]);
             }
         }

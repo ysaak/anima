@@ -7,6 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import ysaak.anima.exception.ErrorCode;
 
 @Service
 public class TranslationService {
@@ -36,6 +37,15 @@ public class TranslationService {
 
         final String key = enumKey.getClass().getName() + "." + enumKey.name();
         return getTranslation(key, null);
+    }
+
+    public String translateError(ErrorCode errorCode, Object[] args) {
+        if (errorCode == null) {
+            return NULL_VALUE;
+        }
+
+        final String key = "error." + errorCode.getCode();
+        return getTranslation(key, args);
     }
 
     private String getTranslation(String key, Object[] args) {

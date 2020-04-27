@@ -1,14 +1,12 @@
 package ysaak.anima.data;
 
 import org.hibernate.annotations.GenericGenerator;
-import ysaak.anima.service.validation.ValidationMessages;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "COLLECTION")
@@ -20,7 +18,6 @@ public class Collection {
     private String id;
 
     @Column(name = "COLL_NAME", nullable = false)
-    @Size(max = 250, message = ValidationMessages.MAX_LENGTH)
     private String name;
 
     public String getId() {

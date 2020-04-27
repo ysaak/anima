@@ -24,9 +24,8 @@ import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
 import ysaak.anima.data.storage.StorageFormat;
 import ysaak.anima.data.storage.StorageType;
-import ysaak.anima.exception.DataValidationException;
+import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.NoDataFoundException;
-import ysaak.anima.exception.StorageException;
 import ysaak.anima.service.CollectionService;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.ExternalSiteService;
@@ -69,6 +68,7 @@ public class ElementController extends AbstractViewController {
 
     @Autowired
     public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, CollectionService collectionService, RoutingService routingService, TranslationService translationService) {
+        super(translationService, routingService);
         this.elementService = elementService;
         this.tagService = tagService;
         this.storageService = storageService;
@@ -114,8 +114,8 @@ public class ElementController extends AbstractViewController {
         try {
             savedElement = elementService.create(elementToSave);
         }
-        catch (DataValidationException dve) {
-            registerValidationErrors(redirectAttributes, dve);
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             redirectAttributes.addFlashAttribute("element", elementEditDto);
             return "redirect:/elements/new";
         }
@@ -165,8 +165,8 @@ public class ElementController extends AbstractViewController {
         try {
             savedElement = elementService.update(elementToSave);
         }
-        catch (DataValidationException dve) {
-            registerValidationErrors(redirectAttributes, dve);
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             redirectAttributes.addFlashAttribute("element", elementEditDto);
             return "redirect:/elements/" + elementEditDto.getId() + "/edit";
         }
@@ -186,7 +186,7 @@ public class ElementController extends AbstractViewController {
 
     @GetMapping("/{elementId}/image.png")
     @ResponseBody
-    public ResponseEntity<Resource> getElementImage(@PathVariable("elementId") String elementId) throws StorageException {
+    public ResponseEntity<Resource> getElementImage(@PathVariable("elementId") String elementId) throws FunctionalException {
         Resource file = storageService.getImage(StorageType.ELEMENT, StorageFormat.FULL, elementId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
@@ -194,7 +194,7 @@ public class ElementController extends AbstractViewController {
 
     @GetMapping("/{elementId}/thumbnail.png")
     @ResponseBody
-    public ResponseEntity<Resource> getElementThumbnail(@PathVariable("elementId") String elementId) throws StorageException {
+    public ResponseEntity<Resource> getElementThumbnail(@PathVariable("elementId") String elementId) throws FunctionalException {
         Resource file = storageService.getImage(StorageType.ELEMENT, StorageFormat.THUMBNAIL, elementId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
@@ -207,7 +207,7 @@ public class ElementController extends AbstractViewController {
     }
 
     @PostMapping(path = "/{elementId}/image/", name = "elements.image.update")
-    public String updateImageAction(@PathVariable("elementId") final String elementId, @RequestParam("file") final MultipartFile file) throws NoDataFoundException, StorageException {
+    public String updateImageAction(@PathVariable("elementId") final String elementId, @RequestParam("file") final MultipartFile file) throws NoDataFoundException, FunctionalException {
         final Element element = elementService.findById(elementId);
 
         storageService.store(StorageType.ELEMENT, elementId, file);
@@ -232,9 +232,8 @@ public class ElementController extends AbstractViewController {
         try {
             element = elementService.addSeason(seasonEditDto.getElementId(), seasonEditDto.getTitle());
         }
-        catch (DataValidationException dve) {
-            // FIXME revoir ce mécanisme
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             return "redirect:/";
         }
 
@@ -307,9 +306,9 @@ public class ElementController extends AbstractViewController {
         try {
             element = elementService.addEpisode(episodeEditDto.getElementId(), episodeEditDto.getSeasonId(), episode);
         }
-        catch (DataValidationException dve) {
+        catch (FunctionalException e) {
             // FIXME revoir ce mécanisme
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            handleFunctionalException(redirectAttributes, e);
             return "redirect:/";
         }
 
@@ -337,7 +336,7 @@ public class ElementController extends AbstractViewController {
     public String episodeMassCreateAction(@ModelAttribute EpisodeMassAddDto episodeMassAddDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element;
 
-        if (StringUtils.isNotEmpty(episodeMassAddDto.getEpisodeList())) {
+        if (StringUtils.isNotBlank(episodeMassAddDto.getEpisodeList())) {
 
             List<Episode> episodeList = new ArrayList<>();
 
@@ -350,9 +349,8 @@ public class ElementController extends AbstractViewController {
 
             try {
                 element = elementService.addEpisode(episodeMassAddDto.getElementId(), episodeMassAddDto.getSeasonId(), episodeList);
-            } catch (DataValidationException dve) {
-                // FIXME revoir ce mécanisme
-                addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+            } catch (FunctionalException e) {
+                handleFunctionalException(redirectAttributes, e);
                 return "redirect:/";
             }
         }
@@ -404,9 +402,8 @@ public class ElementController extends AbstractViewController {
         try {
             element = elementService.updateEpisode(episodeEditDto.getElementId(), episodeEditDto.getSeasonId(), episode);
         }
-        catch (DataValidationException dve) {
-            // FIXME revoir ce mécanisme
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
             return "redirect:/";
         }
 
@@ -450,12 +447,7 @@ public class ElementController extends AbstractViewController {
     public String relationCreateAction(@ModelAttribute RelationAddDto relationAddDto, final RedirectAttributes redirectAttributes) throws NoDataFoundException {
         final Element element = elementService.findById(relationAddDto.getElementId());
 
-        try {
-            relationService.createRelation(relationAddDto.getElementId(), relationAddDto.getRelatedElementId(), relationAddDto.getType());
-        }
-        catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
-        }
+        relationService.createRelation(relationAddDto.getElementId(), relationAddDto.getRelatedElementId(), relationAddDto.getType());
 
         return "redirect:" + routingService.getUrlFor(element);
     }
@@ -494,8 +486,8 @@ public class ElementController extends AbstractViewController {
                     remoteIdAddDto.getRemoteId()
             );
         }
-        catch (DataValidationException dve) {
-            addFlashErrorMessage(redirectAttributes, dve.getMessageList());
+        catch (FunctionalException e) {
+            handleFunctionalException(redirectAttributes, e);
         }
 
         return "redirect:" + routingService.getUrlFor(element);
