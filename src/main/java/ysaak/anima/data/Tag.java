@@ -2,10 +2,6 @@ package ysaak.anima.data;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import ysaak.anima.service.validation.ValidationMessages;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 public class Tag {
     private String id;

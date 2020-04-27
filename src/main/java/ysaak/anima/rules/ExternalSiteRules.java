@@ -11,7 +11,7 @@ public final class ExternalSiteRules {
     /**
      * Validate an ExternalSite object
      * @param externalSite External site to validate
-     * @throws FunctionalException Thrown is the object is invalid
+     * @throws FunctionalException Thrown if the object is invalid
      */
     public static void validate(ExternalSite externalSite) throws FunctionalException {
         Validate.notNull(externalSite, "externalSite");

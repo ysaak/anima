@@ -11,7 +11,7 @@ public final class TagRules {
     /**
      * Validate a Tag object
      * @param tag Tag to validate
-     * @throws FunctionalException Thrown is the object is invalid
+     * @throws FunctionalException Thrown if the object is invalid
      */
     public static void validate(Tag tag) throws FunctionalException {
         Validate.notNull(tag, "tag");

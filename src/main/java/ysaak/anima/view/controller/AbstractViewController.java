@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ysaak.anima.IAnimaComponent;
-import ysaak.anima.exception.DataValidationException;
 import ysaak.anima.exception.ErrorCode;
 import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.service.technical.TranslationService;
@@ -47,10 +46,6 @@ public abstract class AbstractViewController implements IAnimaComponent {
 
     public String redirect(final String routeName, final Map<String, Object> parameters) {
         return "redirect:" + routingService.getUrlFor(routeName, parameters);
-    }
-
-    protected void registerValidationErrors(final RedirectAttributes redirectAttributes, final DataValidationException validationException) {
-        redirectAttributes.addFlashAttribute(ViewConstants.FLASH_VALIDATION_ERROR_KEY, validationException.getErrorMap());
     }
 
     protected void addFlashErrorMessage(final RedirectAttributes redirectAttributes, final String message) {

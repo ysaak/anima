@@ -11,7 +11,7 @@ public final class CollectionRules {
     /**
      * Validate a Collection  object
      * @param collection Collection to validate
-     * @throws FunctionalException Thrown is the object is invalid
+     * @throws FunctionalException Thrown if the object is invalid
      */
     public static void validate(Collection collection) throws FunctionalException {
         Validate.notNull(collection, "collection");
