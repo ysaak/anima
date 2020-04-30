@@ -110,4 +110,12 @@ public class ExternalSiteService implements IAnimaComponent {
 
         return elementMap;
     }
+
+    public int countElementBySite(final String code) {
+        final Optional<ExternalSite> site = externalSiteRepository.findByCode(code);
+
+        return site.map(externalSite -> externalSiteRepository.countElementForSite(externalSite.getId()))
+                .orElse(0);
+
+    }
 }

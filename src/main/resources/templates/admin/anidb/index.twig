@@ -9,15 +9,56 @@
 {% block content %}
 <div class="row">
     <div class="col-6">
-
         <div class="card card-body">
-            <h4 class="card-title">Titres d'animes</h4>
-            <div class="d-flex justify-content-between">
-                <div>Titres en mémoire : {{ title_count }}</div>
-                <form action="{{ urlFor('admin.importer.anidb.reload-titles') }}" method="post">
-                    <button type="submit" class="btn btn-icon btn-primary"><span class="material-icons">refresh</span> Actualiser</button>
-                </form>
+            <div class="card-custom-header">
+                <h4 class="card-title">Informations</h4>
+                <div class="dropdown">
+                    <button class="btn btn-option" data-toggle="dropdown"><span class="material-icons">more_vert</span></button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <form action="{{ urlFor('admin.importer.anidb.reload-titles') }}" method="post">
+                            <button type="submit" class="dropdown-item"><span class="material-icons">refresh</span> Actualiser</button>
+                        </form>
+                    </div>
+                </div>
             </div>
+            <dl class="row">
+                <dt class="col-sm-8">Titres en m&eacute;moire</dt>
+                <dd class="col-sm-4">{{ title_count }}</dd>
+
+                <dt class="col-sm-8">&Eacute;l&eacute;ment import&eacute;s</dt>
+                <dd class="col-sm-4">{{ element_count }}</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card card-body">
+            <div class="card-custom-header">
+                <h4 class="card-title">&Eacute;quivalence tags</h4>
+                <div class="dropdown">
+                    <button class="btn btn-option" data-toggle="dropdown"><span class="material-icons">more_vert</span></button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <a href="{{ urlFor('admin.importer.anidb.equivalence.edit') }}" class="dropdown-item"><span class="material-icons">edit</span> Modifier</a>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-sm">
+                <col span="2" width="50%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Tag</th>
+                        <th>Equivalence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for equivalence in equivalenceList %}
+                    <tr>
+                        <td>{{ equivalence.tagName }}</td>
+                        <td>{{ equivalence.equivalenceList | join(', ') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

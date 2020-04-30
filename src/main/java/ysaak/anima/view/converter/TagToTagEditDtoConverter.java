@@ -12,16 +12,11 @@ public class TagToTagEditDtoConverter extends AbstractConverter<Tag, TagEditDto>
 
     @Override
     protected TagEditDto safeConvert(Tag tag) {
-        final String anidbEquivalence = tag.getEquivalenceMap().get(Tag.TagEquivalenceOrigin.ANIDB)
-                .stream()
-                .sorted()
-                .collect(Collectors.joining("\n"));
-
         return new TagEditDto(
                 tag.getId(),
                 tag.getName(),
                 tag.getDescription(),
-                anidbEquivalence
+                ""
         );
     }
 }

@@ -1,6 +1,5 @@
 package ysaak.anima.view.converter;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import ysaak.anima.converter.AbstractConverter;
 import ysaak.anima.converter.Converter;
@@ -22,24 +21,6 @@ public class TagEditDtoToTagConverter extends AbstractConverter<TagEditDto, Tag>
                 dto.getDescription()
         );
 
-        Multimap<Tag.TagEquivalenceOrigin, String> equivalenceMap = HashMultimap.create();
-
-        if (StringUtils.isNotBlank(dto.getAnidbEquivalence())) {
-            addToEquivalenceMap(equivalenceMap, Tag.TagEquivalenceOrigin.ANIDB, dto.getAnidbEquivalence());
-        }
-
-        tag.setEquivalenceMap(equivalenceMap);
-
         return tag;
-    }
-
-    private void addToEquivalenceMap(final Multimap<Tag.TagEquivalenceOrigin, String> equivalenceMap, Tag.TagEquivalenceOrigin origin, String data) {
-        final List<String> codeList = Stream.of(data.split("\n"))
-                .filter(StringUtils::isNotBlank)
-                .sorted()
-                .map(String::trim)
-                .collect(Collectors.toList());
-
-        equivalenceMap.putAll(origin, codeList);
     }
 }

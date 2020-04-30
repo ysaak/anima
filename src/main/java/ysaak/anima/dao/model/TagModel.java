@@ -1,6 +1,7 @@
 package ysaak.anima.dao.model;
 
 import org.hibernate.annotations.GenericGenerator;
+import ysaak.anima.data.importer.TagEquivalence;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,9 +27,6 @@ public class TagModel {
 
     @Column(name = "TAG_DESCRIPTION", nullable = false)
     private String description;
-
-    @OneToMany(mappedBy="tag", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TagEquivalenceModel> equivalenceList;
 
     public TagModel() {
     }
@@ -65,13 +63,5 @@ public class TagModel {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<TagEquivalenceModel> getEquivalenceList() {
-        return equivalenceList;
-    }
-
-    public void setEquivalenceList(List<TagEquivalenceModel> equivalenceList) {
-        this.equivalenceList = equivalenceList;
     }
 }

@@ -16,4 +16,7 @@ public interface ExternalSiteRepository extends PagingAndSortingRepository<Exter
 
     @Query("SELECT eri FROM ElementRemoteId eri WHERE eri.externalSite.id = :siteId AND eri.remoteId IN (:remoteIdList)")
     List<ElementRemoteId> findElementForSite(@Param("siteId") String siteId, @Param("remoteIdList") List<String> remoteIdList);
+
+    @Query("SELECT COUNT(1) FROM ElementRemoteId eri WHERE eri.externalSite.id = :siteId")
+    int countElementForSite(@Param("siteId") String siteId);
 }

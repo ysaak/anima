@@ -29,6 +29,17 @@ public class TagService implements IAnimaComponent {
         this.tagRepository = tagRepository;
     }
 
+    public Optional<Tag> findById(final String id) {
+        Optional<TagModel> tagModel = tagRepository.findById(id);
+
+        return tagModel.map(m -> converterService.convert(m, Tag.class));
+    }
+
+    public List<Tag> findById(List<String> idList) {
+        List<TagModel> modelList = tagRepository.findByIdIn(idList);
+        return converterService.convert(modelList, Tag.class);
+    }
+
     public List<Tag> findAll() {
         Iterable<TagModel> modelIterable = tagRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         return converterService.convert(CollectionUtils.toList(modelIterable), Tag.class);
@@ -41,12 +52,6 @@ public class TagService implements IAnimaComponent {
         model = tagRepository.save(model);
 
         return converterService.convert(model, Tag.class);
-    }
-
-    public Optional<Tag> findById(final String id) {
-        Optional<TagModel> tagModel = tagRepository.findById(id);
-
-        return tagModel.map(m -> converterService.convert(m, Tag.class));
     }
 
     public void delete(Tag tagToDelete) {

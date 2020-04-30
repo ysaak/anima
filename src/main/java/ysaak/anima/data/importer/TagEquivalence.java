@@ -1,19 +1,15 @@
-package ysaak.anima.dao.model;
+package ysaak.anima.data.importer;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @javax.persistence.Entity
 @Table(name = "TAG_EQUIVALENCE")
-public class TagEquivalenceModel {
+public class TagEquivalence {
 
     @Id
     @GeneratedValue(generator = "suuid_generator")
@@ -21,22 +17,21 @@ public class TagEquivalenceModel {
     @Column(name = "TAEQ_ID", nullable = false)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TAEQ_TAG_ID", nullable = false)
-    private TagModel tag;
+    @Column(name = "TAEQ_TAG_ID", nullable = false)
+    private String tagId;
 
     @Column(name = "TAEQ_ORIGIN", nullable = false)
-    private String origin;
+    private Importer importer;
 
     @Column(name = "TAEQ_EQUIVALENCE", nullable = false)
     private String equivalence;
 
-    public TagEquivalenceModel() {
+    public TagEquivalence() {
     }
 
-    public TagEquivalenceModel(TagModel tag, String origin, String equivalence) {
-        this.tag = tag;
-        this.origin = origin;
+    public TagEquivalence(String tagId, Importer importer, String equivalence) {
+        this.tagId = tagId;
+        this.importer = importer;
         this.equivalence = equivalence;
     }
 
@@ -48,20 +43,20 @@ public class TagEquivalenceModel {
         this.id = id;
     }
 
-    public TagModel getTag() {
-        return tag;
+    public String getTagId() {
+        return tagId;
     }
 
-    public void setTag(TagModel tag) {
-        this.tag = tag;
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
     }
 
-    public String getOrigin() {
-        return origin;
+    public Importer getImporter() {
+        return importer;
     }
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
+    public void setImporter(Importer importer) {
+        this.importer = importer;
     }
 
     public String getEquivalence() {

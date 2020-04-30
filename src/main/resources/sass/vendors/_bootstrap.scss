@@ -28,3 +28,13 @@
 .form-group > label {
     font-weight: bold;
 }
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+
+    & > .material-icons {
+        font-size: 1.1rem;
+        margin-right: 0.5rem;
+    }
+}

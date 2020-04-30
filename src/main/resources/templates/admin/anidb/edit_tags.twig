@@ -1,0 +1,97 @@
+{% extends "admin/layout" %}
+
+{% block header %}
+<div class="header-section">
+    <h1>AniDB <span class="text-muted h6">Importer</span></h1>
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+<h2>&Eacute;quivalence des tags</h2>
+
+<form method="post" action="{{ urlFor('admin.importer.anidb.equivalence.update') }}">
+    <div class="card card-body">
+        <table class="table table-sm table-hover" id="equivalenceTable">
+            <col span="2">
+            <col width="20">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Tag</th>
+                    <th>Equivalence</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% set rowIndex = 0 %}
+            {% for equivalence in equivalenceList %}
+                {% for code in equivalence.equivalenceList %}
+                <tr>
+                    <td>{{ formSelect("tagId[" + rowIndex + "]", tagList, equivalence.tagId) }}</td>
+                    <td>{{ formInput("equivalence[" + rowIndex + "]", code) }}</td>
+                    <td><button type="button" class="btn btn-secondary btn-icon"><span class="material-icons">remove_circle_outline</span></button></td>
+                </tr>
+                {% set rowIndex = rowIndex + 1 %}
+                {% endfor %}
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">
+                        <button type="button" class="btn btn-secondary btn-icon" id="addEquivalenceBtn"><span class="material-icons">control_point</span> Ajouter</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="text-right">
+            <a href="{{ urlFor('admin.importer.anidb.index') }}" class="card-link mr-4">Annuler</a>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+    </div>
+</form>
+
+<template id="equivalenceRow">
+<tr>
+    <td>{{ formSelect("tagId[]", tagList, null) }}</td>
+    <td>{{ formInput("equivalence[]", null) }}</td>
+    <td><button type="button" class="btn btn-secondary btn-icon"><span class="material-icons">remove_circle_outline</span></button></td>
+</tr>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+var nbRow = {{ rowIndex }};
+
+function removeEquivalence(btn) {
+    $tr = $(btn).parents('tr');
+    $tr.remove();
+}
+
+$(document).ready(function() {
+    $("#addEquivalenceBtn").on('click', function() {
+        // On prépare une ligne pour le tableau
+        var template = document.querySelector("#equivalenceRow");
+
+        var tbody = document.querySelector("#equivalenceTable tbody");
+        var clone = document.importNode(template.content, true);
+
+        $('select', clone).attr('name', 'tagId[' + nbRow + ']');
+        $('input', clone).attr('name', 'equivalence[' + nbRow + ']');
+        nbRow++;
+
+        $('button', clone).on('click', function() {
+            removeEquivalence(this);
+        });
+
+        tbody.appendChild(clone);
+    });
+
+    $('#equivalenceTable tbody button').on('click', function() {
+        removeEquivalence(this);
+    });
+});
+</script>
+{% endblock %}
