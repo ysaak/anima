@@ -55,25 +55,37 @@ public class AnimeController extends AbstractViewController {
 
     @GetMapping(path = "/", name = "animes.index")
     public String indexAction(ModelMap model) {
-        return byLetterAction(model, ElementConstants.NON_ALPHA_LETTER);
+        return byLetterAction(model, null);
     }
 
     @GetMapping(path = "/byLetter/{letter}", name = "animes.by-letter")
     public String byLetterAction(final ModelMap model, @PathVariable("letter") final String letter) {
 
-        // Construct letter pagination
-        final List<LetterPaginationDto> letterPaginationDtoList = new ArrayList<>();
         final List<String> usedLetterList = this.elementService.listUsedLetters();
 
-        // Non alpha letters
-        letterPaginationDtoList.add(createLetterPagination(ElementConstants.NON_ALPHA_LETTER, usedLetterList, letter));
+        // Requested letter null?
+        final String requestedLetter;
+        if (letter == null) {
+            requestedLetter = usedLetterList.stream()
+                    .sorted()
+                    .findFirst()
+                    .orElse(ElementConstants.NON_ALPHA_LETTER);
+        }
+        else {
+            requestedLetter = letter;
+        }
+
+        // Construct letter pagination
+        final List<LetterPaginationDto> letterPaginationDtoList = new ArrayList<>();
+        letterPaginationDtoList.add(createLetterPagination(ElementConstants.NON_ALPHA_LETTER, usedLetterList, requestedLetter));
         for (char c = 'A' ; c <= 'Z'; c++) {
-            letterPaginationDtoList.add(createLetterPagination(Character.toString(c), usedLetterList, letter));
+            letterPaginationDtoList.add(createLetterPagination(Character.toString(c), usedLetterList, requestedLetter));
         }
 
         model.put("letterPaginationList", letterPaginationDtoList);
 
-        List<ElementListDto> animeList =  this.elementService.findByTypeAndLetter(ElementType.ANIME, letter).stream()
+        // Load elements
+        List<ElementListDto> animeList =  this.elementService.findByTypeAndLetter(ElementType.ANIME, requestedLetter).stream()
                 .map(this::createViewDto)
                 .collect(Collectors.toList());
 
