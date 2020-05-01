@@ -17,12 +17,15 @@ import ysaak.anima.dao.repository.AnidbTitleRepository;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ExternalSite;
+import ysaak.anima.data.importer.Importer;
+import ysaak.anima.data.importer.TagEquivalence;
 import ysaak.anima.data.importer.anidb.AnidbTitle;
 import ysaak.anima.data.importer.anidb.AnidbTitleType;
 import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.error.AnidbErrorCode;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.ExternalSiteService;
+import ysaak.anima.service.importer.TagEquivalenceService;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,9 +40,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 @Service
@@ -48,15 +53,17 @@ public class AnidbImporterService {
 
     private final ElementService elementService;
     private final ExternalSiteService externalSiteService;
+    private final TagEquivalenceService tagEquivalenceService;
 
     private final AnidbApiClient anidbApiClient;
 
     private final AnidbTitleRepository anidbTitleRepository;
 
     @Autowired
-    public AnidbImporterService(ElementService elementService, ExternalSiteService externalSiteService, AnidbApiClient anidbApiClient, AnidbTitleRepository anidbTitleRepository) {
+    public AnidbImporterService(ElementService elementService, ExternalSiteService externalSiteService, TagEquivalenceService tagEquivalenceService, AnidbApiClient anidbApiClient, AnidbTitleRepository anidbTitleRepository) {
         this.elementService = elementService;
         this.externalSiteService = externalSiteService;
+        this.tagEquivalenceService = tagEquivalenceService;
         this.anidbApiClient = anidbApiClient;
         this.anidbTitleRepository = anidbTitleRepository;
     }
@@ -178,7 +185,11 @@ public class AnidbImporterService {
         }
 
         final String animeData = anidbApiClient.getAnimeXml(aniDbId);
-        final Element element = AnidbAnimeXmlParser.parseDocument(animeData);
+
+        final List<TagEquivalence> equivalenceList = tagEquivalenceService.findByImporter(Importer.ANIDB);
+        final Map<String, String> equivalenceMap = equivalenceList.stream().collect(Collectors.toMap(TagEquivalence::getEquivalence, TagEquivalence::getTagId));
+
+        final Element element = AnidbAnimeXmlParser.parseDocument(animeData, equivalenceMap);
 
         final ExternalSite site = externalSiteService.findByCode(AnidbConstants.ANIDB_SITE_CODE)
                 .orElseThrow(() -> AnidbErrorCode.IMPORT_SITE_NOT_FOUND.functional(AnidbConstants.ANIDB_SITE_CODE));

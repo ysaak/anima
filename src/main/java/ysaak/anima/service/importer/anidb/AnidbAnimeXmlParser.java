@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
@@ -24,9 +25,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 final class AnidbAnimeXmlParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnidbAnimeXmlParser.class);
@@ -43,19 +46,23 @@ final class AnidbAnimeXmlParser {
     private static final String TAG_SYNOPSIS = "description";
     private static final String TAG_EPISODES = "episodes";
     private static final String TAG_EPISODE = "episode";
+    private static final String TAG_TAGS = "tags";
+    private static final String TAG_TAG = "tag";
+    private static final String TAG_TAG_NAME = "name";
 
     private static final String TAG_EPI_NUMBER = "epno";
     private static final String TAG_EPI_TITLE = "title";
 
     private static final String TITLE_TYPE_MAIN = "main";
 
-    static Element parseDocument(final String xmlData) throws FunctionalException {
+    static Element parseDocument(final String xmlData, final Map<String, String> tagEquivalenceMap) throws FunctionalException {
         final Document document = createDocument(xmlData);
 
         final Element element = new Element();
         element.setType(ElementType.ANIME);
 
         final List<Episode> episodeList = new ArrayList<>();
+        final List<String> tagList = new ArrayList<>();
 
         final org.w3c.dom.Element rootNode = document.getDocumentElement();
 
@@ -87,6 +94,9 @@ final class AnidbAnimeXmlParser {
                 else if (TAG_EPISODES.equals(nodeName)) {
                     extractEpisodes(episodeList, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_EPISODE));
                 }
+                else if (TAG_TAGS.equals(nodeName)) {
+                    extractTags(tagList, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_TAG));
+                }
             }
         }
 
@@ -96,6 +106,13 @@ final class AnidbAnimeXmlParser {
         List<Season> seasonSet = new ArrayList<>();
         seasonSet.add(season);
         element.setSeasonList(seasonSet);
+
+        List<TagModel> elementTagList = tagList.stream()
+                .map(tag -> tagEquivalenceMap.getOrDefault(tag, null))
+                .filter(Objects::nonNull)
+                .map(TagModel::new)
+                .collect(Collectors.toList());
+        element.setTagList(elementTagList);
 
         return element;
     }
@@ -219,5 +236,34 @@ final class AnidbAnimeXmlParser {
         }
 
         return alteredDescription;
+    }
+
+    private static void extractTags(final List<String> tagList, final NodeList nodeList) {
+        final int nodeCount = nodeList.getLength();
+
+        for (int i = 0; i < nodeCount; i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                extractTag(node.getChildNodes()).ifPresent(tagList::add);
+            }
+        }
+    }
+
+    private static Optional<String> extractTag(final NodeList nodeList) {
+        final int nodeCount = nodeList.getLength();
+        String tag = null;
+
+        for (int i = 0; i < nodeCount; i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                final String nodeName = node.getNodeName();
+
+                if (TAG_TAG_NAME.equals(nodeName)) {
+                    tag = node.getTextContent();
+                }
+            }
+        }
+
+        return Optional.ofNullable(tag);
     }
 }
