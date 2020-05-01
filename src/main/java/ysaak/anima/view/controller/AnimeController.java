@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import ysaak.anima.config.ElementConstants;
-import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Collection;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementRemoteId;
@@ -20,6 +19,7 @@ import ysaak.anima.data.Episode;
 import ysaak.anima.data.Relation;
 import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
+import ysaak.anima.data.Tag;
 import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.exception.error.GenericErrorCode;
@@ -181,7 +181,7 @@ public class AnimeController extends AbstractViewController {
         );
     }
 
-    private String convertTag(TagModel tag) {
+    private String convertTag(Tag tag) {
         return tag.getName();
     }
 

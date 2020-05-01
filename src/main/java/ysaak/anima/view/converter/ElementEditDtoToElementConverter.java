@@ -1,18 +1,15 @@
 package ysaak.anima.view.converter;
 
-import com.google.common.base.Splitter;
 import ysaak.anima.converter.AbstractConverter;
 import ysaak.anima.converter.Converter;
-import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Collection;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
+import ysaak.anima.data.Tag;
 import ysaak.anima.utils.CollectionUtils;
-import ysaak.anima.utils.StringUtils;
 import ysaak.anima.view.dto.elements.ElementEditDto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,13 +19,9 @@ public class ElementEditDtoToElementConverter extends AbstractConverter<ElementE
     @Override
     protected Element safeConvert(ElementEditDto object) {
 
-        final List<TagModel> tagList = CollectionUtils.getNotNull(object.getTagList())
+        final List<Tag> tagList = CollectionUtils.getNotNull(object.getTagList())
                 .stream()
-                .map(tagId -> {
-                    TagModel tag = new TagModel();
-                    tag.setId(tagId);
-                    return tag;
-                })
+                .map(Tag::new)
                 .collect(Collectors.toList());
 
         final List<Collection> collectionList = CollectionUtils.getNotNull(object.getCollectionList())

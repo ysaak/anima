@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementSubType;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.Season;
+import ysaak.anima.data.Tag;
 import ysaak.anima.exception.FunctionalException;
 import ysaak.anima.exception.error.AnidbErrorCode;
 
@@ -107,10 +107,10 @@ final class AnidbAnimeXmlParser {
         seasonSet.add(season);
         element.setSeasonList(seasonSet);
 
-        List<TagModel> elementTagList = tagList.stream()
+        List<Tag> elementTagList = tagList.stream()
                 .map(tag -> tagEquivalenceMap.getOrDefault(tag, null))
                 .filter(Objects::nonNull)
-                .map(TagModel::new)
+                .map(Tag::new)
                 .collect(Collectors.toList());
         element.setTagList(elementTagList);
 

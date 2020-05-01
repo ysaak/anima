@@ -2,9 +2,9 @@ package ysaak.anima.view.converter;
 
 import ysaak.anima.converter.AbstractConverter;
 import ysaak.anima.converter.Converter;
-import ysaak.anima.dao.model.TagModel;
 import ysaak.anima.data.Collection;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.Tag;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.view.dto.elements.ElementEditDto;
 
@@ -30,13 +30,13 @@ public class ElementToElementEditDtoConverter extends AbstractConverter<Element,
         return dto;
     }
 
-    private List<String> convertTagList(List<TagModel> tagList) {
+    private List<String> convertTagList(List<Tag> tagList) {
         final List<String> tagDtoList;
 
         if (CollectionUtils.isNotEmpty(tagList)) {
             tagDtoList = tagList.stream()
-                    .sorted(Comparator.comparing(TagModel::getName))
-                    .map(TagModel::getId)
+                    .sorted(Comparator.comparing(Tag::getName))
+                    .map(Tag::getId)
                     .collect(Collectors.toList());
         }
         else {
