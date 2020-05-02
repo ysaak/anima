@@ -1,0 +1,23 @@
+.element-card {
+    @extend .shadow-z1;
+
+    position: relative;
+    margin: .25rem;
+
+    border-radius: .25rem;
+    background-color: #fff;
+
+    display: flex;
+    align-items: flex-start;
+
+    & > img {
+        margin-right: 1rem;
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+    }
+
+    & > div {
+        flex: 1;
+        padding: .25rem;
+    }
+}

@@ -14,12 +14,14 @@
 
 <hr>
 
-<div class="d-flex flex-wrap">
+<div class="row">
     {% for element in animeList %}
-    <div class="media m-1 border rounded position-relative" style="width: 400px">
-        <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" class="mr-3 rounded-left" />
-        <div class="media-body">
-            <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+    <div class="col-4">
+        <div class="element-card">
+            <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" />
+            <div>
+                <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+            </div>
         </div>
     </div>
     {% endfor %}
