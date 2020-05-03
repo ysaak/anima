@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 @Service
 public class StorageService {
@@ -49,15 +50,19 @@ public class StorageService {
                 // This is a security check
                 throw StorageErrorCode.FILE_OUTSIDE_DIRECTORY.functional(filename);
             }
-            try (InputStream inputStream = file.getInputStream()) {
-                final BufferedImage originalImage = ImageIO.read(inputStream);
 
-                // Store full image
-                final BufferedImage fullImage = storeImage(originalImage, type, StorageFormat.FULL, id);
-                storeImage(fullImage, type, StorageFormat.THUMBNAIL, id);
+            final BufferedImage originalImage;
+            try (InputStream inputStream = file.getInputStream()) {
+                originalImage = ImageIO.read(inputStream);
             }
             catch (IOException e) {
                 throw StorageErrorCode.IMAGE_READ_ERROR.functional(e, filename);
+            }
+
+            final Map<StorageFormat, StorageConfig.Size> formatMap = storageConfig.getFormatForType(type);
+
+            for (Map.Entry<StorageFormat, StorageConfig.Size> formatEntry : formatMap.entrySet()) {
+                storeImage(originalImage, type, formatEntry.getKey(), formatEntry.getValue(), id);
             }
         }
         else {
@@ -65,11 +70,8 @@ public class StorageService {
         }
     }
 
-    private BufferedImage storeImage(BufferedImage image, StorageType type, StorageFormat format, String id) throws FunctionalException {
-        StorageConfig.Size fullSize = storageConfig.get(type, format)
-                .orElseThrow(() -> StorageErrorCode.MISSING_STORAGE_CONFIGURATION.functional(type, format));
-
-        final BufferedImage resizedImage = ImageUtils.resizeAndCrop(image, fullSize.getWidth(), fullSize.getHeight());
+    private void storeImage(BufferedImage image, StorageType type, StorageFormat format, StorageConfig.Size size, String id) throws FunctionalException {
+        final BufferedImage resizedImage = ImageUtils.resizeAndCrop(image, size.getWidth(), size.getHeight());
         Path destinationPath = getLocalFileLocation(type, format, id);
 
         try {
@@ -82,8 +84,6 @@ public class StorageService {
         catch (IOException e) {
             throw StorageErrorCode.IMAGE_WRITE_ERROR.functional(e, destinationPath.toString());
         }
-
-        return resizedImage;
     }
 
     private Path getLocalFileLocation(final StorageType type, final StorageFormat format, final String id) {

@@ -6,6 +6,10 @@ import org.springframework.stereotype.Component;
 import ysaak.anima.data.storage.StorageFormat;
 import ysaak.anima.data.storage.StorageType;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -17,6 +21,12 @@ public class StorageConfig {
                 .put(StorageType.ELEMENT, StorageFormat.FULL, new Size(300, 390))
                 .put(StorageType.ELEMENT, StorageFormat.THUMBNAIL, new Size(70, 70))
                 .build();
+    }
+
+    public Map<StorageFormat, Size> getFormatForType(StorageType type) {
+        return Collections.unmodifiableMap(
+                storageSizeTable.row(type)
+        );
     }
 
     public Optional<Size> get(StorageType type, StorageFormat format) {
