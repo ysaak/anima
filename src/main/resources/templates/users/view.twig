@@ -1,0 +1,45 @@
+{% extends "layout" %}
+
+{% block content %}
+
+<div class="section">
+    <div class="section--sidebar">
+        <div class="text-center pb-3">
+            <img src="/user/{{ user.id }}/full.png" width="150" height="150" class="rounded shadow-z1 mb-3" />
+            <h3>{{ user.name }}</h3>
+        </div>
+
+        <div class="card" style="width: 18rem;">
+            <div class="list-group list-group-flush">
+                <a href="{{ urlFor('user.image.edit', {'id': user.id }) }}" data-toggle="modal" data-target="#userEditModal" class="list-group-item">Changer image</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="section--content">
+        UservIEW ===
+    </div>
+</div>
+
+<div class="modal fade" id="userEditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#userEditModal').on('show.bs.modal', function (e) {
+        $(this).find('.modal-content').html('<div class="modal-body d-flex justify-content-center"><div class="spinner-border" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">Loading...</span></div></div>');
+        var loadUrl = $(e.relatedTarget).attr('href');
+        $(this).find('.modal-content').load(loadUrl, function() {
+            bsCustomFileInput.init();
+        });
+    });
+});
+</script>
+{% endblock %}

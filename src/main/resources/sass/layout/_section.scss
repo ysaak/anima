@@ -1,0 +1,17 @@
+.section {
+    display: flex;
+    flex-direction: row;
+
+    &--content {
+        flex-grow: 1;
+    }
+
+    &--sidebar {
+        width: calc(300px + 4rem);
+        padding: 0 2rem;
+    }
+
+    &--content + &--sidebar, &--sidebar + &--content {
+        margin-left: 2rem;
+    }
+}

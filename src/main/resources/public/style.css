@@ -84,6 +84,21 @@ body {
   height: calc(100vh - 108px - 62px);
 }
 
+.section {
+  display: flex;
+  flex-direction: row;
+}
+.section--content {
+  flex-grow: 1;
+}
+.section--sidebar {
+  width: calc(300px + 4rem);
+  padding: 0 2rem;
+}
+.section--content + .section--sidebar, .section--sidebar + .section--content {
+  margin-left: 2rem;
+}
+
 .sidebar {
   position: relative;
   background-color: #EEE;

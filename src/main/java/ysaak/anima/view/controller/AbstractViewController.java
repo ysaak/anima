@@ -48,6 +48,10 @@ public abstract class AbstractViewController implements IAnimaComponent {
         return "redirect:" + routingService.getUrlFor(routeName, parameters);
     }
 
+    public String forward(final String routeName, final Map<String, Object> parameters) {
+        return "forward:" + routingService.getUrlFor(routeName, parameters);
+    }
+
     protected void addFlashErrorMessage(final RedirectAttributes redirectAttributes, final String message) {
         addFlashErrorMessage(redirectAttributes, Collections.singletonList(message));
     }
