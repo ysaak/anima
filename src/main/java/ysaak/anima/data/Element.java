@@ -39,6 +39,9 @@ public class Element implements IEntity {
     @Column(name = "ELEM_SYNOPSIS", columnDefinition = "text")
     private String synopsis;
 
+    @Column(name = "ELEM_EPISODE_COUNT")
+    private Integer episodeCount;
+
     @OneToMany(mappedBy = "element", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Season> seasonList;
 
@@ -71,12 +74,13 @@ public class Element implements IEntity {
         this.id = id;
     }
 
-    public Element(String id, String title, ElementType type, ElementSubType subType, int releaseYear, String synopsis) {
+    public Element(String id, String title, ElementType type, ElementSubType subType, int releaseYear, Integer episodeCount, String synopsis) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.subType = subType;
         this.releaseYear = releaseYear;
+        this.episodeCount = episodeCount;
         this.synopsis = synopsis;
     }
 
@@ -167,5 +171,13 @@ public class Element implements IEntity {
 
     public void setCollectionList(List<Collection> collectionList) {
         this.collectionList = collectionList;
+    }
+
+    public Integer getEpisodeCount() {
+        return episodeCount;
+    }
+
+    public void setEpisodeCount(Integer episodeCount) {
+        this.episodeCount = episodeCount;
     }
 }

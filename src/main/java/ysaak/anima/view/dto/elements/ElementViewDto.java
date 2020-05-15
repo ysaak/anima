@@ -15,6 +15,8 @@ public class ElementViewDto {
 
     private final int releaseYear;
 
+    private final Integer episodeCount;
+
     private final String synopsis;
 
     private final List<ElementSeasonDto> seasonList;
@@ -27,12 +29,13 @@ public class ElementViewDto {
 
     private final List<ElementCollectionDto> collectionList;
 
-    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList, List<ElementRelationListDto> relationList, List<ElementRemoteIdDto> remoteIdList, List<ElementCollectionDto> collectionList) {
+    public ElementViewDto(String id, String title, String type, String subType, int releaseYear, Integer episodeCount, String synopsis, List<ElementSeasonDto> seasonList, List<String> tagList, List<ElementRelationListDto> relationList, List<ElementRemoteIdDto> remoteIdList, List<ElementCollectionDto> collectionList) {
         this.id = id;
         this.title = title;
         this.type = type;
         this.subType = subType;
         this.releaseYear = releaseYear;
+        this.episodeCount = episodeCount;
         this.synopsis = synopsis;
         this.seasonList = seasonList;
         this.tagList = tagList;
@@ -59,6 +62,10 @@ public class ElementViewDto {
 
     public int getReleaseYear() {
         return releaseYear;
+    }
+
+    public Integer getEpisodeCount() {
+        return episodeCount;
     }
 
     public String getSynopsis() {

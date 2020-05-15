@@ -1,19 +1,21 @@
 package ysaak.anima.data;
 
 public enum ElementType {
-    ANIME("ANI", true, true, "animes.index", "animes.view")
+    ANIME("ANI", true, true, true, "animes.index", "animes.view")
     ;
 
     private final String dbCode;
-    private final boolean hasSubtype;
-    private final boolean hasEpisodeList;
+    private final boolean subtype;
+    private final boolean episodeList;
+    private final boolean playlistProgress;
     private final String indexRoute;
     private final String viewRoute;
 
-    ElementType(String dbCode, boolean hasSubtype, boolean hasEpisodeList, String indexRoute, String viewRoute) {
+    ElementType(String dbCode, boolean subtype, boolean episodeList, boolean playlistProgress, String indexRoute, String viewRoute) {
         this.dbCode = dbCode;
-        this.hasSubtype = hasSubtype;
-        this.hasEpisodeList = hasEpisodeList;
+        this.subtype = subtype;
+        this.episodeList = episodeList;
+        this.playlistProgress = playlistProgress;
         this.indexRoute = indexRoute;
         this.viewRoute = viewRoute;
     }
@@ -22,12 +24,16 @@ public enum ElementType {
         return dbCode;
     }
 
-    public boolean isHasSubtype() {
-        return hasSubtype;
+    public boolean hasSubtype() {
+        return subtype;
     }
 
-    public boolean isHasEpisodeList() {
-        return hasEpisodeList;
+    public boolean hasPlaylistProgress() {
+        return playlistProgress;
+    }
+
+    public boolean hasEpisodeList() {
+        return episodeList;
     }
 
     public String getIndexRoute() {

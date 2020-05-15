@@ -14,6 +14,8 @@ public class ElementEditDto {
 
     private int releaseYear;
 
+    private Integer episodeCount;
+
     private String synopsis;
 
     private List<String> tagList;
@@ -58,6 +60,14 @@ public class ElementEditDto {
 
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
+    }
+
+    public Integer getEpisodeCount() {
+        return episodeCount;
+    }
+
+    public void setEpisodeCount(Integer episodeCount) {
+        this.episodeCount = episodeCount;
     }
 
     public String getSynopsis() {

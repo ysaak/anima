@@ -43,7 +43,7 @@
                         <div class="col"><strong>Type :</strong> {{ element.subtype }}</div>
                         <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-2">
                         <div class="col">
                             <strong>Tags :</strong>
                             <ul class="tag-list">
@@ -61,6 +61,11 @@
                             </ul>
                         </div>
                     </div>
+                    {% if element.episodeCount is not null %}
+                    <div class="row">
+                        <div class="col"><strong>&Eacute;pisodes :</strong> {{ element.episodeCount }}</div>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div class="card card-body mt-3">
@@ -95,6 +100,45 @@
                 <div class="text-center pb-3">
                     <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
                 </div>
+
+                <div class="card card-body mb-3">
+                    {% if playlistItem is null %}
+                    <form action="{{ urlFor('playlist.item.add') }}" method="post">
+                        <input type="hidden" name="elementId" value="{{ element.id }}" />
+                        <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                        <button type="submit" class="btn btn-link">Ajouter à ma liste</button>
+                    </form>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>&Eacute;tat</strong><br/>{{ playlistItem.status }}
+                        </div>
+                        <div class="col-6 d-flex align-items-end justify-content-between">
+                            {% if playlistItem.currentEpisode is not null %}
+                            <div><strong>Episode</strong><br/>{{ playlistItem.currentEpisode }}</div>
+                            <form method="post" action="{{ urlFor('playlist.item.progress') }}">
+                                <input type="hidden" name="elementId" value="{{ element.id }}" />
+                                <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                                <button type="submit" class="btn btn-sm btn-light btn-icon"><span class="material-icons">add_circle_outline</span></button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        <div class="col-12 mt-3">
+                            <form action="{{ urlFor('playlist.item.mark-as') }}" method="post" class="form-inline">
+                                <input type="hidden" name="elementId" value="{{ element.id }}" />
+                                <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                                <label for="status">Marquer comme&nbsp;:</label>
+                                <select class="custom-select" name="status" id="status">
+                                    <option value="FINISHED">Termin&eacute;</option>
+                                    <option value="DROPPED">Abandonn&eacute;</option>
+                                </select>
+                                <button type="submit" class="btn btn-light">Enregistrer</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
 
                 <div class="card card-body">
                     <h4 class="card-title">Ressource</h4>

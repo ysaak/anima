@@ -34,6 +34,11 @@
     </div>
 
     <div class="form-group">
+        <label for="episodeCount">Nombre d'&eacute;pisodes</label>
+        {{ formInput("episodeCount", element.episodeCount, { "type": "number" }) }}
+    </div>
+
+    <div class="form-group">
         <label for="tagList">Tags</label>
         {{ formSelect("tagList", tagList, element.tagList, { "multiple": "multiple" }) }}
     </div>

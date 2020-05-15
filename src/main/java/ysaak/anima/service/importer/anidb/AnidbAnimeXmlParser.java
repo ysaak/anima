@@ -44,6 +44,7 @@ final class AnidbAnimeXmlParser {
     private static final String TAG_TYPE = "type";
     private static final String TAG_START_DATE = "startdate";
     private static final String TAG_SYNOPSIS = "description";
+    private static final String TAG_EPISODE_COUNT = "episodecount";
     private static final String TAG_EPISODES = "episodes";
     private static final String TAG_EPISODE = "episode";
     private static final String TAG_TAGS = "tags";
@@ -90,6 +91,14 @@ final class AnidbAnimeXmlParser {
                 }
                 else if (TAG_SYNOPSIS.equals(nodeName)) {
                     element.setSynopsis(parseDescription(node.getTextContent()));
+                }
+                else if (TAG_EPISODE_COUNT.equals(nodeName)) {
+                    try {
+                        element.setEpisodeCount(Integer.parseInt(node.getTextContent()));
+                    }
+                    catch (NumberFormatException e) {
+                        LOGGER.error("Error while parsing episode count", e);
+                    }
                 }
                 else if (TAG_EPISODES.equals(nodeName)) {
                     extractEpisodes(episodeList, ((org.w3c.dom.Element) node).getElementsByTagName(TAG_EPISODE));

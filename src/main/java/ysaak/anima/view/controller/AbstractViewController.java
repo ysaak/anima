@@ -28,6 +28,10 @@ public abstract class AbstractViewController implements IAnimaComponent {
         return new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    protected ResponseStatusException badRequest(String reason) {
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, reason);
+    }
+
     protected void handleFunctionalException(final RedirectAttributes redirectAttributes, FunctionalException exception) {
         ErrorCode errorCode = exception.getError();
 

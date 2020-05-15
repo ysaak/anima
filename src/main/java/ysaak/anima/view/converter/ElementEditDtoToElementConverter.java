@@ -39,6 +39,7 @@ public class ElementEditDtoToElementConverter extends AbstractConverter<ElementE
                 toEnum(object.getType(), ElementType.class),
                 toEnum(object.getSubType(), ElementSubType.class),
                 object.getReleaseYear(),
+                object.getEpisodeCount(),
                 object.getSynopsis()
         );
         element.setTagList(tagList);

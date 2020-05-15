@@ -20,16 +20,17 @@ import ysaak.anima.data.Relation;
 import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
 import ysaak.anima.data.Tag;
-import ysaak.anima.exception.FunctionalException;
-import ysaak.anima.exception.NoDataFoundException;
-import ysaak.anima.exception.error.GenericErrorCode;
+import ysaak.anima.data.playlist.PlaylistItem;
 import ysaak.anima.service.ElementService;
+import ysaak.anima.service.PlaylistService;
 import ysaak.anima.service.technical.TranslationService;
+import ysaak.anima.utils.AuthenticationHolder;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.comparator.SeasonComparator;
 import ysaak.anima.view.dto.elements.ElementViewDto;
 import ysaak.anima.view.dto.elements.list.ElementListDto;
 import ysaak.anima.view.dto.elements.list.LetterPaginationDto;
+import ysaak.anima.view.dto.elements.view.ElementPlaylistDto;
 import ysaak.anima.view.router.RoutingService;
 
 import java.util.ArrayList;
@@ -44,13 +45,15 @@ public class AnimeController extends AbstractViewController {
     private final ElementService elementService;
     private final RoutingService routingService;
     private final TranslationService translationService;
+    private final PlaylistService playlistService;
 
     @Autowired
-    public AnimeController(final ElementService elementService, final RoutingService routingService, final TranslationService translationService) {
+    public AnimeController(final ElementService elementService, final RoutingService routingService, final TranslationService translationService, PlaylistService playlistService) {
         super(translationService, routingService);
         this.elementService = elementService;
         this.routingService = routingService;
         this.translationService = translationService;
+        this.playlistService = playlistService;
     }
 
     @GetMapping(path = "/", name = "animes.index")
@@ -115,15 +118,8 @@ public class AnimeController extends AbstractViewController {
     }
 
     @GetMapping(path = "/{id}", name = "animes.view")
-    public String viewAction(ModelMap model, @PathVariable("id") String id) throws FunctionalException {
-        Element element;
-        try {
-            element = this.elementService.findById(id);
-        }
-        catch (NoDataFoundException e) {
-            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
-            throw GenericErrorCode.NOT_FOUND.functional(id);
-        }
+    public String viewAction(ModelMap model, @PathVariable("id") String id) {
+        Element element = this.elementService.findById2(id).orElseThrow(this::notFound);
 
         ElementViewDto elementView = convertElementToDto(element);
 
@@ -132,6 +128,13 @@ public class AnimeController extends AbstractViewController {
         int seasonCount = elementView.getSeasonList().size();
         model.put("seasonCount", seasonCount);
 
+        AuthenticationHolder.getAuthenticatedUserId().ifPresent(userId -> {
+            final ElementPlaylistDto playlistDto = playlistService.getItem(userId, element.getId())
+                .map(this::convertToPlaylistDto)
+                .orElse(null);
+
+            model.put("playlistItem", playlistDto);
+        });
         return "elements/view";
     }
 
@@ -160,6 +163,7 @@ public class AnimeController extends AbstractViewController {
                 object.getType().name(),
                 object.getSubType().name(),
                 object.getReleaseYear(),
+                object.getEpisodeCount(),
                 object.getSynopsis(),
                 seasonList,
                 tagList,
@@ -266,6 +270,14 @@ public class AnimeController extends AbstractViewController {
         return new ElementViewDto.ElementCollectionDto(
                 collection.getId(),
                 collection.getName()
+        );
+    }
+
+    private ElementPlaylistDto convertToPlaylistDto(final PlaylistItem playlistItem) {
+        return new ElementPlaylistDto(
+            playlistItem.getStatus().name(),
+            playlistItem.getStartDate(),
+            playlistItem.getCurrentEpisode()
         );
     }
 }

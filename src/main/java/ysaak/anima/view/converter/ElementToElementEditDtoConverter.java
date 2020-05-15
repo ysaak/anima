@@ -24,6 +24,7 @@ public class ElementToElementEditDtoConverter extends AbstractConverter<Element,
         dto.setTitle(object.getTitle());
         dto.setSubType(fromEnum(object.getSubType()));
         dto.setReleaseYear(object.getReleaseYear());
+        dto.setEpisodeCount(object.getEpisodeCount());
         dto.setSynopsis(object.getSynopsis());
         dto.setTagList(convertTagList(object.getTagList()));
         dto.setCollectionList(convertCollectionList(object.getCollectionList()));

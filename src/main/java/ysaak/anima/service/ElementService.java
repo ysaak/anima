@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ElementService implements IAnimaComponent {
@@ -75,6 +76,10 @@ public class ElementService implements IAnimaComponent {
         else {
             return elementRepository.findAllByTypeAndFistLetterAlpha(type, firstLetter);
         }
+    }
+
+    public Optional<Element> findById2(String id) {
+        return elementRepository.findById(id);
     }
 
     public Element findById(String id) throws NoDataFoundException {

@@ -13,15 +13,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ysaak.anima.data.User;
+import ysaak.anima.data.playlist.PlaylistItem;
+import ysaak.anima.data.playlist.PlaylistItemStatus;
 import ysaak.anima.data.storage.StorageFormat;
 import ysaak.anima.data.storage.StorageType;
 import ysaak.anima.exception.FunctionalException;
+import ysaak.anima.service.ElementService;
+import ysaak.anima.service.PlaylistService;
 import ysaak.anima.service.StorageService;
 import ysaak.anima.service.UserService;
 import ysaak.anima.service.technical.TranslationService;
+import ysaak.anima.view.dto.user.UserPlaylistItemDto;
 import ysaak.anima.view.router.RoutingService;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
@@ -33,18 +41,35 @@ public class UserController extends AbstractViewController {
 
     private final UserService userService;
     private final StorageService storageService;
+    private final PlaylistService playlistService;
+    private final ElementService elementService;
 
     @Autowired
-    public UserController(TranslationService translationService, RoutingService routingService, UserService userService, StorageService storageService) {
+    public UserController(TranslationService translationService, RoutingService routingService, UserService userService, StorageService storageService, PlaylistService playlistService, ElementService elementService) {
         super(translationService, routingService);
         this.userService = userService;
         this.storageService = storageService;
+        this.playlistService = playlistService;
+        this.elementService = elementService;
     }
 
     @GetMapping(path = "/{id}", name = ROUTE_USER_VIEW)
     public String viewAction(final ModelMap model, @PathVariable("id") final String id) {
         final User user = userService.findById(id).orElseThrow(this::notFound);
         model.put("user", user);
+
+
+        List<PlaylistItem> watchingItemList = playlistService.getPlaylistForUserByStatus(id, PlaylistItemStatus.STARTED);
+        List<UserPlaylistItemDto> watchingItemDtoList = watchingItemList.stream().map(item ->
+            new UserPlaylistItemDto(
+                item.getElement().getId(),
+                item.getElement().getTitle(),
+                item.getStatus().name(),
+                item.getStartDate(),
+                item.getCurrentEpisode()
+            )
+        ).collect(Collectors.toList());
+        model.put("watchingList", watchingItemDtoList);
 
         return "users/view";
     }
