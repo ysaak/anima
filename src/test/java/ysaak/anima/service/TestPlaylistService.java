@@ -87,7 +87,8 @@ public class TestPlaylistService {
         // Then
         Assert.assertNotNull(item);
         Assert.assertEquals(userId, item.getUserIdList().get(0));
-        Assert.assertEquals(fakeElement.getId(), item.getElement());
+        Assert.assertNotNull(item.getElement());
+        Assert.assertEquals(fakeElement.getId(), item.getElement().getId());
         Assert.assertNotNull(item.getLastUpdateTime());
         Assert.assertEquals(PlaylistItemStatus.STARTED, item.getStatus());
         Assert.assertNotNull(item.getStartDate());
@@ -113,7 +114,8 @@ public class TestPlaylistService {
         // Then
         Assert.assertNotNull(item);
         Assert.assertEquals(userId, item.getUserIdList().get(0));
-        Assert.assertEquals(fakeElement.getId(), item.getElement());
+        Assert.assertNotNull(item.getElement());
+        Assert.assertEquals(fakeElement.getId(), item.getElement().getId());
         Assert.assertNotNull(item.getLastUpdateTime());
         Assert.assertEquals(PlaylistItemStatus.PLAN_TO_WATCH, item.getStatus());
         Assert.assertNull(item.getStartDate());
