@@ -7,14 +7,17 @@ public class UserPlaylistItemDto {
     private final String elementName;
     private final String status;
     private final LocalDate startDate;
-    private final Integer currentEpisode;
 
-    public UserPlaylistItemDto(String elementId, String elementName, String status, LocalDate startDate, Integer currentEpisode) {
+    private final Integer currentEpisode;
+    private final Integer totalEpisodes;
+
+    public UserPlaylistItemDto(String elementId, String elementName, String status, LocalDate startDate, Integer currentEpisode, Integer totalEpisodes) {
         this.elementId = elementId;
         this.elementName = elementName;
         this.status = status;
         this.startDate = startDate;
         this.currentEpisode = currentEpisode;
+        this.totalEpisodes = totalEpisodes;
     }
 
     public String getElementId() {
@@ -35,5 +38,9 @@ public class UserPlaylistItemDto {
 
     public Integer getCurrentEpisode() {
         return currentEpisode;
+    }
+
+    public Integer getTotalEpisodes() {
+        return totalEpisodes;
     }
 }

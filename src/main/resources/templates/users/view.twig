@@ -17,7 +17,29 @@
     </div>
 
     <div class="section--content">
-        UservIEW ===
+        <div class="card card-body">
+            <h4 class="card-title">En cours</h4>
+
+            <table class="table table-sm">
+                <tbody>
+                    {% for watching in watchingList %}
+                    <tr>
+                        <td>{{ watching.elementName }}</td>
+                        <td>
+                            {% if watching.currentEpisode is not null %}
+                                {{ watching.currentEpisode}}
+                                {% if watching.totalEpisodes is not null %}
+                                    / {{ watching.totalEpisodes }}
+                                {% endif %}
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
