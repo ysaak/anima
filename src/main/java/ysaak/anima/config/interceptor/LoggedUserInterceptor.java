@@ -1,7 +1,5 @@
 package ysaak.anima.config.interceptor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
@@ -15,27 +13,19 @@ import java.util.Optional;
 
 @Component
 public class LoggedUserInterceptor extends HandlerInterceptorAdapter {
-    private List<String> WHITE_LIST_URI_PATTERN = Arrays.asList(
+    private static final List<String> WHITE_LIST_URI_PATTERN = Arrays.asList(
             "\\/select-user(.*)",
             "\\/user\\/(.*)\\/full.png"
     );
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-        Logger logger = LoggerFactory.getLogger(LoggedUserInterceptor.class);
-
-        logger.debug("Requested URI : {}", request.getRequestURI());
-
         if (isResourceUri(handler) || isWhiteListedUri(request.getRequestURI())) {
-            logger.debug("White listed URI !");
             return super.preHandle(request, response, handler);
         }
 
         Optional<String> userId = AuthenticationHolder.getAuthenticatedUserId();
         if (!userId.isPresent()) {
-            logger.debug("Should block access");
-
             response.sendRedirect("/select-user");
             return false;
         }
