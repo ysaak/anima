@@ -9,7 +9,7 @@
         <li class="page-item disabled"><span class="page-link">{{ page.letter }}</span></li>
         {% else %}
         <li class="page-item{% if page.current %} active{% endif %}">
-            <a href="{{ page.url }}" class="page-link">{{ page.letter }}</a>
+            <a href="{{ urlFor('titles.letter', {'letter': page.letter}) }}" class="page-link">{{ page.letter }}</a>
         </li>
         {% endif %}
 {% endfor %}
@@ -22,7 +22,7 @@
         <div class="element-card">
             <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" />
             <div>
-                <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+                <a href="{{ urlFor('elements.view', {'id': element.id}) }}" class="h5 stretched-link">{{ element.title }}</a>
             </div>
         </div>
     </div>

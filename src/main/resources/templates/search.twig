@@ -20,7 +20,7 @@
         <div class="element-card">
             <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" />
             <div>
-                <a href="{{ element.viewUrl }}" class="h5 stretched-link">{{ element.title }}</a>
+                <a href="{{ urlFor('elements.view', {'id': element.id}) }}" class="h5 stretched-link">{{ element.title }}</a>
             </div>
         </div>
     </div>

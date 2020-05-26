@@ -1,0 +1,18 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>{{ collectionName }}</h1>
+
+<div class="row">
+{% for element in elementList %}
+    <div class="col-4">
+        <div class="element-card">
+            <img src="/elements/{{ element.id }}/thumbnail.png" width="70" height="70" />
+            <div>
+                <a href="{{ urlFor('elements.view', {'id': element.id}) }}" class="h5 stretched-link">{{ element.title }}</a>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+{% endblock %}

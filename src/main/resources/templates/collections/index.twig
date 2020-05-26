@@ -1,0 +1,17 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>Collections</h1>
+
+<ul>
+{% for collection in collectionList %}
+    <li>
+        <a href="{{ urlFor('collections.view', {'id': collection.id}) }}">{{ collection.name }}</a>
+        <small class="text-muted">({% for entry in collection.countByType %}
+            {% if not loop.first %} - {% endif %}
+            {{ entry.key }}&nbsp;: {{ entry.value }}
+            {% endfor %})</small>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

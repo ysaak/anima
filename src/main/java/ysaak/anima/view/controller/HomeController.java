@@ -69,8 +69,7 @@ public class HomeController extends AbstractViewController {
     private ElementListDto convertToDto(Element element) {
         return new ElementListDto(
                 element.getId(),
-                element.getTitle(),
-                routingService.getUrlFor(element)
+                element.getTitle()
         );
     }
 

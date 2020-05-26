@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementCollectionCount;
 import ysaak.anima.data.ElementType;
 
 import java.util.List;
@@ -29,4 +30,13 @@ public interface ElementRepository extends PagingAndSortingRepository<Element, S
     List<Element> findAllByTypeAndFistLetterAlpha(@Param("type") final ElementType type, @Param("firstLetter") final String firstLetter);
 
     List<Element> findByTitleContainingIgnoreCaseOrderByTitle(String title);
+
+    @Query("SELECT e.type as elementType, cl.id as collectionId, count(1) as count FROM Element as e JOIN e.collectionList as cl GROUP BY e.type, cl.id")
+    List<ElementCollectionCount> countElementTypeByCollection();
+
+    @Query(
+        value = "SELECT e.* FROM element e INNER JOIN L_ELEMENT_COLLECTION lec ON lec.ELEMENT_ID = e.ELEM_ID WHERE lec.COLLECTION_ID = :collectionId",
+        nativeQuery = true
+    )
+    List<Element> findByCollectionId(@Param("collectionId") String collectionId);
 }

@@ -82,11 +82,11 @@
                         <tbody>
                         {% for relationGroup in element.relationList %}
                         <tr>
-                            <th colspan="2">{{ relationGroup.name }}</th>
+                            <th colspan="2">{{ __("elements.relation." + relationGroup.relationType) }}</th>
                         </tr>
                         {% for relation in relationGroup.elementList %}
                         <tr>
-                            <td><a href="{{ relation.url }}">{{ relation.title }}</a></td>
+                            <td><a href="{{ urlFor('elements.view', {'id': relation.elementId }) }}">{{ relation.title }}</a></td>
                             <td><a href="{{ urlFor('elements.relations.delete', { 'elementId': element.id, 'relationId': relation.id }) }}" data-toggle="confirm" class="btn btn-light btn-sm">&times;</a></td>
                         </tr>
                         {% endfor %}

@@ -200,25 +200,25 @@ public class ElementViewDto {
 
     public static class ElementRelationDto {
         private final String id;
+        private final String elementId;
         private final String title;
-        private final String url;
 
-        public ElementRelationDto(String id, String title, String url) {
+        public ElementRelationDto(String id, String elementId, String title) {
             this.id = id;
+            this.elementId = elementId;
             this.title = title;
-            this.url = url;
         }
 
         public String getId() {
             return id;
         }
 
-        public String getTitle() {
-            return title;
+        public String getElementId() {
+            return elementId;
         }
 
-        public String getUrl() {
-            return url;
+        public String getTitle() {
+            return title;
         }
     }
 

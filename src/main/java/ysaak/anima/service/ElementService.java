@@ -7,6 +7,7 @@ import ysaak.anima.IAnimaComponent;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.dao.repository.ElementRepository;
 import ysaak.anima.data.Element;
+import ysaak.anima.data.ElementCollectionCount;
 import ysaak.anima.data.ElementRemoteId;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
@@ -76,6 +77,14 @@ public class ElementService implements IAnimaComponent {
         else {
             return elementRepository.findAllByTypeAndFistLetterAlpha(type, firstLetter);
         }
+    }
+
+    public List<ElementCollectionCount> elementCollectionCountList() {
+        return elementRepository.countElementTypeByCollection();
+    }
+
+    public List<Element> findByCollection(String collectionId) {
+        return elementRepository.findByCollectionId(collectionId);
     }
 
     public Optional<Element> findById2(String id) {

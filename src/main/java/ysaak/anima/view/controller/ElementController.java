@@ -22,6 +22,7 @@ import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.RelationType;
 import ysaak.anima.data.Season;
+import ysaak.anima.data.playlist.PlaylistItem;
 import ysaak.anima.data.storage.StorageFormat;
 import ysaak.anima.data.storage.StorageType;
 import ysaak.anima.exception.FunctionalException;
@@ -29,20 +30,24 @@ import ysaak.anima.exception.NoDataFoundException;
 import ysaak.anima.service.CollectionService;
 import ysaak.anima.service.ElementService;
 import ysaak.anima.service.ExternalSiteService;
+import ysaak.anima.service.PlaylistService;
 import ysaak.anima.service.RelationService;
 import ysaak.anima.service.StorageService;
 import ysaak.anima.service.TagService;
 import ysaak.anima.service.technical.TranslationService;
+import ysaak.anima.utils.AuthenticationHolder;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
 import ysaak.anima.utils.comparator.SeasonComparator;
 import ysaak.anima.view.dto.KeyValueItem;
 import ysaak.anima.view.dto.elements.ElementEditDto;
+import ysaak.anima.view.dto.elements.ElementViewDto;
 import ysaak.anima.view.dto.elements.EpisodeEditDto;
 import ysaak.anima.view.dto.elements.EpisodeMassAddDto;
 import ysaak.anima.view.dto.elements.RelationAddDto;
 import ysaak.anima.view.dto.elements.RemoteIdAddDto;
 import ysaak.anima.view.dto.elements.SeasonEditDto;
+import ysaak.anima.view.dto.elements.view.ElementPlaylistDto;
 import ysaak.anima.view.router.RoutingService;
 
 import java.util.ArrayList;
@@ -56,6 +61,7 @@ import java.util.stream.Stream;
 @RequestMapping("/elements")
 @Transactional
 public class ElementController extends AbstractViewController {
+    public static final String ROUTE_VIEW = "elements.view";
 
     private final ElementService elementService;
     private final TagService tagService;
@@ -63,11 +69,10 @@ public class ElementController extends AbstractViewController {
     private final RelationService relationService;
     private final ExternalSiteService externalSiteService;
     private final CollectionService collectionService;
-    private final RoutingService routingService;
-    private final TranslationService translationService;
+    private final PlaylistService playlistService;
 
     @Autowired
-    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, CollectionService collectionService, RoutingService routingService, TranslationService translationService) {
+    public ElementController(ElementService elementService, TagService tagService, StorageService storageService, RelationService relationService, ExternalSiteService externalSiteService, CollectionService collectionService, RoutingService routingService, TranslationService translationService, PlaylistService playlistService) {
         super(translationService, routingService);
         this.elementService = elementService;
         this.tagService = tagService;
@@ -75,8 +80,36 @@ public class ElementController extends AbstractViewController {
         this.relationService = relationService;
         this.externalSiteService = externalSiteService;
         this.collectionService = collectionService;
-        this.routingService = routingService;
-        this.translationService = translationService;
+        this.playlistService = playlistService;
+    }
+
+    @GetMapping(path = "/{id}", name = ROUTE_VIEW)
+    public String viewAction(final ModelMap model, @PathVariable("id") final String id) {
+        Element element = this.elementService.findById2(id).orElseThrow(this::notFound);
+
+        ElementViewDto elementView = converters().convert(element, ElementViewDto.class);
+
+        model.put("element", elementView);
+
+        int seasonCount = elementView.getSeasonList().size();
+        model.put("seasonCount", seasonCount);
+
+        AuthenticationHolder.getAuthenticatedUserId().ifPresent(userId -> {
+            final ElementPlaylistDto playlistDto = playlistService.getItem(userId, element.getId())
+                .map(this::convertToPlaylistDto)
+                .orElse(null);
+
+            model.put("playlistItem", playlistDto);
+        });
+        return "elements/view";
+    }
+
+    private ElementPlaylistDto convertToPlaylistDto(final PlaylistItem playlistItem) {
+        return new ElementPlaylistDto(
+            playlistItem.getStatus().name(),
+            playlistItem.getStartDate(),
+            playlistItem.getCurrentEpisode()
+        );
     }
 
     @GetMapping(path = "/new", name = "elements.new")

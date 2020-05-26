@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import ysaak.anima.data.Element;
 import ysaak.anima.exception.TechnicalException;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
+import ysaak.anima.view.controller.ElementController;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
@@ -27,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -143,7 +141,7 @@ public class RoutingService {
         }
         else if (object instanceof Element) {
             Element element = (Element) object;
-            return getUrlFor(element.getType().getViewRoute(), Collections.singletonMap("id", element.getId()));
+            return getUrlFor(ElementController.ROUTE_VIEW, Collections.singletonMap("id", element.getId()));
         }
         else {
             throw new TechnicalException("No route defined for class " + object.getClass().getName());
@@ -198,16 +196,6 @@ public class RoutingService {
 
     public String redirectUrl(final Element element) {
         return "redirect:" + this.getUrlFor(element);
-    }
-
-    public Optional<String> getCurrentRoute() {
-        final ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        final String currentURI = requestAttributes.getRequest().getRequestURI();
-
-        return this.routeMap.values().stream()
-                .filter(route -> route.getPath().equals(currentURI))
-                .findFirst()
-                .map(Route::getName);
     }
 
     private static class AnnotationData {
