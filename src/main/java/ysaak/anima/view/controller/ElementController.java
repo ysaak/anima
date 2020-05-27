@@ -118,23 +118,7 @@ public class ElementController extends AbstractViewController {
             model.put("element", new Element());
         }
 
-        List<KeyValueItem> typeList = Stream.of(ElementType.ANIME).map(this::mapFromEnum).collect(Collectors.toList());
-        model.put("typeList", typeList);
-
-        List<KeyValueItem> subTypeList = Stream.of(ElementSubType.UNDETERMINED, ElementSubType.TV).map(this::mapFromEnum).collect(Collectors.toList());
-        model.put("subTypeList", subTypeList);
-
-        List<KeyValueItem> tagList = tagService.findAll().stream()
-                .map(t -> new KeyValueItem(t.getId(), t.getName()))
-                .sorted(Comparator.comparing(KeyValueItem::getValue))
-                .collect(Collectors.toList());
-        model.put("tagList", tagList);
-
-        List<KeyValueItem> collectionList = collectionService.findAll().stream()
-                .map(t -> new KeyValueItem(t.getId(), t.getName()))
-                .sorted(Comparator.comparing(KeyValueItem::getValue))
-                .collect(Collectors.toList());
-        model.put("collectionList", collectionList);
+        initComboList(model);
 
         return "elements/edit";
     }
@@ -165,28 +149,36 @@ public class ElementController extends AbstractViewController {
             model.put("element", elementEditDto);
         }
 
-        List<KeyValueItem> typeList = Stream.of(ElementType.ANIME).map(e -> new KeyValueItem(e.name(), e.name())).collect(Collectors.toList());
-        model.put("typeList", typeList);
-
-        List<KeyValueItem> subTypeList = Stream.of(ElementSubType.UNDETERMINED, ElementSubType.TV).map(e -> new KeyValueItem(e.name(), e.name())).collect(Collectors.toList());
-        model.put("subTypeList", subTypeList);
-
-        List<KeyValueItem> tagList = tagService.findAll().stream()
-                .map(t -> new KeyValueItem(t.getId(), t.getName()))
-                .sorted(Comparator.comparing(KeyValueItem::getValue))
-                .collect(Collectors.toList());
-        model.put("tagList", tagList);
-
-        List<KeyValueItem> collectionList = collectionService.findAll().stream()
-                .map(t -> new KeyValueItem(t.getId(), t.getName()))
-                .sorted(Comparator.comparing(KeyValueItem::getValue))
-                .collect(Collectors.toList());
-        model.put("collectionList", collectionList);
+        initComboList(model);
 
         return "elements/edit";
     }
 
-    private KeyValueItem mapFromEnum(Enum<?> item) {
+    private void initComboList(final ModelMap model) {
+        List<KeyValueItem> typeList = Stream.of(ElementType.ANIME)
+            .map(this::enumToKeyValueItem)
+            .collect(Collectors.toList());
+        model.put("typeList", typeList);
+
+        List<KeyValueItem> subTypeList = Stream.of(ElementSubType.UNDETERMINED, ElementSubType.TV, ElementSubType.MOVIE, ElementSubType.OVA, ElementSubType.SPECIAL)
+            .map(this::enumToKeyValueItem)
+            .collect(Collectors.toList());
+        model.put("subTypeList", subTypeList);
+
+        List<KeyValueItem> tagList = tagService.findAll().stream()
+            .map(t -> new KeyValueItem(t.getId(), t.getName()))
+            .sorted(Comparator.comparing(KeyValueItem::getValue))
+            .collect(Collectors.toList());
+        model.put("tagList", tagList);
+
+        List<KeyValueItem> collectionList = collectionService.findAll().stream()
+            .map(t -> new KeyValueItem(t.getId(), t.getName()))
+            .sorted(Comparator.comparing(KeyValueItem::getValue))
+            .collect(Collectors.toList());
+        model.put("collectionList", collectionList);
+    }
+
+    private KeyValueItem enumToKeyValueItem(Enum<?> item) {
         return new KeyValueItem(item.name(), translationService.get(item));
     }
 

@@ -40,7 +40,7 @@
             <div class="entity-layout__center">
                 <div class="card card-body">
                     <div class="row mb-2">
-                        <div class="col"><strong>Type :</strong> {{ element.subtype }}</div>
+                        <div class="col"><strong>Type :</strong> {{ __("ysaak.anima.data.ElementSubType." + element.subtype) }}</div>
                         <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
                     </div>
                     <div class="row mb-2">
@@ -56,7 +56,7 @@
                             <strong>Collections :</strong>
                             <ul class="tag-list">
                                 {% for collection in element.collectionList %}
-                                <li>{{ collection.name }}</li>
+                                <li><a href="{{ urlFor('collections.view', {'id': collection.id}) }}">{{ collection.name }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>

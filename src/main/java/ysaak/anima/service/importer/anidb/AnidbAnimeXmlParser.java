@@ -53,6 +53,13 @@ final class AnidbAnimeXmlParser {
 
     private static final String TAG_EPI_NUMBER = "epno";
     private static final String TAG_EPI_TITLE = "title";
+    private static final String TAG_EPI_ATTR_NORMAL = "1";
+
+    private static final String TYPE_TV_SERIES = "TV Series";
+    private static final String TYPE_MOVIE = "Movie";
+    private static final String TYPE_OVA = "OVA";
+    private static final String TYPE_WEB = "Web";
+    private static final String TYPE_TV_SPECIAL = "TV Special";
 
     private static final String TITLE_TYPE_MAIN = "main";
 
@@ -165,8 +172,25 @@ final class AnidbAnimeXmlParser {
     }
 
     private static ElementSubType convertType(String data) {
-        // TV Series
-        return ElementSubType.TV;
+        final ElementSubType type;
+
+        if (TYPE_MOVIE.equals(data)) {
+            type = ElementSubType.MOVIE;
+        }
+        else if (TYPE_OVA.equals(data) || TYPE_WEB.equals(data)) {
+            type = ElementSubType.OVA;
+        }
+        else if (TYPE_TV_SPECIAL.equals(data)) {
+            type = ElementSubType.SPECIAL;
+        }
+        else if (TYPE_TV_SERIES.equals(data)) {
+            type = ElementSubType.TV;
+        }
+        else {
+            type = ElementSubType.UNDETERMINED;
+        }
+
+        return type;
     }
 
     private static LocalDate parseDate(String data) {
@@ -190,6 +214,8 @@ final class AnidbAnimeXmlParser {
         String number = null;
         String title = null;
 
+        boolean storeEpisode = false;
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -197,6 +223,8 @@ final class AnidbAnimeXmlParser {
                 final String nodeName = node.getNodeName();
 
                 if (TAG_EPI_NUMBER.equals(nodeName)) {
+                    storeEpisode = TAG_EPI_ATTR_NORMAL.equals(e.getAttribute("type"));
+
                     number = node.getTextContent();
                 }
                 else if (TAG_EPI_TITLE.equals(nodeName)) {
@@ -225,10 +253,15 @@ final class AnidbAnimeXmlParser {
         }
         else {
             LOGGER.warn("No title found for episode {}", number);
-            return Optional.empty();
+            storeEpisode = false;
         }
 
-        return Optional.of(new Episode(number, title));
+        if (storeEpisode) {
+            return Optional.of(new Episode(number, title));
+        }
+        else {
+            return Optional.empty();
+        }
     }
 
     private static String parseDescription(final String description) {
