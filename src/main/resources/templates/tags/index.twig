@@ -1,0 +1,30 @@
+{% extends "layout" %}
+
+{% block content %}
+<h1>Tags</h1>
+
+<div class="card card-body">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                {% for type in typeList %}
+                <th>{{ __('ysaak.anima.data.ElementType.' + type) }}</th>
+                {% endfor %}
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tag in tagList %}
+            <tr>
+                <td><a href="{{ urlFor('tags.view', {'id': tag.id}) }}">{{ tag.name }}</a></td>
+                {% for type in typeList %}
+                <td>{{ tag.countByType.get(type) }}</td>
+                {% endfor %}
+                <td>{{ tag.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

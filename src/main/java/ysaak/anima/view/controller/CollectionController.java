@@ -77,7 +77,7 @@ public class CollectionController extends AbstractViewController {
         final Collection collection = collectionService.findById(id).orElseThrow(this::notFound);
         model.put("collectionName", collection.getName());
 
-        final List<ElementListDto> elementList = elementService.findByCollection(collection.getId()).stream()
+        final List<ElementListDto> elementList = elementService.findByCollectionId(collection.getId()).stream()
             .map(this::createViewDto)
             .sorted(Comparator.comparing(ElementListDto::getTitle))
             .collect(Collectors.toList());

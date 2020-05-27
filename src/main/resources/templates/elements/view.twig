@@ -48,7 +48,7 @@
                             <strong>Tags :</strong>
                             <ul class="tag-list">
                                 {% for tag in element.tagList %}
-                                <li>{{ tag }}</li>
+                                <li><a href="{{ urlFor('tags.view', {'id': tag.id}) }}">{{ tag.name }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>

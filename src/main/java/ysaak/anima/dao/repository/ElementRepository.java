@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ysaak.anima.config.ElementConstants;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementCollectionCount;
+import ysaak.anima.data.ElementTagCount;
 import ysaak.anima.data.ElementType;
 
 import java.util.List;
@@ -39,4 +40,13 @@ public interface ElementRepository extends PagingAndSortingRepository<Element, S
         nativeQuery = true
     )
     List<Element> findByCollectionId(@Param("collectionId") String collectionId);
+
+    @Query("SELECT e.type as elementType, tl.id as tagId, count(1) as count FROM Element as e JOIN e.tagList as tl GROUP BY e.type, tl.id")
+    List<ElementTagCount> countElementTypeByTag();
+
+    @Query(
+        value = "SELECT e.* FROM element e INNER JOIN L_ELEMENT_TAG let ON let.ELEMENT_ID = e.ELEM_ID WHERE let.TAG_ID = :tagId",
+        nativeQuery = true
+    )
+    List<Element> findByTagId(@Param("tagId") String tagId);
 }

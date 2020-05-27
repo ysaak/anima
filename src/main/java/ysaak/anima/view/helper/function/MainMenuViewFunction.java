@@ -9,6 +9,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import ysaak.anima.service.technical.TranslationService;
 import ysaak.anima.view.controller.CollectionController;
+import ysaak.anima.view.controller.TagController;
 import ysaak.anima.view.controller.TitleController;
 import ysaak.anima.view.helper.ViewHelper;
 import ysaak.anima.view.router.RoutingService;
@@ -39,7 +40,8 @@ public class MainMenuViewFunction implements Function {
     public Object execute(Map<String, Object> args, PebbleTemplate self, EvaluationContext context, int lineNumber) {
         final List<MenuItem> itemList = Arrays.asList(
             new MenuItem("title", TitleController.ROUTE_TITLES_INDEX),
-            new MenuItem("collection", CollectionController.ROUTE_COLLECTIONS_INDEX)
+            new MenuItem("collection", CollectionController.ROUTE_COLLECTIONS_INDEX),
+            new MenuItem("tag", TagController.ROUTE_TAGS_INDEX)
         );
 
         final ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();

@@ -32,10 +32,10 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
             .map(this::convertSeason)
             .collect(Collectors.toList());
 
-        List<String> tagList = CollectionUtils.getNotNull(object.getTagList())
+        List<ElementViewDto.ElementTagDto> tagList = CollectionUtils.getNotNull(object.getTagList())
             .stream()
             .map(this::convertTag)
-            .sorted(Comparator.naturalOrder())
+            .sorted(Comparator.comparing(ElementViewDto.ElementTagDto::getName))
             .collect(Collectors.toList());
 
         List<ElementViewDto.ElementRelationListDto> relationList = convertRelationList(object.getRelationList());
@@ -83,8 +83,11 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
         );
     }
 
-    private String convertTag(Tag tag) {
-        return tag.getName();
+    private ElementViewDto.ElementTagDto convertTag(Tag tag) {
+        return new ElementViewDto.ElementTagDto(
+            tag.getId(),
+            tag.getName()
+        );
     }
 
     private List<ElementViewDto.ElementRelationListDto> convertRelationList(final List<Relation> relationList) {
@@ -103,7 +106,7 @@ public class ElementToElementViewDtoConverter extends AbstractConverter<Element,
 
                 final ElementViewDto.ElementRelationListDto dto = new ElementViewDto.ElementRelationListDto(
                     type,
-                    type.name(), //translationService.get("elements.relation." + type.name()),
+                    type.name(),
                     relatedElementList
                 );
 

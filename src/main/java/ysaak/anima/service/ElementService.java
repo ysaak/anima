@@ -9,6 +9,7 @@ import ysaak.anima.dao.repository.ElementRepository;
 import ysaak.anima.data.Element;
 import ysaak.anima.data.ElementCollectionCount;
 import ysaak.anima.data.ElementRemoteId;
+import ysaak.anima.data.ElementTagCount;
 import ysaak.anima.data.ElementType;
 import ysaak.anima.data.Episode;
 import ysaak.anima.data.ExternalSite;
@@ -83,8 +84,16 @@ public class ElementService implements IAnimaComponent {
         return elementRepository.countElementTypeByCollection();
     }
 
-    public List<Element> findByCollection(String collectionId) {
+    public List<Element> findByCollectionId(String collectionId) {
         return elementRepository.findByCollectionId(collectionId);
+    }
+
+    public List<ElementTagCount> elementTagCountList() {
+        return elementRepository.countElementTypeByTag();
+    }
+
+    public List<Element> findByTagId(String tagId) {
+        return elementRepository.findByTagId(tagId);
     }
 
     public Optional<Element> findById2(String id) {
