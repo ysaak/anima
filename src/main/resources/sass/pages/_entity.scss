@@ -1,14 +1,26 @@
 .entity-layout {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+
+    @include min_tablet {
+        flex-direction: row;
+    }
 
     &__center {
         flex-grow: 1;
     }
 
     &__sidebar {
-        width: calc(300px + 4rem);
-        margin-left: 2rem;
-        padding: 0 2rem;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 1rem;
+    }
+
+    @include min_tablet {
+        &__sidebar {
+            width: calc(300px + 4rem);
+            margin-right: 1rem;
+            padding: 0 2rem;
+        }
     }
 }

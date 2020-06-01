@@ -244,15 +244,27 @@ ul.tag-list li + li::before {
 
 .entity-layout {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .entity-layout {
+    flex-direction: row;
+  }
 }
 .entity-layout__center {
   flex-grow: 1;
 }
 .entity-layout__sidebar {
-  width: calc(300px + 4rem);
-  margin-left: 2rem;
-  padding: 0 2rem;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+@media (min-width: 768px) {
+  .entity-layout__sidebar {
+    width: calc(300px + 4rem);
+    margin-right: 1rem;
+    padding: 0 2rem;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
