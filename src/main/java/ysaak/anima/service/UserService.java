@@ -9,7 +9,9 @@ import ysaak.anima.exception.error.UserErrorCode;
 import ysaak.anima.rules.UserRules;
 import ysaak.anima.utils.CollectionUtils;
 import ysaak.anima.utils.StringUtils;
+import ysaak.anima.utils.Validate;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,12 +23,27 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @PostConstruct
+    public void init() {
+        long userCount = userRepository.count();
+        if (userCount == 0) {
+            User defaultUser = new User();
+            defaultUser.setName("User");
+            userRepository.save(defaultUser);
+        }
+    }
+
     public User save(final User user) throws FunctionalException {
         Preconditions.checkNotNull(user, "user is null");
         UserRules.validate(user);
 
-        final User userToSave;
+        final Optional<User> existingUserOpt = userRepository.findByNameIgnoreCase(user.getName());
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            Validate.isTrue(existingUser.getId().equals(user.getId()), UserErrorCode.VALIDATE_NAME_UNIQUENESS, existingUser.getName());
+        }
 
+        final User userToSave;
         if (StringUtils.isNotBlank(user.getId())) {
             // Updating data
             userToSave = userRepository.findById(user.getId())

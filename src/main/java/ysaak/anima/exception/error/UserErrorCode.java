@@ -5,8 +5,10 @@ import ysaak.anima.exception.ErrorCode;
 
 public enum UserErrorCode implements ErrorCode {
     VALIDATE_NAME_FORMAT("USER-VAL-001", "Name length must be between %s and %s characters", HttpStatus.BAD_REQUEST),
+    VALIDATE_NAME_UNIQUENESS("USER-VAL-002", "User with name '%s' already exists", HttpStatus.BAD_REQUEST),
 
     NOT_EXISTING_USER("USER-SAV-001", "Cannot update non existing user (id=%s)", HttpStatus.BAD_REQUEST)
+
     ;
 
     private final String code;

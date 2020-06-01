@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 public final class HtmlUtils {
     private HtmlUtils() { /**/ }
 
+    public static String createHtmlTag(String tagName, Map<String, Object> attributeMap) {
+        return createHtmlTag(tagName, attributeMap, null);
+    }
+
     public static String createHtmlTag(String tagName, Map<String, Object> attributeMap, String value) {
         final StringBuilder sb = new StringBuilder("<").append(tagName);
 

@@ -14,8 +14,8 @@ import java.util.Optional;
 @Component
 public class LoggedUserInterceptor extends HandlerInterceptorAdapter {
     private static final List<String> WHITE_LIST_URI_PATTERN = Arrays.asList(
-            "\\/select-user(.*)",
-            "\\/user\\/(.*)\\/full.png"
+            "\\/auth\\/(.*)",
+            "\\/users\\/(.*)\\/(.*)\\.png"
     );
 
     @Override
@@ -26,7 +26,7 @@ public class LoggedUserInterceptor extends HandlerInterceptorAdapter {
 
         Optional<String> userId = AuthenticationHolder.getAuthenticatedUserId();
         if (!userId.isPresent()) {
-            response.sendRedirect("/select-user");
+            response.sendRedirect("/auth/select");
             return false;
         }
 

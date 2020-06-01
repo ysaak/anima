@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController extends AbstractViewController {
-    public static final String ROUTE_USER_VIEW = "user.view";
-    private static final String ROUTE_USER_IMAGE = "user.image";
-    private static final String ROUTE_USER_IMAGE_EDIT = "user.image.edit";
-    private static final String ROUTE_USER_IMAGE_UPDATE = "user.image.update";
+    public static final String ROUTE_USER_VIEW = "users.view";
+    public static final String ROUTE_USER_IMAGE = "users.image";
+    private static final String ROUTE_USER_IMAGE_EDIT = "users.image.edit";
+    private static final String ROUTE_USER_IMAGE_UPDATE = "users.image.update";
 
     private final UserService userService;
     private final StorageService storageService;

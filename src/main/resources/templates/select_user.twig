@@ -6,8 +6,9 @@
 
     {% for user in userList %}
     <div class="d-flex flex-column align-items-center mx-4 position-relative">
-        <img src="/user/{{ user.id }}/full.png" width="150" height="150" class="rounded mb-3 bg-white shadow-z1" />
-        <form method="post" action="{{ urlFor('user.change', {'id': user.id}) }}">
+        {{ user_image(user.id, 'full', 'rounded mb-3 bg-white shadow-z1') }}
+        <form method="post" action="{{ urlFor('auth.change') }}">
+            <input type="hidden" name="id" value="{{ user.id }}">
             <button class="stretched-link btn btn-link"><span class="h4">{{ user.name }}</span></button>
         </form>
     </div>
