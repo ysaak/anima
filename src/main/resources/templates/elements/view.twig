@@ -1,73 +1,124 @@
 {% extends "layout" %}
 
-{% block header %}
-<div class="header-section border-bottom">
+{% block content %}
+<div class="d-flex justify-content-between">
     <h1>{{ element.title }}</h1>
-    <div>
-        <div class="header-navigation">
-            <ul class="nav">
-                <li class="nav-item"><a data-toggle="tab" href="#element-details" class="nav-link active">D&eacute;tails</a></li>
-                <li class="nav-item"><a data-toggle="tab" href="#element-episodes" class="nav-link">&Eacute;pisodes</a></li>
-            </ul>
-        </div>
-        <div class="d-flex">
-            <a href="{{ urlFor('elements.edit',{'id': element.id}) }}" class="btn btn-light">Modifier</a>
-            &nbsp;
-            <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown">Suite</button>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="{{ urlFor('elements.image.edit', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ urlFor('elements.seasons.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
-                    <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-                    <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
-                    <a class="dropdown-item" href="{{ urlFor('elements.remote-ids.new', {'elementId': element.id }) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une ressource</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
-                </div>
+    <div class="d-flex">
+        <div class="dropdown">
+            <button class="btn btn-icon btn-light dropdown-toggle" type="button" data-toggle="dropdown"><span class="material-icons">more_vert</span></button>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="{{ urlFor('elements.edit',{'id': element.id}) }}">Modifier</a>
+                <a class="dropdown-item" href="{{ urlFor('elements.image.edit', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier l'image</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ urlFor('elements.seasons.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une saison</a>
+                <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                <a class="dropdown-item" href="{{ urlFor('elements.episodes.mass-new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter des &eacute;pisodes</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ urlFor('elements.relations.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une relation</a>
+                <a class="dropdown-item" href="{{ urlFor('elements.remote-ids.new', {'elementId': element.id }) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter une ressource</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="#" data-toggle="modal" data-target="#elementDeleteModal">Supprimer</a>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block content %}
-<div class="tab-content" id="elementTabContent">
-    <div class="tab-pane fade show active" id="element-details">
-        <div class="entity-layout">
-            <div class="entity-layout__center">
-                <div class="card card-body">
-                    <div class="row mb-2">
-                        <div class="col"><strong>Type :</strong> {{ __("ysaak.anima.data.ElementSubType." + element.subtype) }}</div>
-                        <div class="col"><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <strong>Tags :</strong>
-                            <ul class="tag-list">
-                                {% for tag in element.tagList %}
-                                <li><a href="{{ urlFor('tags.view', {'id': tag.id}) }}">{{ tag.name }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col">
-                            <strong>Collections :</strong>
-                            <ul class="tag-list">
-                                {% for collection in element.collectionList %}
-                                <li><a href="{{ urlFor('collections.view', {'id': collection.id}) }}">{{ collection.name }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    {% if element.episodeCount is not null %}
-                    <div class="row">
-                        <div class="col"><strong>&Eacute;pisodes :</strong> {{ element.episodeCount }}</div>
-                    </div>
+<div class="entity-layout">
+    <div class="entity-layout__sidebar">
+        <div class="text-center pb-3">
+            <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
+        </div>
+
+        <div class="card card-body mb-3">
+            {% if playlistItem is null %}
+            <form action="{{ urlFor('playlist.item.add') }}" method="post">
+                <input type="hidden" name="elementId" value="{{ element.id }}" />
+                <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                <button type="submit" class="btn btn-icon btn-link"><span class="material-icons mr-2">playlist_add</span> Ajouter à ma liste</button>
+            </form>
+            {% else %}
+
+            <div class="d-flex justify-content-between align-items-center">
+                <form method="post" action="{{ urlFor('playlist.item.progress') }}" class="d-flex">
+                    <span class="material-icons mr-2">playlist_play</span>
+                    {% if playlistItem.currentEpisode is not null %}
+                    <strong>Episodes vu&nbsp;:</strong>&nbsp;{{ playlistItem.currentEpisode }}
+
+                    <input type="hidden" name="elementId" value="{{ element.id }}" />
+                    <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                    <button type="submit" class="btn btn-sm btn-primary btn-icon ml-2"><span class="material-icons">add_circle_outline</span></button>
+
                     {% endif %}
+                </form>
+                <div class="dropdown">
+                    <button class="btn btn-icon btn-sm btn-light" data-toggle="dropdown"><span class="material-icons">more_vert</span></button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <h6 class="dropdown-header">Marquer comme</h6>
+                        <form action="{{ urlFor('playlist.item.mark-as') }}" method="post" class="form-inline">
+                            <input type="hidden" name="elementId" value="{{ element.id }}" />
+                            <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                            <input type="hidden" name="status" value="FINISHED" />
+                            <button type="submit" class="dropdown-item">Termin&eacute;</button>
+                        </form>
+                        <form action="{{ urlFor('playlist.item.mark-as') }}" method="post" class="form-inline">
+                            <input type="hidden" name="elementId" value="{{ element.id }}" />
+                            <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
+                            <input type="hidden" name="status" value="DROPPED" />
+                            <button type="submit" class="dropdown-item">Abandonn&eacute;</button>
+                        </form>
+                    </div>
                 </div>
+            </div>
+            {% endif %}
+        </div>
 
+        <div class="card card-body">
+            <ul class="list-unstyled mb-0">
+                <li><strong>Type :</strong> {{ __("ysaak.anima.data.ElementSubType." + element.subtype) }}</li>
+                <li><strong>Ann&eacute;e de parution :</strong> {{ element.releaseYear }}</li>
+                {% if element.episodeCount is not null %}
+                <li><strong>&Eacute;pisodes :</strong> {{ element.episodeCount }}</li>
+                {% endif %}
+                {% if element.tagList is not empty %}
+                <li>
+                    <strong>Tags :</strong>
+                    {% for tag in element.tagList %}
+                    {% if not loop.first %}, {% endif %}
+                    <a href="{{ urlFor('tags.view', {'id': tag.id}) }}">{{ tag.name }}</a>
+                    {% endfor %}
+                </li>
+                {% endif %}
+                {% if element.collectionList is not empty %}
+                <li>
+                    <strong>Collections :</strong>
+                    {% for collection in element.collectionList %}
+                    {% if not loop.first %}, {% endif %}
+                    <a href="{{ urlFor('collections.view', {'id': collection.id}) }}">{{ collection.name }}</a>
+                    {% endfor %}
+                </li>
+                {% endif %}
+                {% if element.remoteIdList is not empty %}
+                <li>
+                    <strong>Ressources :</strong>
+                    {% for remoteId in element.remoteIdList %}
+                    {% if not loop.first %}, {% endif %}
+                    <a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a>
+                    {% endfor %}
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <div class="entity-layout__center">
+        <nav class="mb-3">
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#infos">Informations</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#episodes">&Eacute;pisodes</a></li>
+            </ul>
+        </nav>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="infos" role="tabpanel" aria-labelledby="infos-tab">
                 <div class="card card-body mt-3">
                     <h4 class="card-title">Synopsis</h4>
                     <div>{{ element.synopsis | nl2br }}</div>
@@ -96,122 +147,62 @@
                 </div>
                 {% endif %}
             </div>
-            <div class="entity-layout__sidebar">
-                <div class="text-center pb-3">
-                    <img src="/elements/{{ element.id }}/image.png" width="300" class="rounded shadow-z1" />
-                </div>
-
-                <div class="card card-body mb-3">
-                    {% if playlistItem is null %}
-                    <form action="{{ urlFor('playlist.item.add') }}" method="post">
-                        <input type="hidden" name="elementId" value="{{ element.id }}" />
-                        <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
-                        <button type="submit" class="btn btn-link">Ajouter à ma liste</button>
-                    </form>
-                    {% else %}
-                    <div class="row">
-                        <div class="col-6">
-                            <strong>&Eacute;tat</strong><br/>{{ playlistItem.status }}
-                        </div>
-                        <div class="col-6 d-flex align-items-end justify-content-between">
-                            {% if playlistItem.currentEpisode is not null %}
-                            <div><strong>Episode</strong><br/>{{ playlistItem.currentEpisode }}</div>
-                            <form method="post" action="{{ urlFor('playlist.item.progress') }}">
-                                <input type="hidden" name="elementId" value="{{ element.id }}" />
-                                <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
-                                <button type="submit" class="btn btn-sm btn-light btn-icon"><span class="material-icons">add_circle_outline</span></button>
-                            </form>
-                            {% endif %}
-                        </div>
-                        <div class="col-12 mt-3">
-                            <form action="{{ urlFor('playlist.item.mark-as') }}" method="post" class="form-inline">
-                                <input type="hidden" name="elementId" value="{{ element.id }}" />
-                                <input type="hidden" name="redirectUrl" value="{{ currentUri() }}" />
-                                <label for="status">Marquer comme&nbsp;:</label>
-                                <select class="custom-select" name="status" id="status">
-                                    <option value="FINISHED">Termin&eacute;</option>
-                                    <option value="DROPPED">Abandonn&eacute;</option>
-                                </select>
-                                <button type="submit" class="btn btn-light">Enregistrer</button>
-                            </form>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
-
-
+            <div class="tab-pane fade" id="episodes" role="tabpanel" aria-labelledby="episodes-tab">
                 <div class="card card-body">
-                    <h4 class="card-title">Ressource</h4>
-                    <table class="table table-sm">
-                        <col/>
-                        <col width="30"/>
-                        <tbody>
-                        {% for remoteId in element.remoteIdList %}
+                    <table class="table table-sm table-hover" id="episodeTable">
+                        <col width="50">
+                        <col>
+                        <col width="50">
+                        <thead class="thead-dark">
                         <tr>
-                            <td><a href="{{ remoteId.url }}" target="_blank">{{ remoteId.siteName }}</a></td>
-                            <td><a href="{{ urlFor('elements.remote-ids.delete', { 'elementId': element.id, 'remoteId': remoteId.id }) }}" data-toggle="confirm" class="btn btn-icon btn-light btn-sm table-action"><span class="material-icons">delete</span></a></td>
+                            <th>N&deg;</th>
+                            <th>Titre</th>
+                            <th>&nbsp;</th>
                         </tr>
+                        </thead>
+                        <tbody>
+                        {% for season in element.seasonList %}
+                        {% if seasonCount > 1 %}
+                        <tr class="table-secondary parent">
+                            <td><span class="material-icons table-line-toggle">unfold_less</span></td>
+                            <td><strong>{{ season.title }}</strong></td>
+                            <td>
+                                <div class="dropdown table-action">
+                                    <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
+                                        <span class="material-icons">more_vert</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for episode in season.episodeList %}
+                        <tr class="child">
+                            <td>{{ episode.number }}</td>
+                            <td>{{ episode.title }}</td>
+                            <td>
+                                <div class="dropdown table-action">
+                                    <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
+                                        <span class="material-icons">more_vert</span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
+                                        <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="tab-pane fade" id="element-episodes">
-        <div class="card card-body">
-            <table class="table table-sm table-hover" id="episodeTable">
-                <col width="50">
-                <col>
-                <col width="50">
-                <thead class="thead-dark">
-                <tr>
-                    <th>N&deg;</th>
-                    <th>Titre</th>
-                    <th>&nbsp;</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for season in element.seasonList %}
-                {% if seasonCount > 1 %}
-                <tr class="table-secondary parent">
-                    <td><span class="material-icons table-line-toggle">unfold_less</span></td>
-                    <td><strong>{{ season.title }}</strong></td>
-                    <td>
-                        <div class="dropdown table-action">
-                            <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
-                                <span class="material-icons">more_vert</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.new', {'elementId': element.id}) }}" data-toggle="modal" data-target="#elementEditModal">Ajouter un &eacute;pisode</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ urlFor('elements.seasons.edit', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.seasons.delete', {'elementId': element.id, 'seasonId': season.id}) }}" data-toggle="confirm" data-confirm-text="Confirmer la suppression de la saison ainsi que tous les &eacute;pisodes.">Supprimer</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endif %}
-                {% for episode in season.episodeList %}
-                <tr class="child">
-                    <td>{{ episode.number }}</td>
-                    <td>{{ episode.title }}</td>
-                    <td>
-                        <div class="dropdown table-action">
-                            <button class="btn btn-icon btn-light btn-sm" type="button" data-toggle="dropdown">
-                                <span class="material-icons">more_vert</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="{{ urlFor('elements.episodes.edit', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="modal" data-target="#elementEditModal">Modifier</a>
-                                <a class="dropdown-item text-danger" href="{{ urlFor('elements.episodes.delete', { 'elementId': element.id, 'episodeId': episode.id }) }}" data-toggle="confirm">Supprimer</a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-                {% endfor %}
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
