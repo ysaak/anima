@@ -24,7 +24,7 @@
                 <tbody>
                     {% for watching in watchingList %}
                     <tr>
-                        <td>{{ watching.elementName }}</td>
+                        <td><a href="{{ urlFor('elements.view', {'id': watching.elementId}) }}">{{ watching.elementName }}</a></td>
                         <td>
                             {% if watching.currentEpisode is not null %}
                                 {{ watching.currentEpisode}}
